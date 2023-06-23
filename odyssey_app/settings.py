@@ -90,12 +90,11 @@ WSGI_APPLICATION = 'odyssey_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# db_host = os.environ.get('JAWSDB_URL') or os.environ.get('DB_URL')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'odyssey',
+        'NAME': os.environ.get('SCHEMA'),
         'USER': os.environ.get(
             'DB_USER'
         ),
@@ -103,7 +102,7 @@ DATABASES = {
             'DB_PASSWORD'
         ),
         'HOST': os.environ.get('DB_URL'),
-        'PORT': os.environ.get('DB_PORT'),
+        'PORT': os.environ.get('PORT'),
     }
 }
 
