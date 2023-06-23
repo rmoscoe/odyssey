@@ -2,10 +2,10 @@
 .DS_Store
 /venv/
 /node_modules/
+.env
 
 # .gitignore
 # Project files and directories
-/odyssey_app/settings.py
 /odyssey_app/static/
 /odyssey_app/tmp/
 /odyssey_app/media/
