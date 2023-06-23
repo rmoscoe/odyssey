@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
 load_dotenv()
 
@@ -88,6 +89,8 @@ WSGI_APPLICATION = 'odyssey_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+db_host = os.environ.get('JAWSDB_URL') or os.environ.get('DB_URL')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -95,9 +98,7 @@ DATABASES = {
         'USER': os.environ.get(
             'DB_USER'
         ),
-        'PASSWORD': os.environ.get(
-            'DB_PASSWORD'
-        ),
+        'PASSWORD': db_host,
         'HOST': os.environ.get('DB_URL'),
         'PORT': os.environ.get('DB_PORT'),
     }
