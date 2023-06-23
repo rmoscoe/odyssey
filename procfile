@@ -1,2 +1,2 @@
-release: python odyssey.manage.py migrate
-web: gunicorn odyssey.odyssey.wsgi --log-file -
+release: python manage.py migrate
+web: gunicorn odyssey_app.wsgi --log-file -
