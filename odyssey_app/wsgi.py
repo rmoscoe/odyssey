@@ -12,7 +12,7 @@ import os
 from django.core.wsgi import get_wsgi_application
 # from whitenoise import DjangoWhiteNoise
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'odyssey_app.settings')
 
 application = get_wsgi_application()
 # application = DjangoWhiteNoise(application)
