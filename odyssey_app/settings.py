@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+
 import dj_database_url
 
 load_dotenv()
@@ -98,8 +99,10 @@ DATABASES = {
         'USER': os.environ.get(
             'DB_USER'
         ),
-        'PASSWORD': db_host,
-        'HOST': os.environ.get('DB_URL'),
+        'PASSWORD': os.environ.get(
+            'DB_PASSWORD'
+        ),
+        'HOST': db_host,
         'PORT': os.environ.get('DB_PORT'),
     }
 }
