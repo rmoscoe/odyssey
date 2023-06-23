@@ -102,7 +102,7 @@ DATABASES = {
             'DB_PASSWORD'
         ),
         'HOST': os.environ.get('DB_URL'),
-        'PORT': os.environ.get('DB_PORT'),
+        'PORT': '3306',
     }
 }
 
