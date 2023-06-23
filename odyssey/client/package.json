@@ -20,7 +20,12 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postinstall": "npm run build"
+  },
+  "engines": {
+    "node": "16.16.0",
+    "npm": "9.7.2"
   },
   "eslintConfig": {
     "extends": [
