@@ -1,3 +1,4 @@
 *.docx
 .DS_Store
 /venv/
+/server/node_modules/
