@@ -1,0 +1,1 @@
+print('logging server init')

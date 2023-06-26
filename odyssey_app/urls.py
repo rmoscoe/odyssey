@@ -25,5 +25,7 @@ urlpatterns = [
     re_path('.*', TemplateView.as_view(template_name='index.html')),
 ]
 
+print('logging odyssey_app urls')
+
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

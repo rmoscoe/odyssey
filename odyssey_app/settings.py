@@ -40,7 +40,7 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['odyssey.herokuapp.com', '127.0.0.1:8000', 'localhost']
+ALLOWED_HOSTS = ['odyssey-db3a471a3d45.herokuapp.com', '127.0.0.1:8000', 'localhost']
 
 
 # Application definition
