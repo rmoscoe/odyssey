@@ -1,8 +1,5 @@
 from django.contrib import admin
-from .models import Adventure
-from .models import Scene
-from .models import Encounter
-from .models import Custom_Field
+from .models import Adventure, Scene, Encounter, Custom_Field
 
 # Register your models here.
 admin.site.register(Adventure)
