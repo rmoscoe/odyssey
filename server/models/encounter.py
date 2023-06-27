@@ -10,3 +10,6 @@ class Encounter(models.Model):
     description = models.TextField(blank = True, validators = [safe_text_validator])
     stats = models.TextField(blank = True, validators = [safe_text_validator])
     progress = models.CharField(max_length = 15, choices = progress_choices, default = 'Not Started')
+
+    class Meta:
+        db_table = 'encounter'

@@ -11,3 +11,6 @@ class Custom_Field(models.Model):
     encounter_id = models.ForeignKey(Encounter, on_delete=models.CASCADE)
     name = models.CharField(max_length = 80, validators = [safe_text_validator])
     value = models.TextField(blank = True, validators = [safe_text_validator])
+
+    class Meta:
+        db_table = 'custom_field'
