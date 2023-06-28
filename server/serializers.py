@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import Adventure, Scene, Encounter, Custom_Field
+from .models import Adventure, Scene, Encounter, Custom_Field
 from django.contrib.auth.models import User
 
 class AdventureSerializer(serializers.ModelSerializer):

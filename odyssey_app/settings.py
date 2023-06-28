@@ -38,7 +38,7 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['odyssey-db3a471a3d45.herokuapp.com', '127.0.0.1:8000', 'localhost']
 
@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'server',
+    'server.apps.ServerConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
