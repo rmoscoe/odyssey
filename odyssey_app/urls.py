@@ -8,13 +8,12 @@ api_prefix = 'api/'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(api_prefix, include('server.urls')),
+    path(api_prefix, include('server.urls', namespace='server')),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += [
-    path('api/', include('server.urls')),
     re_path('.*', TemplateView.as_view(template_name='index.html')),
 ]

@@ -12,6 +12,7 @@ class Adventure(models.Model):
     created_at = models.DateField(auto_now_add=True)
     last_modified = models.DateField(auto_now=True)
     game = models.CharField(max_length = 80, validators=[safe_text_validator])
+    campaign_setting = models.CharField(max_length = 80, blank=True, validators=[safe_text_validator])
     exposition = models.CharField(max_length = 255, blank=True, validators=[safe_text_validator])
     incitement = models.TextField(blank=True, validators=[safe_text_validator])
     climax = models.TextField(blank=True, validators=[safe_text_validator])
