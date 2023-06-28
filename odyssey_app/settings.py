@@ -37,6 +37,8 @@ SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY'
 )
 
+SECRET_KEY_FALLBACKS = os.environ.get('SECRET_KEY_FALLBACKS')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -149,3 +151,5 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'client', 'build', 'static')]
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/login'

@@ -4,6 +4,9 @@ from server.models import Adventure, Scene, Encounter, Custom_Field
 from django.contrib.auth.models import User
 from server.serializers import AdventureSerializer, UserSerializer, SceneSerializer, EncounterSerializer, CustomFieldSerializer
 from rest_framework.response import Response
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def home(request):
@@ -24,6 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': 'Unable to create user'}, status=400)
 
+    @login_required
     def partial_update(self, request):
         if 'password' in request.data:
             try:
@@ -32,6 +36,8 @@ class UserViewSet(viewsets.ModelViewSet):
                 user.save()
             except User.DoesNotExist:
                 return Response({'error': 'Unable to reset password'}, status=500)
+            else:
+                update_session_auth_hash(request, user)
 
         if 'email' in request.data:
             try:
@@ -46,8 +52,20 @@ class UserViewSet(viewsets.ModelViewSet):
         user = User.objects.get(pk=request.user.id)
         serializer = UserSerializer(user)
         return Response(serializer.data, status=200)
+    
+    def login(self, request):
+        user = authenticate(username=request.data['username'], password=request.data['password'])
+        if user is not None:
+            login(request, user)
+            # Redirect to Adventures page
+        else:
+            pass
+    
+    def logout(self, request):
+        logout(request)
+        # Redirect to Home page
 
-class AdventureViewSet(viewsets.ModelViewSet):
+class AdventureViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
 
     queryset = Adventure.objects.all()
     serializer_class = AdventureSerializer
@@ -69,7 +87,7 @@ class AdventureViewSet(viewsets.ModelViewSet):
         return queryset.prefetch_related('scene_set')
 
 
-class SceneViewSet(viewsets.ModelViewSet):
+class SceneViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
 
     queryset = Scene.objects.all()
     serializer_class = SceneSerializer
@@ -81,7 +99,7 @@ class SceneViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
         return Response(serializer.data)
 
-class EncounterViewSet(viewsets.ModelViewSet):
+class EncounterViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
 
     queryset = Encounter.objects.all()
     serializer_class = EncounterSerializer
@@ -93,7 +111,7 @@ class EncounterViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
         return Response(serializer.data)
 
-class CustomFieldViewSet(viewsets.ModelViewSet):
+class CustomFieldViewSet(LoginRequiredMixin, -viewsets.ModelViewSet):
 
     queryset = Custom_Field.objects.all()
     serializer_class = CustomFieldSerializer
