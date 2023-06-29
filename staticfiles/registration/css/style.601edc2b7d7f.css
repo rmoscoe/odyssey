@@ -1,0 +1,85 @@
+:root {
+    --primary-color:#930C10;
+    --accent-color:#F7CE65;
+    --light-accent-color:#FFFEBD;
+    --dark-accent-color:#290000;
+    font-size:10px;
+}
+
+body {
+    background-color: var(--light-accent-color);
+    color: var(--dark-accent-color);
+    padding:0px;
+    margin:0px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    height:auto;
+}
+
+header {
+    background-color:var(--primary-color);
+    padding:1rem;
+    display:flex;
+}
+
+img {
+    max-width:10rem;
+}
+
+h2 {
+    color:var(--accent-color);
+    font-size: 3rem;
+    text-align: center;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.hero {
+    background-color:var(--accent-color);
+    height:2rem;
+}
+
+main {
+    margin-top:1rem;
+    padding:2rem;
+}
+
+p {
+    margin-bottom:2rem;
+}
+
+.reset-link {
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+    font-size:1.2rem;
+}
+
+@media screen and (min-width:640px) {
+    :root {
+        font-size:12px;
+    }
+}
+
+@media screen and (min-width:768px) {
+    :root {
+        font-size:14px;
+    }
+}
+
+@media screen and (min-width:1024px) {
+    :root {
+        font-size:16px;
+    }
+}
+
+@media screen and (min-width:1280px) {
+    :root {
+        font-size:18px;
+    }
+}
+
+@media screen and (min-width:1536px) {
+    :root {
+        font-size:20px;
+    }
+}
