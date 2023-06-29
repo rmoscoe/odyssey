@@ -4,9 +4,10 @@ from server.models import Adventure, Scene, Encounter, Custom_Field
 from django.contrib.auth.models import User
 from server.serializers import AdventureSerializer, UserSerializer, SceneSerializer, EncounterSerializer, CustomFieldSerializer
 from rest_framework.response import Response
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from .utils import update_secret_key
 
 # Create your views here.
 def home(request):
@@ -37,7 +38,7 @@ class UserViewSet(viewsets.ModelViewSet):
             except User.DoesNotExist:
                 return Response({'error': 'Unable to reset password'}, status=500)
             else:
-                update_session_auth_hash(request, user)
+                update_secret_key()
 
         if 'email' in request.data:
             try:
