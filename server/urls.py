@@ -12,7 +12,6 @@ router.register(r'adventures', views.AdventureViewSet)
 router.register(r'scenes', views.SceneViewSet)
 router.register(r'encounters', views.EncounterViewSet)
 router.register(r'custom-fields', views.CustomFieldViewSet)
-router.register(r'password', views.PasswordResetViewSet)
 
 # Supposedly GenerateAdventureView will run synchronously. If this causes problems, use async_to_sync and change the path to read path('generate-adventure/', async_to_sync(views.GenerateAdventureView.as_view()), name='generate_adventure')
 urlpatterns = [
