@@ -8,6 +8,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from .utils import update_secret_key
+from rest_framework.views import APIView
+from .palm import generate_adventure
+# import aiohttp
 
 # Create your views here.
 def home(request):
@@ -112,7 +115,7 @@ class EncounterViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
         self.perform_update(serializer)
         return Response(serializer.data)
 
-class CustomFieldViewSet(LoginRequiredMixin, -viewsets.ModelViewSet):
+class CustomFieldViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
 
     queryset = Custom_Field.objects.all()
     serializer_class = CustomFieldSerializer
@@ -123,3 +126,16 @@ class CustomFieldViewSet(LoginRequiredMixin, -viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
+
+class GenerateAdventureView(APIView):
+    # Supposedly generate_adventure runs synchronously. If this causes problems, try using async await.
+    def get(self, request):
+        data = request.data
+        campaign_setting = data.get('campaign_setting')
+        level = data.get('level')
+        experience = data.get('experience')
+        context = data.get('context')
+        
+        adventure = generate_adventure(data.game, data.players, data.scenes, data.encounters, data.plot_twists, data.clues, campaign_setting, level, experience, context)
+
+        return Response(adventure)
