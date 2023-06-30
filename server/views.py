@@ -10,6 +10,11 @@ from django.contrib.auth.decorators import login_required
 from .utils import update_secret_key
 from rest_framework.views import APIView
 from .palm import generate_adventure
+from rest_framework.authtoken.models import Token
+from django.utils import timezone
+from datetime import timedelta
+from server.models import Token
+
 # import aiohttp
 
 # Create your views here.
@@ -26,8 +31,9 @@ class UserViewSet(viewsets.ModelViewSet):
             user = User.objects.create_user(
                 request.data['username'], request.data['email'], request.data['password']
             )
+            token = Token.objects.create(user=user, expires_at=timezone.now() + timedelta(days=1))
             serializer = UserSerializer(user)
-            return Response(serializer.data, status=200)
+            return Response({'user': serializer.data, 'token': token}, status=200)
         except Exception as e:
             return Response({'error': 'Unable to create user'}, status=400)
 
@@ -61,13 +67,14 @@ class UserViewSet(viewsets.ModelViewSet):
         user = authenticate(username=request.data['username'], password=request.data['password'])
         if user is not None:
             login(request, user)
-            # Redirect to Adventures page
+            token = Token.objects.create(user=user, expires_at=timezone.now() + timedelta(days=1))
+            return Response(token, status=200)
         else:
-            pass
+            return Response({'error': 'Invalid email or password'}, status=401)
     
     def logout(self, request):
         logout(request)
-        # Redirect to Home page
+        return Response({'message': 'Logout successful'}, status=200)
 
 class AdventureViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
 

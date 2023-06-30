@@ -163,3 +163,8 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'admin@omegagamingstudios.com'
 EMAIL_SUBJECT_PREFIX = 'Odyssey'
 PASSWORD_RESET_TIMEOUT = 3600
+
+AUTHENTICATION_BACKENDS = [
+    'server.backends.CustomTokenBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
