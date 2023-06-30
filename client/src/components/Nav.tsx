@@ -39,7 +39,7 @@ const Nav = ({ currentPage, handlePageChange }: NavProps) => {
     }
 
     return (
-        <nav className={`${showNav} flex justify-between self-end text-xl text-${theme}-accent content-end space-x-4`}>
+        <nav className={`${showNav} flex justify-between self-end text-xl text-${theme}-accent content-end space-x-4 font-${theme}-text`}>
             {currentPage === 'Home' &&
                 <>
                     <Link className={'hidden lg:block'} to='/account/new'>Get Started</Link>

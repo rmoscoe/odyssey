@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.fantasy-text {
+    @apply font-fantasy-text text-fantasy-text text-base leading-relaxed
+}
+
+.sci-fi-text {
+    @apply font-sci-fi-text text-sci-fi-text text-base leading-relaxed
+}
+
+.fantasy-label {
+    @apply font-fantasy-label text-fantasy-label text-xs
+}
+
+.sci-fi-label {
+    @apply font-sci-fi-label text-sci-fi-label text-xs
+}
