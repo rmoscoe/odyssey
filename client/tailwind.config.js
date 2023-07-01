@@ -19,6 +19,7 @@ module.exports = {
       'fantasy-toggle-void': '#F7CE65',
       'fantasy-toggle-border': '#FFFEBD',
       'fantasy-footer-text': '#FFFEBD',
+      'fantasy-form-heading': '#930C10',
       'sci-fi-primary': '#1352FF',
       'sci-fi-accent': '#FF54A4',
       'sci-fi-heading': '#FF54A4',
@@ -33,6 +34,7 @@ module.exports = {
       'sci-fi-toggle-void': '#31333B',
       'sci-fi-toggle-border': 'D9D9D9',
       'sci-fi-footer-text': '#D9D9D9',
+      'sci-fi-form-heading': '#FF54A4',
     },
     fontFamily: {
       'fantasy-title': ['Yatra One', 'Macondo Swash Caps', 'cursive', 'Arial', 'sans-serif'],

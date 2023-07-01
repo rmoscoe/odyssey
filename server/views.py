@@ -28,14 +28,22 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         try:
-            user = User.objects.create_user(
-                request.data['username'], request.data['email'], request.data['password']
-            )
+            username = request.data['username']
+            email = request.data['email']
+            password = request.data['password']
+
+            # Check if the username already exists in the database
+            if User.objects.filter(username=username).exists():
+                return Response({'error': 'Username already in use'}, status=400)
+
+            # Create the user if the username is unique
+            user = User.objects.create_user(username, email, password)
             token = Token.objects.create(user=user, expires_at=timezone.now() + timedelta(days=1))
             serializer = UserSerializer(user)
             return Response({'user': serializer.data, 'token': token}, status=200)
         except Exception as e:
             return Response({'error': 'Unable to create user'}, status=400)
+
 
     @login_required
     def partial_update(self, request):

@@ -11,7 +11,7 @@ function Home() {
     const logInHandler = () => navigate('/login');
 
     return (
-        <main className="mt-44">
+        <main className="mt-44 h-screen">
             <section id="hero" className={`bg-${theme}-accent lg:p-1`}>
                 <div className="w-full lg:hidden">
                     <img className="w-full lg:hidden" src={theme === 'fantasy' ? '../../public/dragon.png' : '../../public/space-battle.png'} alt={theme === 'fantasy' ? '3 adventurers facing a large, menacing, red dragon, framed by a stone archway' : 'several spaceships shooting lasers at each other in orbit of a blue planet with nearby explosions'} />
