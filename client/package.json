@@ -28,7 +28,7 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "makecss": "tailwindcss -i ./src/index.css -o ./dist/output.css -watch",
+    "makecss": "npx tailwindcss -i ./src/index.css -o ./dist/output.css -watch",
     "postinstall": "npm run build"
   },
   "engines": {
