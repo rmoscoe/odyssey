@@ -3,11 +3,13 @@ from django.urls import path, re_path, include
 from django.views.generic import TemplateView
 from django.conf.urls.static import static
 from django.conf import settings
+from django.contrib.auth import views as auth_views
 
 api_prefix = 'api/'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('password/reset/confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path(api_prefix, include('server.urls', namespace='server')),
 ]
 

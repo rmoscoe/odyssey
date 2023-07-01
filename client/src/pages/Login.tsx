@@ -114,6 +114,7 @@ export default function Login () {
                         value={email}
                         onChange={handleInputChange}
                         onBlur={handleEmailLoseFocus}
+                        required
                     />
                     {notification === 'Please enter a valid email address' &&
                         <p className={`${theme}-text`}>{notification}</p>
@@ -130,6 +131,7 @@ export default function Login () {
                         value={password}
                         onChange={handleInputChange}
                         onBlur={handlePasswordLoseFocus}
+                        required
                     />
                     <Link to='/account/reset-password' className={`ml-auto mr-1 font${theme}-text`}>Forgot Password?</Link>
                     {notification === 'Please enter your password or click "Forgot Password?"' &&
@@ -137,7 +139,7 @@ export default function Login () {
                     }
                     <input
                         type="submit"
-                        id="submit-create-account"
+                        id="submit-login"
                         className={`mt-4 w-full border-${theme}-button-alt-border border-[3px] rounded-2xl bg-${theme}-primary text-${theme}-accent font-${theme}-text`}
                         value="Submit"
                     />

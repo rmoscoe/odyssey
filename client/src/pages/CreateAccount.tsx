@@ -148,6 +148,7 @@ export default function CreateAccount () {
                         value={email}
                         onChange={handleInputChange}
                         onBlur={handleEmailLoseFocus}
+                        required
                     />
                     {(notification === 'Please enter a valid email address' || notification === 'This email address is already in use. Please try a different email address or proceed to login') &&
                         <p className={`${theme}-text`}>{notification}</p>
@@ -164,6 +165,7 @@ export default function CreateAccount () {
                         value={password}
                         onChange={handleInputChange}
                         onBlur={handlePasswordLoseFocus}
+                        required
                     />
                     {notification === 'Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")' &&
                         <p className={`${theme}-text`}>{notification}</p>
@@ -180,6 +182,7 @@ export default function CreateAccount () {
                         value={confirmPassword}
                         onChange={handleInputChange}
                         onBlur={handleConfirmPasswordLoseFocus}
+                        required
                     />
                     {notification === 'Password confirmation must match Password entered above' &&
                         <p className={`${theme}-text`}>{notification}</p>
