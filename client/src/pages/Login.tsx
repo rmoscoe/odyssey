@@ -4,12 +4,19 @@ import { useTheme } from '../utils/ThemeContext';
 import { validateEmail, validatePassword } from '../utils/helpers';
 import axios from 'axios';
 
-export default function Login () {
+type PageProps = {
+    currentPage: string;
+    handlePageChange: (page: string) => void;
+}
+
+export default function Login ({ currentPage, handlePageChange }: PageProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [notification, setNotification] = useState('');
     const theme = useTheme();
     const navigate = useNavigate();
+
+    handlePageChange('Login');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();

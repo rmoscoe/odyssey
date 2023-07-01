@@ -1,9 +1,16 @@
 import { useTheme } from '../utils/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
-function Home() {
+type PageProps = {
+    currentPage: string;
+    handlePageChange: (page: string) => void;
+}
+
+function Home({ currentPage, handlePageChange }: PageProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
+
+    handlePageChange('Home');
 
     const getStartedHandler = () => navigate('/account/new');
 

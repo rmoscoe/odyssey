@@ -13,6 +13,7 @@ import MyAdventures from './pages/MyAdventures';
 import AccountSettings from './pages/AccountSettings';
 import NewAdventure from './pages/NewAdventure';
 import AdventureDetails from './pages/AdventureDetails';
+import PasswordResetConfirm from './pages/PasswordResetConfirm';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('Home');
@@ -30,39 +31,43 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Home />}
+          element={<Home currentPage={currentPage} handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/account/new"
-          element={<CreateAccount/>}
+          element={<CreateAccount currentPage={currentPage} handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/login"
-          element={<Login />}
+          element={<Login currentPage={currentPage} handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/account/reset-password"
-          element={<ResetPassword />}
+          element={<ResetPassword currentPage={currentPage} handlePageChange={handlePageChange}/>}
+        />
+        <Route
+          path="/password/reset/confirm/:uidb64/:token"
+          element={<PasswordResetConfirm currentPage={currentPage} handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/adventures"
-          element={<MyAdventures/>}
+          element={<MyAdventures currentPage={currentPage} handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/account/settings"
-          element={<AccountSettings/>}
+          element={<AccountSettings currentPage={currentPage} handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/adventures/new"
-          element={<NewAdventure/>}
+          element={<NewAdventure currentPage={currentPage} handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/adventures/:adventureId"
-          element={<AdventureDetails/>}
+          element={<AdventureDetails currentPage={currentPage} handlePageChange={handlePageChange}/>}
         />
         <Route
           path="*"
-          element={<Login />}
+          element={<Login currentPage={currentPage} handlePageChange={handlePageChange}/>}
         />
       </Routes>
       <Footer />

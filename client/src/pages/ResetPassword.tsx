@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
-import { validateEmail, validatePassword } from '../utils/helpers';
+import { validateEmail } from '../utils/helpers';
 import axios from 'axios';
 
-export default function ResetPassword () {
+type PageProps = {
+    currentPage: string;
+    handlePageChange: (page: string) => void;
+}
+
+export default function ResetPassword ({ currentPage, handlePageChange }: PageProps) {
     const [email, setEmail] = useState('');
     const [notification, setNotification] = useState('');
     const theme = useTheme();
-    const navigate = useNavigate();
     const [instructions, setInstructions] = useState("Enter your email and we'll send you instructions to reset your password");
+
+    handlePageChange('Reset Password');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();

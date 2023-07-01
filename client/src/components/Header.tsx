@@ -20,7 +20,7 @@ const Header = ({ currentPage, handlePageChange }: HeaderProps) => {
             <Link to={(currentPage === 'Home' || currentPage === 'Create Account' || currentPage === 'Login') ? '/' : '/adventures'}>
                 <h1 className={`text-${theme}-accent text-5xl font-${theme}-title text-center mx-auto lg:mx-0 lg:text-left`}>Odyssey</h1>
             </Link>
-            {currentPage !== 'Account Settings' &&
+            {(currentPage !== 'Account Settings' && currentPage !== 'Password Reset Confirm') &&
                 <Nav currentPage={currentPage} handlePageChange={handlePageChange}/>
             }
             {(currentPage === 'My Adventures' || currentPage === 'New Adventure' || currentPage === 'Adventure Details') &&

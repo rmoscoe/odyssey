@@ -4,13 +4,20 @@ import { useTheme } from '../utils/ThemeContext';
 import { validateEmail, validatePassword } from '../utils/helpers';
 import axios from 'axios';
 
-export default function CreateAccount () {
+type PageProps = {
+    currentPage: string;
+    handlePageChange: (page: string) => void;
+}
+
+export default function CreateAccount ({ currentPage, handlePageChange }: PageProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [notification, setNotification] = useState('');
     const theme = useTheme();
     const navigate = useNavigate();
+
+    handlePageChange('Create Account');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
