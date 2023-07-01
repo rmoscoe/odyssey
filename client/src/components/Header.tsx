@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import Nav from './Nav';
 import Hamburger from './Hamburger';

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { ReactComponent as Sword } from '../../public/sword.svg';
@@ -9,7 +8,7 @@ interface NavProps {
     handlePageChange: (page: string) => void
 }
 
-const Nav = ({ currentPage, handlePageChange }: NavProps) => {
+const Nav = ({ currentPage }: NavProps) => {
     const { theme, toggleTheme } = useTheme();
     const navigate = useNavigate();
 

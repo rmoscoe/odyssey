@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { validateEmail, validatePassword } from '../utils/helpers';
@@ -9,21 +9,16 @@ export default function CreateAccount () {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [notification, setNotification] = useState('');
-    const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState();
-    const [confirmation, setConfirmation] = useState(false);
     const theme = useTheme();
     const navigate = useNavigate();
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
 
         const { target } = e;
         const inputType = target.name;
         const inputValue = target.value;
 
-        setConfirmation(false);
         target.classList.remove("invalid-entry");
 
         if (inputType === 'email') {
@@ -89,7 +84,6 @@ export default function CreateAccount () {
     const emailInUse = () => {
         setNotification('This email address is already in use. Please try a different email address or proceed to login');
         document.getElementById('email-input')?.classList.add('invalid-entry');
-        setConfirmation(false);
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -98,21 +92,18 @@ export default function CreateAccount () {
         if (!validateEmail(email)) {
             setNotification('Please enter a valid email address');
             document.getElementById('email-input')?.classList.add('invalid-entry');
-            setConfirmation(false);
             return;
         }
 
         if (!validatePassword(password)) {
             setNotification('Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")');
             document.getElementById('password-input')?.classList.add('invalid-entry');
-            setConfirmation(false);
             return;
         }
 
         if (password !== confirmPassword) {
             setNotification('Password confirmation must match Password entered above');
             document.getElementById('confirm-password-input')?.classList.add('invalid-entry');
-            setConfirmation(false);
             return;
         }
 
@@ -122,27 +113,19 @@ export default function CreateAccount () {
             password: password
         }
 
-        setLoading(true);
-
         try {
             const response = await axios.post('/api/users/', user);
-            setSubmitted(true);
-            setLoading(false);
-            setConfirmation(true);
             // log the user in and store the token in localStorage
             const token = response.data.token;
             localStorage.setItem('odysseyToken', token);
             navigate('/adventures');
 
         } catch (error) {
-            setSubmitted(true);
-            setLoading(false);
             setEmail('');
             setPassword('');
             setConfirmPassword('');
 
             error === 'Username already in use' ? emailInUse() : setNotification('An error occured while creating an account. Please try again.');
-            setConfirmation(true);
             console.error(error);
         }
     }
@@ -151,7 +134,7 @@ export default function CreateAccount () {
         <main className="mt-44 w-full flex content-center p-1.5 h-screen">
             <section className={`bg-${theme}-contrast rounded-3xl h-[90%] w-[97%] lg:w-3/5`}>
                 <h2 className={`font-${theme}-heading text-${theme}-form-heading text-3xl mx-auto mb-5 lg:text-4xl`}>Create an Account</h2>
-                <form autoComplete="on" id="signup-form" className="mx-auto w-[95%] lg:w-3/5">
+                <form autoComplete="on" id="signup-form" className="mx-auto w-[95%] lg:w-3/5" onSubmit={handleSubmit}>
                     <label htmlFor="email-input" className={`${theme}-label mb-2`}>Email</label>
                     <input 
                         type="email" 
