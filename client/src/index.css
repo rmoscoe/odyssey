@@ -17,3 +17,7 @@
 .sci-fi-label {
     @apply font-sci-fi-label text-sci-fi-label text-xs
 }
+
+.invalid-entry {
+    @apply border-rose-500
+}

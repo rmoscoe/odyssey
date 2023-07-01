@@ -134,6 +134,9 @@ export default function CreateAccount () {
         <main className="mt-44 w-full flex content-center p-1.5 h-screen">
             <section className={`bg-${theme}-contrast rounded-3xl h-[90%] w-[97%] lg:w-3/5`}>
                 <h2 className={`font-${theme}-heading text-${theme}-form-heading text-3xl mx-auto mb-5 lg:text-4xl`}>Create an Account</h2>
+                {notification === 'An error occured while creating an account. Please try again.' &&
+                    <p className={`mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>{notification}</p>
+                }
                 <form autoComplete="on" id="signup-form" className="mx-auto w-[95%] lg:w-3/5" onSubmit={handleSubmit}>
                     <label htmlFor="email-input" className={`${theme}-label mb-2`}>Email</label>
                     <input 
@@ -185,6 +188,7 @@ export default function CreateAccount () {
                         type="submit"
                         id="submit-create-account"
                         className={`mt-4 w-full border-${theme}-button-alt-border border-[3px] rounded-2xl bg-${theme}-primary text-${theme}-accent font-${theme}-text`}
+                        value="Create Account"
                     />
                 </form>
                 <p className={`${theme}-text mt-4 mx-auto w-[95%] lg:w-3/5`}>
