@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
+import { validateEmail, validatePassword } from '../utils/helpers';
 
 export default function CreateAccount () {
     const [email, setEmail] = useState('');
@@ -75,7 +76,7 @@ export default function CreateAccount () {
         }
 
         const handleConfirmPasswordLoseFocus = (e: FocusEvent) => {
-            if (!validateConfirmPassword(confirmPassword)) {
+            if (password !== confirmPassword) {
                 setNotification('Password confirmation must match Password entered above');
                 const inputElement = e.target as HTMLInputElement;
                 inputElement.classList.add("invalid-entry");
