@@ -3,18 +3,23 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { validateEmail, validatePassword } from '../utils/helpers';
 import axios from 'axios';
+import Auth from '../utils/auth';
 
 type PageProps = {
     currentPage: string;
     handlePageChange: (page: string) => void;
 }
 
-export default function Login ({ currentPage, handlePageChange }: PageProps) {
+export default function Login({ currentPage, handlePageChange }: PageProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [notification, setNotification] = useState('');
     const theme = useTheme();
     const navigate = useNavigate();
+
+    if (Auth.loggedIn()) {
+        navigate('/adventures');
+    }
 
     handlePageChange('Login');
 
@@ -88,18 +93,18 @@ export default function Login ({ currentPage, handlePageChange }: PageProps) {
         }
 
         try {
-            const response = await axios.post('/api/users/login', user);
-            const token = response.data.token;
-            localStorage.setItem('odysseyToken', token);
-            navigate('/adventures');
+            const token = await Auth.login(user);
+            if (token) {
+                navigate('/adventures');
+            }
 
         } catch (error) {
-            setEmail('');
-            setPassword('');
-
             error === 'Invalid email or password' ? setNotification('Invalid email or password') : setNotification('An error occured while logging in. Please try again.');
             console.error(error);
         }
+        
+        setEmail('');
+        setPassword('');
     }
 
     return (
@@ -112,12 +117,12 @@ export default function Login ({ currentPage, handlePageChange }: PageProps) {
                 }
                 <form autoComplete="on" id="login-form" className="mx-auto w-[95%] lg:w-3/5" onSubmit={handleLoginSubmit}>
                     <label htmlFor="email-field" className={`${theme}-label mb-2`}>Email</label>
-                    <input 
-                        type="email" 
-                        id="email-field" 
-                        name="email-field" 
-                        pattern="^([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([\da-z.-]{1,253})\.([a-z.]{2,6})$" 
-                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-lg text-${theme}-text w-full`} 
+                    <input
+                        type="email"
+                        id="email-field"
+                        name="email-field"
+                        pattern="^([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([\da-z.-]{1,253})\.([a-z.]{2,6})$"
+                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-lg text-${theme}-text w-full`}
                         value={email}
                         onChange={handleInputChange}
                         onBlur={handleEmailLoseFocus}
@@ -127,14 +132,14 @@ export default function Login ({ currentPage, handlePageChange }: PageProps) {
                         <p className={`${theme}-text`}>{notification}</p>
                     }
                     <label htmlFor="password-field" className={`${theme}-label mt-4 mb-2`}>Password</label>
-                    <input 
-                        type="password" 
+                    <input
+                        type="password"
                         autoComplete="current-password"
-                        id="password-field" 
-                        name="password-field" 
+                        id="password-field"
+                        name="password-field"
                         pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
                         minLength={8}
-                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-lg text-${theme}-text w-full`} 
+                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-lg text-${theme}-text w-full`}
                         value={password}
                         onChange={handleInputChange}
                         onBlur={handlePasswordLoseFocus}
@@ -152,7 +157,7 @@ export default function Login ({ currentPage, handlePageChange }: PageProps) {
                     />
                 </form>
                 <p className={`${theme}-text mt-4 mx-auto w-[95%] lg:w-3/5`}>
-                    New to Odyssey? 
+                    New to Odyssey?
                     <Link to="/account/new">Create an account for FREE.</Link>
                 </p>
             </section>

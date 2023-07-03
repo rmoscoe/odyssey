@@ -1,5 +1,6 @@
 import { useTheme } from '../utils/ThemeContext';
 import { useNavigate } from 'react-router-dom';
+import Auth from '../utils/auth';
 
 type PageProps = {
     currentPage: string;
@@ -9,6 +10,10 @@ type PageProps = {
 function Home({ currentPage, handlePageChange }: PageProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
+
+    if (Auth.loggedIn()) {
+        navigate('/adventures');
+    }
 
     handlePageChange('Home');
 

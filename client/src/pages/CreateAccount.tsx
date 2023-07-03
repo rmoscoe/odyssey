@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { validateEmail, validatePassword } from '../utils/helpers';
 import axios from 'axios';
+import Auth from '../utils/auth';
 
 type PageProps = {
     currentPage: string;
@@ -16,6 +17,10 @@ export default function CreateAccount ({ currentPage, handlePageChange }: PagePr
     const [notification, setNotification] = useState('');
     const theme = useTheme();
     const navigate = useNavigate();
+
+    if (Auth.loggedIn()) {
+        navigate('/adventures');
+    }
 
     handlePageChange('Create Account');
 

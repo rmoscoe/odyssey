@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { ReactComponent as Sword } from '../../public/sword.svg';
 import { ReactComponent as Planet } from '../../public/planet.svg';
+import Auth from '../utils/auth';
 
 interface NavProps {
     currentPage: string,
@@ -33,8 +34,8 @@ const Nav = ({ currentPage }: NavProps) => {
 
     const handleLogout = (event: Event) => {
         event.preventDefault();
-        localStorage.removeItem('odysseyToken');
-        navigate('/Home');
+        Auth.logout();
+        navigate('/');
     }
 
     return (
