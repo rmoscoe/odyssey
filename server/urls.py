@@ -2,7 +2,6 @@ from django.urls import include, path
 from rest_framework import routers
 from . import views
 from django.contrib.auth import views as auth_views
-# from django.views.decorators.async import async_to_sync
 
 app_name = 'server'
 
