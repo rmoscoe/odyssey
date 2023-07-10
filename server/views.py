@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from server.models import Adventure, Scene, Encounter, Custom_Field, Odyssey_Token
 from django.contrib.auth.models import User
-from server.serializers import AdventureSerializer, AdventureCreateSerializer, UserSerializer, SceneSerializer, EncounterSerializer, CustomFieldSerializer
+from server.serializers import AdventureSerializer, UserSerializer, SceneSerializer, EncounterSerializer, CustomFieldSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -14,7 +14,7 @@ from datetime import timedelta
 from django.utils.crypto import get_random_string
 from django.core.serializers import serialize
 import json
-from django.db.models import Prefetch
+from django.http import HttpResponse
 
 # import aiohttp
 
@@ -168,13 +168,16 @@ class CustomFieldViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
 
 class GenerateAdventureView(APIView):
     # Supposedly generate_adventure runs synchronously. If this causes problems, try using async await.
-    def get(self, request):
+    def post(self, request):
         data = request.data
         campaign_setting = data.get('campaign_setting')
         level = data.get('level')
         experience = data.get('experience')
         context = data.get('context')
         
-        adventure = generate_adventure(data.game, data.players, data.scenes, data.encounters, data.plot_twists, data.clues, campaign_setting, level, experience, context)
+        adventure = generate_adventure(data['game'], data['players'], data['scenes'], data['encounters'], data['plot_twists'], data['clues'], campaign_setting, level, experience, context).strip('"```json\\n').rstrip('\\n```"')
 
-        return Response(adventure)
+        adventure_dict = json.loads(adventure)
+        serialized_adventure = json.dumps(adventure_dict)
+
+        return HttpResponse(serialized_adventure, content_type='application/json')
