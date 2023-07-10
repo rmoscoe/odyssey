@@ -1,21 +1,20 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from server.models import Adventure, Scene, Encounter, Custom_Field
+from server.models import Adventure, Scene, Encounter, Custom_Field, Odyssey_Token
 from django.contrib.auth.models import User
-from server.serializers import AdventureSerializer, UserSerializer, SceneSerializer, EncounterSerializer, CustomFieldSerializer
+from server.serializers import AdventureSerializer, AdventureCreateSerializer, UserSerializer, SceneSerializer, EncounterSerializer, CustomFieldSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 from .utils import update_secret_key
 from rest_framework.views import APIView
 from .palm import generate_adventure
-from rest_framework.authtoken.models import Token
 from django.utils import timezone
 from datetime import timedelta
-from server.models import Token
-import os
-from django.http import HttpResponse
+from django.utils.crypto import get_random_string
+from django.core.serializers import serialize
+import json
+from django.db.models import Prefetch
 
 # import aiohttp
 
@@ -33,22 +32,33 @@ class UserViewSet(viewsets.ModelViewSet):
             username = request.data['username']
             email = request.data['email']
             password = request.data['password']
+            print("Creating new user: %s" % username)
 
             # Check if the username already exists in the database
             if User.objects.filter(username=username).exists():
                 return Response({'error': 'Username already in use'}, status=400)
+                print("Username already in use")
 
+            print("Username not in use")
             # Create the user if the username is unique
             user = User.objects.create_user(username, email, password)
-            token = Token.objects.create(user=user, expires_at=timezone.now() + timedelta(days=1))
+            print("User record created")
+            key = get_random_string(length=40)
+            token = Odyssey_Token.objects.create(user=user, key=key, expires_at=timezone.now() + timedelta(days=1))
+            print("Token created")
+            token_data = serialize('json', [token])
+            token_dict = json.loads(token_data)[0]
             serializer = UserSerializer(user)
-            return Response({'user': serializer.data, 'token': token}, status=200)
+            print("Serializer created")
+            return Response({'user': serializer.data, 'token': token_dict}, status=200)
         except Exception as e:
+            print("Unable to create user because %s" % e)
             return Response({'error': 'Unable to create user'}, status=400)
 
 
-    @login_required
-    def partial_update(self, request):
+    # @login_required
+    def partial_update(self, request, *args, **kwargs):
+        print(request)
         if 'password' in request.data:
             try:
                 user = User.objects.get(username=request.user.username)
@@ -61,12 +71,18 @@ class UserViewSet(viewsets.ModelViewSet):
 
         if 'email' in request.data:
             try:
-                instance = self.get_object()
+                print("Updating email")
+                user = self.get_object()
+                print(user)
                 new_email = {'email': request.data['email'], 'username': request.data['email']}
-                serializer = self.get_serializer(instance, data=new_email, partial=True)
+                print(new_email)
+                serializer = self.get_serializer(user, data=new_email, partial=True)
+                print("serialized data")
                 serializer.is_valid(raise_exception=True)
+                print("validated serializer")
                 self.perform_update(serializer)
             except Exception as e:
+                print("Unable to update email because %s" % e)
                 return Response({'error': 'Unable to update email'}, status=500)
 
         user = User.objects.get(pk=request.user.id)
@@ -77,8 +93,11 @@ class UserViewSet(viewsets.ModelViewSet):
         user = authenticate(username=request.data['username'], password=request.data['password'])
         if user is not None:
             login(request, user)
-            token = Token.objects.create(user=user, expires_at=timezone.now() + timedelta(days=1))
-            return Response(token, status=200)
+            key = get_random_string(length=40)
+            token = Odyssey_Token.objects.create(user=user, key=key, expires_at=timezone.now() + timedelta(days=1))
+            token_data = serialize('json', [token])  # Serialize the token object
+            token_dict = json.loads(token_data)[0]
+            return Response(token_dict, status=200)
         else:
             return Response({'error': 'Invalid email or password'}, status=401)
     
@@ -86,9 +105,10 @@ class UserViewSet(viewsets.ModelViewSet):
         logout(request)
         return Response({'message': 'Logout successful'}, status=200)
 
-class AdventureViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+# class AdventureViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+class AdventureViewSet(viewsets.ModelViewSet):
 
-    queryset = Adventure.objects.all()
+    queryset = Adventure.objects.select_related('user_id').prefetch_related('scene_set')
     serializer_class = AdventureSerializer
 
     def partial_update(self, request):
@@ -103,12 +123,13 @@ class AdventureViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
         user_id = self.request.query_params.get('user_id')
     
         if user_id:
-            queryset = queryset.filter(user_id=user_id)
-    
-        return queryset.prefetch_related('scene_set')
+            queryset = queryset.prefetch_related('scene_set').filter(user_id=user_id)
+        
+        return queryset
 
 
-class SceneViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+# class SceneViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+class SceneViewSet(viewsets.ModelViewSet):
 
     queryset = Scene.objects.all()
     serializer_class = SceneSerializer
@@ -120,7 +141,8 @@ class SceneViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
         self.perform_update(serializer)
         return Response(serializer.data)
 
-class EncounterViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+class EncounterViewSet(viewsets.ModelViewSet):
+# class EncounterViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
 
     queryset = Encounter.objects.all()
     serializer_class = EncounterSerializer
