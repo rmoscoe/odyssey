@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/rmoscoe/odyssey/issues"
   },
-  "homepage": "https://odyssey.herokuapp.com/",
+  "homepage": "https://odyssey-db3a471a3d45.herokuapp.com/",
   "devDependencies": {
     "typescript": "^5.1.3"
   },

@@ -1,8 +1,12 @@
-@import 'tailwindcss/base';
+/* @import 'tailwindcss/base';
 @import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import 'tailwindcss/utilities'; */
 
-:root {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -16,9 +20,29 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+} */
+
+.fantasy-text {
+    @apply font-fantasy-text text-fantasy-text text-base leading-relaxed
 }
 
-a {
+.sci-fi-text {
+    @apply font-sci-fi-text text-sci-fi-text text-base leading-relaxed
+}
+
+.fantasy-label {
+    @apply font-fantasy-label text-fantasy-label text-xs
+}
+
+.sci-fi-label {
+    @apply font-sci-fi-label text-sci-fi-label text-xs
+}
+
+.invalid-entry {
+    @apply border-rose-500
+}
+
+/* a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
@@ -70,4 +94,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
