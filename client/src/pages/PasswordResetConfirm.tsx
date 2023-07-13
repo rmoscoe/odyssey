@@ -8,14 +8,14 @@ type PageProps = {
     handlePageChange: (page: string) => void;
 }
 
-export default function PasswordResetConfirm ({ handlePageChange }: PageProps) {
+export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
     const { uidb64, token } = useParams();
     const [uid] = useState(uidb64);
     const [tokenValue] = useState(token);
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [notification, setNotification] = useState('');
-    const { theme }  = useTheme();
+    const { theme } = useTheme();
     const [instructions, setInstructions] = useState('Enter your new password below.');
 
     handlePageChange('Password Reset Confirm');
@@ -24,12 +24,12 @@ export default function PasswordResetConfirm ({ handlePageChange }: PageProps) {
         e.preventDefault();
 
         const { target } = e;
-        const inputType = target.name;
+        const inputId = target.id;
         const inputValue = target.value;
 
         target.classList.remove("invalid-entry");
 
-        if (inputType === 'newPassword') {
+        if (inputId === 'new-password-input') {
             setNewPassword(inputValue);
         } else {
             setConfirmNewPassword(inputValue);
@@ -37,17 +37,17 @@ export default function PasswordResetConfirm ({ handlePageChange }: PageProps) {
 
         switch (notification) {
             case 'Please enter a new password':
-                if (inputType === 'newPassword') {
+                if (inputId === 'new-password-input') {
                     setNotification('');
                 }
                 break;
             case 'Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")':
-                if (inputType === 'newPassword') {
+                if (inputId === 'new-password-input') {
                     setNotification('');
                 }
                 break;
             case 'Password confirmation must match new password entered above':
-                if (inputType === 'confirmNewPassword') {
+                if (inputId === 'confirm-new-password-input') {
                     setNotification('');
                 }
                 break;
@@ -109,52 +109,57 @@ export default function PasswordResetConfirm ({ handlePageChange }: PageProps) {
     }
 
     return (
-        <main className="mt-[6.5rem] w-full flex content-center p-1.5 h-screen">
-            <section className={`bg-${theme}-contrast rounded-3xl h-[90%] w-[97%] lg:w-3/5`}>
-                <h2 className={`font-${theme}-heading text-${theme}-form-heading text-3xl mx-auto mb-5 lg:text-4xl`}>Set New Password</h2>
+        <main className="mt-[5.5rem] w-full flex justify-center p-2 h-overlay relative">
+            <section className={`absolute top-[2%] bottom-7 inset-x-2.5 bg-${theme}-contrast rounded-[2rem] justify-center p-3 lg:w-3/5 lg:mx-auto`}>
+                <h2 className={`font-${theme}-heading text-center text-${theme}-form-heading text-[1.75rem] mx-auto mb-5 lg:text-4xl`}>Set New Password</h2>
                 <p className={`mx-auto text-center w-[95%] ${theme}-text lg:w-3/5`}>{instructions}</p>
                 {instructions === 'Your password has been successfully updated. Please proceed to login.' &&
-                    <Link className={`${theme}-text text-center mx-auto w-[95%] lg:w-3/5`} to='/login'>Log in.</Link>
+                    <Link className={`block link-text text-center mx-auto w-[95%] lg:w-3/5`} to='/login'>Log in.</Link>
                 }
                 <form autoComplete="on" id="new-password-form" className="mt-4 mx-auto w-[95%] lg:w-3/5" onSubmit={handleSubmit}>
-                <label htmlFor="new-password-input" className={`${theme}-label mt-4 mb-2`}>Password</label>
-                    <input 
-                        type="password" 
-                        autoComplete="new-password"
-                        id="new-password-input" 
-                        name="new-password-input" 
-                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
-                        minLength={8}
-                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-lg text-${theme}-text w-full`} 
-                        value={newPassword}
-                        onChange={handleInputChange}
-                        onBlur={handlePasswordLoseFocus}
-                        required
-                    />
-                    {notification === 'Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")' &&
-                        <p className={`${theme}-text`}>{notification}</p>
-                    }
-                    <label htmlFor="confirm-new-password-input" className={`${theme}-label mt-4 mb-2`}>Confirm Password</label>
-                    <input 
-                        type="password" 
-                        autoComplete="on"
-                        id="confirm-new-password-input" 
-                        name="confirm-new-password-input" 
-                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
-                        minLength={8}
-                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-lg text-${theme}-text w-full`} 
-                        value={confirmNewPassword}
-                        onChange={handleInputChange}
-                        onBlur={handleConfirmPasswordLoseFocus}
-                        required
-                    />
-                    {notification === 'Password confirmation must match new password entered above' &&
-                        <p className={`${theme}-text`}>{notification}</p>
-                    }
+                    <div className="mb-4">
+                        <label htmlFor="new-password-input" className={`${theme}-label`}>Password</label>
+                        <input
+                            type="password"
+                            autoComplete="new-password"
+                            id="new-password-input"
+                            name="new-password-input"
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
+                            minLength={8}
+                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mt-2`}
+                            value={newPassword}
+                            onChange={handleInputChange}
+                            onBlur={handlePasswordLoseFocus}
+                            required
+                        />
+                        {notification === 'Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")' &&
+                            <p className={`${theme}-text mt-2`}>{notification}</p>
+                        }
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="confirm-new-password-input" className={`${theme}-label`}>Confirm Password</label>
+                        <input
+                            type="password"
+                            autoComplete="on"
+                            id="confirm-new-password-input"
+                            name="confirm-new-password-input"
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
+                            minLength={8}
+                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full px-1 py-2 mt-2`}
+                            value={confirmNewPassword}
+                            onChange={handleInputChange}
+                            onBlur={handleConfirmPasswordLoseFocus}
+                            required
+                        />
+                        {notification === 'Password confirmation must match new password entered above' &&
+                            <p className={`${theme}-text mt-2`}>{notification}</p>
+                        }
+                    </div>
+
                     <input
                         type="submit"
                         id="submit-reset-password"
-                        className={`mt-4 w-full border-${theme}-button-alt-border border-[3px] rounded-2xl bg-${theme}-primary text-${theme}-accent font-${theme}-text`}
+                        className={`mt-4 py-2 w-full border-${theme}-button-alt-border border-[3px] rounded-xl bg-${theme}-primary text-${theme}-accent text-lg font-${theme}-text`}
                         value="Submit"
                     />
                 </form>
