@@ -12,7 +12,7 @@ export default function Login({ handlePageChange }: PageProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [notification, setNotification] = useState('');
-    const theme = useTheme();
+    const { theme } = useTheme();
     const navigate = useNavigate();
 
     if (Auth.loggedIn()) {
@@ -106,7 +106,7 @@ export default function Login({ handlePageChange }: PageProps) {
     }
 
     return (
-        <main className="mt-44 w-full flex content-center p-1.5 h-screen">
+        <main className="mt-[6.5rem] w-full flex content-center p-1.5 h-screen">
             <section className={`bg-${theme}-contrast rounded-3xl h-[90%] w-[97%] lg:w-3/5`}>
                 <h2 className={`font-${theme}-heading text-${theme}-form-heading text-3xl mx-auto mb-5 lg:text-4xl`}>Log in to Odyssey</h2>
                 <p className={`text-center mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>The journey continues. Speak friend and enter.</p>

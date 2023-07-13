@@ -26,10 +26,11 @@ export default function ThemeProvider({ children }: ThemeProviderProps):JSX.Elem
     const toggleTheme = () => {
         if (theme === 'fantasy') {
             setTheme('sci-fi');
+            localStorage.setItem('theme', 'sci-fi');
         } else {
             setTheme('fantasy');
+            localStorage.setItem('theme', 'fantasy');
         }
-        localStorage.setItem('theme', theme);
     };
 
     return (

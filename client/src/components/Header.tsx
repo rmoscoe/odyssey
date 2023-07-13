@@ -25,15 +25,17 @@ const Header = ({ currentPage }: HeaderProps) => {
     }
 
     return (
-        <header className={`bg-${theme}-primary w-full px-3 py-2 flex justify-between items-center fixed top-0 z-50`}>
-            <Link to={(currentPage === 'Home' || currentPage === 'Create Account' || currentPage === 'Login') ? '/' : '/adventures'}>
-                <img src="/static/logo192.png" alt="Odyssey logo: a sailing ship on rough seas surrounded by a compass rose" className="max-w-[6rem]" />
-            </Link>
-            <Link to={(currentPage === 'Home' || currentPage === 'Create Account' || currentPage === 'Login') ? '/' : '/adventures'}>
-                <h1 className={`${theme}-title`}>Odyssey</h1>
-            </Link>
+        <header className={`bg-${theme}-primary w-full p-3 flex justify-between items-center fixed top-0 z-50`}>
+            <div className="flex items-center">
+                <Link to={(currentPage === 'Home' || currentPage === 'Create Account' || currentPage === 'Login') ? '/' : '/adventures'}>
+                    <img src="/static/logo192.png" alt="Odyssey logo: a sailing ship on rough seas surrounded by a compass rose" className="max-w-[4rem]" />
+                </Link>
+                <Link to={(currentPage === 'Home' || currentPage === 'Create Account' || currentPage === 'Login') ? '/' : '/adventures'}>
+                    <h1 className={`${theme}-title justify-self-center self-center text-center lg:text-start lg:justify-self-start lg:text-5xl lg:px-2`}>Odyssey</h1>
+                </Link>
+            </div>
             {(currentPage !== 'Account Settings' && currentPage !== 'Password Reset Confirm') &&
-                <Nav currentPage={currentPage} handleLogout={handleLogout}/>
+                <Nav currentPage={currentPage} handleLogout={handleLogout} />
             }
             {(currentPage === 'My Adventures' || currentPage === 'New Adventure' || currentPage === 'Adventure Details') &&
                 <>

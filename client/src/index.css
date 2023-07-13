@@ -22,31 +22,31 @@
 } */
 
 .fantasy-title {
-  @apply text-fantasy-accent text-5xl font-fantasy-title text-center mx-auto my-auto lg:mx-0 lg:text-left
+  @apply text-fantasy-accent text-4xl font-fantasy-title text-center mx-auto my-auto lg:mx-0 lg:text-left
 }
 
 .sci-fi-title {
-  @apply text-sci-fi-accent text-5xl font-sci-fi-title text-center mx-auto my-auto lg:mx-0 lg:text-left
+  @apply text-sci-fi-accent text-4xl font-sci-fi-title text-center mx-auto my-auto lg:mx-0 lg:text-left
 }
 
 .fantasy-text {
-    @apply font-fantasy-text text-fantasy-text text-base leading-relaxed
+    @apply font-fantasy-text text-fantasy-text text-lg leading-relaxed
 }
 
 .sci-fi-text {
-    @apply font-sci-fi-text text-sci-fi-text text-base leading-relaxed
+    @apply font-sci-fi-text text-sci-fi-text text-lg leading-relaxed
 }
 
 .fantasy-label {
-    @apply font-fantasy-label text-fantasy-label text-xs
+    @apply font-fantasy-label text-fantasy-label text-sm
 }
 
 .sci-fi-label {
-    @apply font-sci-fi-label text-sci-fi-label text-xs
+    @apply font-sci-fi-label text-sci-fi-label text-sm
 }
 
 .bg-fantasy-primary {
-  background-color: #930C10;
+  background-color: #930C10 !important;
 }
 
 .border-fantasy-primary {
@@ -274,7 +274,7 @@
 }
 
 .bg-sci-fi-primary {
-  background-color: #1352FF;
+  background-color: #1352FF !important;
 }
 
 .border-sci-fi-primary {
@@ -535,6 +535,14 @@
 
 .font-sci-fi-label {
   font-family: 'Verdana', 'Arial', 'sans-serif';
+}
+
+.h-overlay {
+  height: calc(100vh - 7rem);
+}
+
+.link-text {
+  color: rgb(0, 0, 255);
 }
 
 /* a {

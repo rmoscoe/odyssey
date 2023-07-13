@@ -9,12 +9,12 @@ type PageProps = {
     handlePageChange: (page: string) => void;
 }
 
-export default function CreateAccount ({ handlePageChange }: PageProps) {
+export default function CreateAccount({ handlePageChange }: PageProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [notification, setNotification] = useState('');
-    const theme = useTheme();
+    const { theme } = useTheme();
     const navigate = useNavigate();
 
     if (Auth.loggedIn()) {
@@ -27,14 +27,14 @@ export default function CreateAccount ({ handlePageChange }: PageProps) {
         e.preventDefault();
 
         const { target } = e;
-        const inputType = target.name;
+        const inputId = target.id;
         const inputValue = target.value;
 
         target.classList.remove("invalid-entry");
 
-        if (inputType === 'email') {
+        if (inputId === 'email-input') {
             setEmail(inputValue);
-        } else if (inputType === 'password') {
+        } else if (inputId === 'password-input') {
             setPassword(inputValue);
         } else {
             setConfirmPassword(inputValue);
@@ -42,22 +42,22 @@ export default function CreateAccount ({ handlePageChange }: PageProps) {
 
         switch (notification) {
             case 'Please enter a valid email address':
-                if (inputType === 'email') {
+                if (inputId === 'email-input') {
                     setNotification('');
                 }
                 break;
             case 'This email address is already in use. Please try a different email address or proceed to login':
-                if (inputType === 'email') {
+                if (inputId === 'email-input') {
                     setNotification('');
                 }
                 break;
             case 'Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")':
-                if (inputType === 'password') {
+                if (inputId === 'password-input') {
                     setNotification('');
                 }
                 break;
             case 'Password confirmation must match Password entered above':
-                if (inputType === 'confirmPassword') {
+                if (inputId === 'confirm-password-input') {
                     setNotification('');
                 }
                 break;
@@ -142,72 +142,79 @@ export default function CreateAccount ({ handlePageChange }: PageProps) {
     }
 
     return (
-        <main className="mt-44 w-full flex content-center p-1.5 h-screen">
-            <section className={`bg-${theme}-contrast rounded-3xl h-[90%] w-[97%] lg:w-3/5`}>
-                <h2 className={`font-${theme}-heading text-${theme}-form-heading text-3xl mx-auto mb-5 lg:text-4xl`}>Create an Account</h2>
+        <main className="mt-[5.5rem] w-full flex justify-center p-2 h-overlay relative">
+            <section className={`absolute top-[2%] bottom-7 inset-x-2.5 bg-${theme}-contrast rounded-[2rem] justify-center p-3 lg:w-3/5 lg:mx-auto`}>
+                <h2 className={`font-${theme}-heading text-center text-${theme}-form-heading text-[1.75rem] mx-auto mb-5 lg:text-4xl`}>Create an Account</h2>
                 {notification === 'An error occured while creating an account. Please try again.' &&
                     <p className={`mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>{notification}</p>
                 }
                 <form autoComplete="on" id="signup-form" className="mx-auto w-[95%] lg:w-3/5" onSubmit={handleSubmit}>
-                    <label htmlFor="email-input" className={`${theme}-label mb-2`}>Email</label>
-                    <input 
-                        type="email" 
-                        id="email-input" 
-                        name="email-input" 
-                        pattern="^([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([\da-z.-]{1,253})\.([a-z.]{2,6})$" 
-                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-lg text-${theme}-text w-full`} 
-                        value={email}
-                        onChange={handleInputChange}
-                        onBlur={handleEmailLoseFocus}
-                        required
-                    />
-                    {(notification === 'Please enter a valid email address' || notification === 'This email address is already in use. Please try a different email address or proceed to login') &&
-                        <p className={`${theme}-text`}>{notification}</p>
-                    }
-                    <label htmlFor="password-input" className={`${theme}-label mt-4 mb-2`}>Password</label>
-                    <input 
-                        type="password" 
-                        autoComplete="new-password"
-                        id="password-input" 
-                        name="password-input" 
-                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
-                        minLength={8}
-                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-lg text-${theme}-text w-full`} 
-                        value={password}
-                        onChange={handleInputChange}
-                        onBlur={handlePasswordLoseFocus}
-                        required
-                    />
-                    {notification === 'Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")' &&
-                        <p className={`${theme}-text`}>{notification}</p>
-                    }
-                    <label htmlFor="confirm-password-input" className={`${theme}-label mt-4 mb-2`}>Confirm Password</label>
-                    <input 
-                        type="password" 
-                        autoComplete="on"
-                        id="confirm-password-input" 
-                        name="confirm-password-input" 
-                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
-                        minLength={8}
-                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-lg text-${theme}-text w-full`} 
-                        value={confirmPassword}
-                        onChange={handleInputChange}
-                        onBlur={handleConfirmPasswordLoseFocus}
-                        required
-                    />
-                    {notification === 'Password confirmation must match Password entered above' &&
-                        <p className={`${theme}-text`}>{notification}</p>
-                    }
+                    <div className="mb-4">
+                        <label htmlFor="email-input" className={`${theme}-label`}>Email</label>
+                        <input
+                            type="email"
+                            id="email-input"
+                            name="email-input"
+                            pattern="^([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([\da-z.-]{1,253})\.([a-z.]{2,6})$"
+                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg w-full px-1 py-2 mt-2`}
+                            value={email}
+                            onChange={handleInputChange}
+                            onBlur={handleEmailLoseFocus}
+                            required
+                        />
+                        {(notification === 'Please enter a valid email address' || notification === 'This email address is already in use. Please try a different email address or proceed to login') &&
+                            <p className={`${theme}-text mt-2`}>{notification}</p>
+                        }
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="password-input" className={`${theme}-label`}>Password</label>
+                        <input
+                            type="password"
+                            autoComplete="new-password"
+                            id="password-input"
+                            name="password-input"
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
+                            minLength={8}
+                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg w-full px-1 py-2 mt-2`}
+                            value={password}
+                            onChange={handleInputChange}
+                            onBlur={handlePasswordLoseFocus}
+                            required
+                        />
+                        {notification === 'Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")' &&
+                            <p className={`${theme}-text mt-2`}>{notification}</p>
+                        }
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="confirm-password-input" className={`${theme}-label`}>Confirm Password</label>
+                        <input
+                            type="password"
+                            autoComplete="on"
+                            id="confirm-password-input"
+                            name="confirm-password-input"
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
+                            minLength={8}
+                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg w-full px-1 py-2 mt-2`}
+                            value={confirmPassword}
+                            onChange={handleInputChange}
+                            onBlur={handleConfirmPasswordLoseFocus}
+                            required
+                        />
+                        {notification === 'Password confirmation must match Password entered above' &&
+                            <p className={`${theme}-text mt-2`}>{notification}</p>
+                        }
+                    </div>
+
                     <input
                         type="submit"
                         id="submit-create-account"
-                        className={`mt-4 w-full border-${theme}-button-alt-border border-[3px] rounded-2xl bg-${theme}-primary text-${theme}-accent font-${theme}-text`}
+                        className={`mt-4 py-2 w-full border-${theme}-button-alt-border border-[3px] rounded-xl bg-${theme}-primary text-lg text-${theme}-accent font-${theme}-text`}
                         value="Create Account"
                     />
                 </form>
                 <p className={`${theme}-text mt-4 mx-auto w-[95%] lg:w-3/5`}>
-                    Already have an account? 
-                    <Link to="/login">Log in.</Link>
+                    Already have an account? &nbsp;
+                    <Link className="link-text" to="/login">Log in.</Link>
                 </p>
             </section>
         </main>
