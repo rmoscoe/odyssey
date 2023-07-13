@@ -5,11 +5,10 @@ import { validatePassword } from '../utils/helpers';
 import axios from 'axios';
 
 type PageProps = {
-    currentPage: string;
     handlePageChange: (page: string) => void;
 }
 
-export default function PasswordResetConfirm ({ currentPage, handlePageChange }: PageProps) {
+export default function PasswordResetConfirm ({ handlePageChange }: PageProps) {
     const { uidb64, token } = useParams();
     const [uid] = useState(uidb64);
     const [tokenValue] = useState(token);

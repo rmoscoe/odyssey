@@ -1,7 +1,5 @@
 /// <reference types="vite-plugin-svgr/client" />
 
-
-import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { ReactComponent as Sword } from '../assets/sword.svg';
@@ -9,11 +7,10 @@ import { ReactComponent as Planet } from '../assets/planet.svg';
 
 interface NavProps {
     currentPage: string,
-    handlePageChange: (page: string) => void,
-    handleLogout: (event: Event) => void
+    handleLogout: (event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => void
 }
 
-const Nav = ({ currentPage, handlePageChange, handleLogout }: NavProps) => {
+const Nav = ({ currentPage, handleLogout }: NavProps) => {
     const { theme, toggleTheme } = useTheme();
 
     let showNav: string;

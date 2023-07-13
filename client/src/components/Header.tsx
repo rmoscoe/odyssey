@@ -9,37 +9,36 @@ import Auth from '../utils/auth';
 
 interface HeaderProps {
     currentPage: string,
-    handlePageChange: (page: string) => void
 }
 
-const Header = ({ currentPage, handlePageChange }: HeaderProps) => {
+const Header = ({ currentPage }: HeaderProps) => {
     const { theme } = useTheme();
     const [hamburgerActive, setHamburgerActive] = useState(false);
     const navigate = useNavigate();
 
     const toggleActive = () => setHamburgerActive(!hamburgerActive);
 
-    const handleLogout = (event: Event) => {
+    const handleLogout = (event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => {
         event.preventDefault();
         Auth.logout();
         navigate('/');
     }
 
     return (
-        <header className={`bg-${theme}-primary px-3 py-2 flex justify-between content-center fixed top-0 z-50`}>
+        <header className={`bg-${theme}-primary w-full px-3 py-2 flex justify-between items-center fixed top-0 z-50`}>
             <Link to={(currentPage === 'Home' || currentPage === 'Create Account' || currentPage === 'Login') ? '/' : '/adventures'}>
-                <img src="../../public/logo192.png" alt="Odyssey logo: a sailing ship on rough seas surrounded by a compass rose" className="max-w-[10rem]" />
+                <img src="/static/logo192.png" alt="Odyssey logo: a sailing ship on rough seas surrounded by a compass rose" className="max-w-[6rem]" />
             </Link>
             <Link to={(currentPage === 'Home' || currentPage === 'Create Account' || currentPage === 'Login') ? '/' : '/adventures'}>
-                <h1 className={`text-${theme}-accent text-5xl font-${theme}-title text-center mx-auto lg:mx-0 lg:text-left`}>Odyssey</h1>
+                <h1 className={`${theme}-title`}>Odyssey</h1>
             </Link>
             {(currentPage !== 'Account Settings' && currentPage !== 'Password Reset Confirm') &&
-                <Nav currentPage={currentPage} handlePageChange={handlePageChange} handleLogout={handleLogout}/>
+                <Nav currentPage={currentPage} handleLogout={handleLogout}/>
             }
             {(currentPage === 'My Adventures' || currentPage === 'New Adventure' || currentPage === 'Adventure Details') &&
                 <>
                     <div role="button" className={"lg:hidden"} onClick={toggleActive} aria-label="menu" aria-expanded="false">
-                        <FontAwesomeIcon className={`font-${theme}-text text-${theme}-accent text-2xl`} icon={faNavicon} />
+                        <FontAwesomeIcon className={`font-${theme}-text text-[color:${theme}-accent] text-2xl`} icon={faNavicon} />
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>

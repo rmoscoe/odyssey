@@ -1,11 +1,11 @@
-import React from 'react';
+// import React from 'react';
 
-interface AdventureDetailsProps {
-    currentPage: string;
-    handlePageChange: (page: string) => void;
-}
+// interface AdventureDetailsProps {
+//     currentPage: string;
+//     handlePageChange: (page: string) => void;
+// }
 
-export default function AdventureDetails({ currentPage, handlePageChange }: AdventureDetailsProps) {
+export default function AdventureDetails() {
     return (
         <></>
     );

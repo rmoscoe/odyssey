@@ -4,7 +4,6 @@
 
 @tailwind base;
 @tailwind components;
-@tailwind utilities;
 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -22,6 +21,14 @@
   -webkit-text-size-adjust: 100%;
 } */
 
+.fantasy-title {
+  @apply text-fantasy-accent text-5xl font-fantasy-title text-center mx-auto my-auto lg:mx-0 lg:text-left
+}
+
+.sci-fi-title {
+  @apply text-sci-fi-accent text-5xl font-sci-fi-title text-center mx-auto my-auto lg:mx-0 lg:text-left
+}
+
 .fantasy-text {
     @apply font-fantasy-text text-fantasy-text text-base leading-relaxed
 }
@@ -38,8 +45,496 @@
     @apply font-sci-fi-label text-sci-fi-label text-xs
 }
 
+.bg-fantasy-primary {
+  background-color: #930C10;
+}
+
+.border-fantasy-primary {
+  border-color: #930C10;
+}
+
+.text-fantasy-primary {
+  color: #930C10;
+}
+
+.bg-fantasy-accent {
+  background-color: #F7CE65;
+}
+
+.border-fantasy-accent {
+  border-color: #F7CE65;
+}
+
+.text-fantasy-accent {
+  color: #F7CE65;
+}
+
+.bg-fantasy-heading {
+  background-color: #930C10;
+}
+
+.border-fantasy-heading {
+  border-color: #930C10;
+}
+
+.text-fantasy-heading {
+  color: #930C10;
+}
+
+.bg-fantasy-text {
+  background-color: #930C10;
+}
+
+.border-fantasy-text {
+  border-color: #930C10;
+}
+
+.text-fantasy-text {
+  color: #930C10;
+}
+
+.bg-fantasy-secondary {
+  background-color: #FFFEBD;
+}
+
+.border-fantasy-secondary {
+  border-color: #FFFEBD;
+}
+
+.text-fantasy-secondary {
+  color: #FFFEBD;
+}
+
+.bg-fantasy-neutral {
+  background-color: #290000;
+}
+
+.border-fantasy-neutral {
+  border-color: #290000;
+}
+
+.text-fantasy-neutral {
+  color: #290000;
+}
+
+.bg-fantasy-label {
+  background-color: #290000;
+}
+
+.border-fantasy-label {
+  border-color: #290000;
+}
+
+.text-fantasy-label {
+  color: #290000;
+}
+
+.bg-fantasy-contrast {
+  background-color: #F7CE65;
+}
+
+.border-fantasy-contrast {
+  border-color: #F7CE65;
+}
+
+.text-fantasy-contrast {
+  color: #F7CE65;
+}
+
+.bg-fantasy-field {
+  background-color: #FFFEE8;
+}
+
+.border-fantasy-field {
+  border-color: #FFFEE8;
+}
+
+.text-fantasy-field {
+  color: #FFFEE8;
+}
+
+.bg-fantasy-button-alt-border {
+  background-color: #FFFEBD;
+}
+
+.border-fantasy-button-alt-border {
+  border-color: #FFFEBD;
+}
+
+.text-fantasy-button-alt-border {
+  color: #FFFEBD;
+}
+
+.bg-fantasy-toggle-switch {
+  background-color: #930C10;
+}
+
+.border-fantasy-toggle-switch {
+  border-color: #930C10;
+}
+
+.text-fantasy-toggle-switch {
+  color: #930C10;
+}
+
+.bg-fantasy-toggle-void {
+  background-color: #F7CE65;
+}
+
+.border-fantasy-toggle-void {
+  border-color: #F7CE65;
+}
+
+.text-fantasy-toggle-void {
+  color: #F7CE65;
+}
+
+.bg-fantasy-toggle-border {
+  background-color: #FFFEBD;
+}
+
+.border-fantasy-toggle-border {
+  border-color: #FFFEBD;
+}
+
+.text-fantasy-toggle-border {
+  color: #FFFEBD;
+}
+
+.bg-fantasy-footer-text {
+  background-color: #FFFEBD;
+}
+
+.border-fantasy-footer-text {
+  border-color: #FFFEBD;
+}
+
+.text-fantasy-footer-text {
+  color: #FFFEBD;
+}
+
+.bg-fantasy-form-heading {
+  background-color: #930C10;
+}
+
+.border-fantasy-form-heading {
+  border-color: #930C10;
+}
+
+.text-fantasy-form-heading {
+  color: #930C10;
+}
+
+.bg-fantasy-game-name {
+  background-color: #930C10;
+}
+
+.border-fantasy-game-name {
+  border-color: #930C10;
+}
+
+.text-fantasy-game-name {
+  color: #930C10;
+}
+
+.bg-fantasy-progress-void {
+  background-color: #290000;
+}
+
+.border-fantasy-progress-void {
+  border-color: #290000;
+}
+
+.text-fantasy-progress-void {
+  color: #290000;
+}
+
+.bg-fantasy-progress-border {
+  background-color: #930C10;
+}
+
+.border-fantasy-progress-border {
+  border-color: #930C10;
+}
+
+.text-fantasy-progress-border {
+  color: #930C10;
+}
+
+.bg-fantasy-progress-fill {
+  background-color: #FFFEBD;
+}
+
+.border-fantasy-progress-fill {
+  border-color: #FFFEBD;
+}
+
+.text-fantasy-progress-fill {
+  color: #FFFEBD;
+}
+
+.bg-sci-fi-primary {
+  background-color: #1352FF;
+}
+
+.border-sci-fi-primary {
+  border-color: #1352FF;
+}
+
+.text-sci-fi-primary {
+  color: #1352FF;
+}
+
+.bg-sci-fi-accent {
+  background-color: #FF54A4;
+}
+
+.border-sci-fi-accent {
+  border-color: #FF54A4;
+}
+
+.text-sci-fi-accent {
+  color: #FF54A4;
+}
+
+.bg-sci-fi-heading {
+  background-color: #D9D9D9;
+}
+
+.border-sci-fi-heading {
+  border-color: #D9D9D9;
+}
+
+.text-sci-fi-heading {
+  color: #D9D9D9;
+}
+
+.bg-sci-fi-secondary {
+  background-color: #31333B;
+}
+
+.border-sci-fi-secondary {
+  border-color: #31333B;
+}
+
+.text-sci-fi-secondary {
+  color: #31333B;
+}
+
+.bg-sci-fi-neutral {
+  background-color: #D9D9D9;
+}
+
+.border-sci-fi-neutral {
+  border-color: #D9D9D9;
+}
+
+.text-sci-fi-neutral {
+  color: #D9D9D9;
+}
+
+.bg-sci-fi-text {
+  background-color: #D9D9D9;
+}
+
+.border-sci-fi-text {
+  border-color: #D9D9D9;
+}
+
+.text-sci-fi-text {
+  color: #D9D9D9;
+}
+
+.bg-sci-fi-label {
+  background-color: #D9D9D9;
+}
+
+.border-sci-fi-label {
+  border-color: #D9D9D9;
+}
+
+.text-sci-fi-label {
+  color: #D9D9D9;
+}
+
+.bg-sci-fi-contrast {
+  background-color: #B952E1;
+}
+
+.border-sci-fi-contrast {
+  border-color: #B952E1;
+}
+
+.text-sci-fi-contrast {
+  color: #B952E1;
+}
+
+.bg-sci-fi-field {
+  background-color: #455055;
+}
+
+.border-sci-fi-field {
+  border-color: #455055;
+}
+
+.text-sci-fi-field {
+  color: #455055;
+}
+
+.bg-sci-fi-button-alt-border {
+  background-color: #FF54A4;
+}
+
+.border-sci-fi-button-alt-border {
+  border-color: #FF54A4;
+}
+
+.text-sci-fi-button-alt-border {
+  color: #FF54A4;
+}
+
+.bg-sci-fi-toggle-switch {
+  background-color: #FF54A4;
+}
+
+.border-sci-fi-toggle-switch {
+  border-color: #FF54A4;
+}
+
+.text-sci-fi-toggle-switch {
+  color: #FF54A4;
+}
+
+.bg-sci-fi-toggle-void {
+  background-color: #31333B;
+}
+
+.border-sci-fi-toggle-void {
+  border-color: #31333B;
+}
+
+.text-sci-fi-toggle-void {
+  color: #31333B;
+}
+
+.bg-sci-fi-toggle-border {
+  background-color: #D9D9D9;
+}
+
+.border-sci-fi-toggle-border {
+  border-color: #D9D9D9;
+}
+
+.text-sci-fi-toggle-border {
+  color: #D9D9D9;
+}
+
+.bg-sci-fi-footer-text {
+  background-color: #D9D9D9;
+}
+
+.border-sci-fi-footer-text {
+  border-color: #D9D9D9;
+}
+
+.text-sci-fi-footer-text {
+  color: #D9D9D9;
+}
+
+.bg-sci-fi-form-heading {
+  background-color: #FF54A4;
+}
+
+.border-sci-fi-form-heading {
+  border-color: #FF54A4;
+}
+
+.text-sci-fi-form-heading {
+  color: #FF54A4;
+}
+
+.bg-sci-fi-game-name {
+  background-color: #D9D9D9;
+}
+
+.border-sci-fi-game-name {
+  border-color: #D9D9D9;
+}
+
+.text-sci-fi-game-name {
+  color: #D9D9D9;
+}
+
+.bg-sci-fi-progress-void {
+  background-color: #FF54A4;
+}
+
+.border-sci-fi-progress-void {
+  border-color: #FF54A4;
+}
+
+.text-sci-fi-progress-void {
+  color: #FF54A4;
+}
+
+.bg-sci-fi-progress-border {
+  background-color: #D9D9D9;
+}
+
+.border-sci-fi-progress-border {
+  border-color: #D9D9D9;
+}
+
+.text-sci-fi-progress-border {
+  color: #D9D9D9;
+}
+
+.bg-sci-fi-progress-fill {
+  background-color: #1352FF;
+}
+
+.border-sci-fi-progress-fill {
+  border-color: #1352FF;
+}
+
+.text-sci-fi-progress-fill {
+  color: #1352FF;
+}
+
 .invalid-entry {
-    @apply border-rose-500
+  border-color: rgb(244 63 94);
+}
+
+.font-fantasy-title {
+  font-family: 'Yatra One', 'Macondo Swash Caps', 'cursive', 'Arial', 'sans-serif';
+}
+
+.font-fantasy-heading {
+  font-family: 'Uncial Antiqua', 'Milonga', 'Macondo Swash Caps', 'cursive', 'Arial', 'TrebuchetMS', 'sans-serif';
+}
+
+.font-fantasy-text {
+  font-family: 'Milonga', 'cursive', 'Arial', 'TrebuchetMS', 'sans-serif';
+}
+
+.font-fantasy-label {
+  font-family: 'Verdana', 'Arial', 'sans-serif';
+}
+
+.font-sci-fi-title {
+  font-family: 'Bruno Ace SC', 'Michroma', 'Oxanium', 'cursive', 'Arial', 'sans-serif';
+}
+
+.font-sci-fi-heading {
+  font-family: 'Bruno Ace SC', 'Play', 'cursive', 'Arial', 'sans-serif';
+}
+
+.font-sci-fi-text {
+  font-family: 'Sunflower', 'Oxanium', 'Tahoma', 'sans-serif';
+}
+
+.font-sci-fi-label {
+  font-family: 'Verdana', 'Arial', 'sans-serif';
 }
 
 /* a {
@@ -95,3 +590,5 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+
+@tailwind utilities;

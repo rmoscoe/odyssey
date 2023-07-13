@@ -5,11 +5,10 @@ import { validateEmail } from '../utils/helpers';
 import axios from 'axios';
 
 type PageProps = {
-    currentPage: string;
     handlePageChange: (page: string) => void;
 }
 
-export default function ResetPassword ({ currentPage, handlePageChange }: PageProps) {
+export default function ResetPassword ({ handlePageChange }: PageProps) {
     const [email, setEmail] = useState('');
     const [notification, setNotification] = useState('');
     const theme = useTheme();

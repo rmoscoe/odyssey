@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import Auth from '../utils/auth';
 
 type PageProps = {
-    currentPage: string;
     handlePageChange: (page: string) => void;
 }
 
-export default function Home({ currentPage, handlePageChange }: PageProps) {
+export default function Home({ handlePageChange }: PageProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
 
@@ -23,14 +22,14 @@ export default function Home({ currentPage, handlePageChange }: PageProps) {
 
     return (
         <main className="mt-44 h-screen">
-            <section id="hero" className={`bg-${theme}-accent lg:p-1`}>
+            <section id="hero" className={`bg-${theme}-contrast lg:p-1`}>
                 <div className="w-full lg:hidden">
-                    <img className="w-full lg:hidden" src={theme === 'fantasy' ? '../../public/dragon.png' : '../../public/space-battle.png'} alt={theme === 'fantasy' ? '3 adventurers facing a large, menacing, red dragon, framed by a stone archway' : 'several spaceships shooting lasers at each other in orbit of a blue planet with nearby explosions'} />
+                    <img className="w-full lg:hidden" src={theme === 'fantasy' ? '/static/dragon.png' : '/static/space-battle.png'} alt={theme === 'fantasy' ? '3 adventurers facing a large, menacing, red dragon, framed by a stone archway' : 'several spaceships shooting lasers at each other in orbit of a blue planet with nearby explosions'} />
                     <button onClick={getStartedHandler} className={`fixed top-[65%] left-[7%] w-[40%] border-${theme}-accent border-[3px] rounded-2xl bg-${theme}-primary text-${theme}-accent font-${theme}-text`}>Get Started</button>
                     <button onClick={logInHandler} className={`fixed top-[65%] left-[53%] w-[40%] border-${theme}-accent border-[3px] rounded-2xl bg-${theme}-primary text-${theme}-accent font-${theme}-text`}>Log In</button>
                 </div>
                 <div className={`w-full hidden bg-${theme}-contrast lg:block`}>
-                    <img className="m-1 w-full" src={`../../public/hero-${theme}.png`} alt={theme === 'fantasy' ? 'Left: adventurers standing in front of a large, red dragon, framed by a stone archway. Center: many multi-colored polyhedral dice in a bag. Right: Three armored adventurers in a cavern.' : 'Left: a battle between ships in outer space. Center: many multi-colored polyhedral dice in a bag. Right: a futuristic spaceship control room with a control panel that wraps around the front and a center console, flanked by chairs for the pilot and co-pilot.'}/>
+                    <img className="m-1 w-full" src={`/static/hero-${theme}.png`} alt={theme === 'fantasy' ? 'Left: adventurers standing in front of a large, red dragon, framed by a stone archway. Center: many multi-colored polyhedral dice in a bag. Right: Three armored adventurers in a cavern.' : 'Left: a battle between ships in outer space. Center: many multi-colored polyhedral dice in a bag. Right: a futuristic spaceship control room with a control panel that wraps around the front and a center console, flanked by chairs for the pilot and co-pilot.'}/>
                 </div>
             </section>
 

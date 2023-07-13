@@ -9,7 +9,7 @@ import { ReactComponent as Planet } from '../assets/planet.svg';
 interface HamburgerProps {
     toggleActive: () => void;
     hamburgerActive: boolean;
-    handleLogout: (event: Event) => void;
+    handleLogout: (event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => void;
 }
 
 export default function Hamburger({ toggleActive, hamburgerActive, handleLogout }: HamburgerProps) {

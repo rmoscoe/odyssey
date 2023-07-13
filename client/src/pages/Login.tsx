@@ -5,11 +5,10 @@ import { validateEmail, validatePassword } from '../utils/helpers';
 import Auth from '../utils/auth';
 
 type PageProps = {
-    currentPage: string;
     handlePageChange: (page: string) => void;
 }
 
-export default function Login({ currentPage, handlePageChange }: PageProps) {
+export default function Login({ handlePageChange }: PageProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [notification, setNotification] = useState('');

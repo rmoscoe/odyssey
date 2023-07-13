@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import 'tailwindcss/tailwind.css';
 import Header from './components/Header';
@@ -21,54 +21,54 @@ function App() {
   const { theme } = useTheme();
 
   useEffect(() => {
-    document.body.className = `bg-${theme}-secondary`;
+    document.documentElement.className = `bg-${theme}-secondary`;
   }, [theme]);
 
   const handlePageChange = (page: string) => setCurrentPage(page);
 
   return (
     <BrowserRouter>
-      <Header currentPage={currentPage} handlePageChange={handlePageChange} />
+      <Header currentPage={currentPage} />
       <Routes>
         <Route
           path="/"
-          element={<Home currentPage={currentPage} handlePageChange={handlePageChange}/>}
+          element={<Home handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/account/new"
-          element={<CreateAccount currentPage={currentPage} handlePageChange={handlePageChange}/>}
+          element={<CreateAccount handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/login"
-          element={<Login currentPage={currentPage} handlePageChange={handlePageChange}/>}
+          element={<Login handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/account/reset-password"
-          element={<ResetPassword currentPage={currentPage} handlePageChange={handlePageChange}/>}
+          element={<ResetPassword handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/password/reset/confirm/:uidb64/:token"
-          element={<PasswordResetConfirm currentPage={currentPage} handlePageChange={handlePageChange}/>}
+          element={<PasswordResetConfirm handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/adventures"
-          element={<MyAdventures currentPage={currentPage} handlePageChange={handlePageChange}/>}
+          element={<MyAdventures />}
         />
         <Route
           path="/account/settings"
-          element={<AccountSettings currentPage={currentPage} handlePageChange={handlePageChange}/>}
+          element={<AccountSettings />}
         />
         <Route
           path="/adventures/new"
-          element={<NewAdventure currentPage={currentPage} handlePageChange={handlePageChange}/>}
+          element={<NewAdventure />}
         />
         <Route
           path="/adventures/:adventureId"
-          element={<AdventureDetails currentPage={currentPage} handlePageChange={handlePageChange}/>}
+          element={<AdventureDetails />}
         />
         <Route
           path="*"
-          element={<Login currentPage={currentPage} handlePageChange={handlePageChange}/>}
+          element={<Login handlePageChange={handlePageChange}/>}
         />
       </Routes>
       <Footer />

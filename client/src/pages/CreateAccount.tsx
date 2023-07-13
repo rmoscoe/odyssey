@@ -6,11 +6,10 @@ import axios from 'axios';
 import Auth from '../utils/auth';
 
 type PageProps = {
-    currentPage: string;
     handlePageChange: (page: string) => void;
 }
 
-export default function CreateAccount ({ currentPage, handlePageChange }: PageProps) {
+export default function CreateAccount ({ handlePageChange }: PageProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
