@@ -109,7 +109,7 @@ export default function Login({ handlePageChange }: PageProps) {
         <main className="mt-[5.5rem] w-full flex justify-center p-2 h-overlay relative">
             <section className={`absolute top-[2%] bottom-7 inset-x-2.5 bg-${theme}-contrast rounded-[2rem] justify-center p-3 lg:w-3/5 lg:mx-auto`}>
                 <h2 className={`font-${theme}-heading text-center text-${theme}-form-heading text-[1.75rem] mx-auto mb-5 lg:text-4xl`}>Log in to Odyssey</h2>
-                <p className={`text-center mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>The journey continues. Speak friend and enter.</p>
+                <p className={`text-center mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>The journey continues. {theme === 'fantasy' ? 'Speak friend and enter.' : 'Voice authorization required.'}</p>
                 {notification === 'An error occured while logging in. Please try again.' &&
                     <p className={`text-center mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>{notification}</p>
                 }
