@@ -69,6 +69,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     }
 
     const handleEmailLoseFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+        console.log("Validating email");
         if (!validateEmail(email)) {
             setNotification('Please enter a valid email address');
             const inputElement = e.target as HTMLInputElement;
@@ -77,6 +78,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     }
 
     const handlePasswordLoseFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+        console.log("Validating password");
         if (!validatePassword(password)) {
             setNotification('Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")');
             const inputElement = e.target as HTMLInputElement;
@@ -85,6 +87,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     }
 
     const handleConfirmPasswordLoseFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+        console.log("Validaing password confirmation");
         if (password !== confirmPassword) {
             setNotification('Password confirmation must match Password entered above');
             const inputElement = e.target as HTMLInputElement;
@@ -93,26 +96,31 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     }
 
     const emailInUse = () => {
+        console.log("Email in use");
         setNotification('This email address is already in use. Please try a different email address or proceed to login');
         document.getElementById('email-input')?.classList.add('invalid-entry');
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log("Submitting new user data");
 
         if (!validateEmail(email)) {
+            console.log("Failed email validation");
             setNotification('Please enter a valid email address');
             document.getElementById('email-input')?.classList.add('invalid-entry');
             return;
         }
 
         if (!validatePassword(password)) {
+            console.log("Failed password validation");
             setNotification('Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")');
             document.getElementById('password-input')?.classList.add('invalid-entry');
             return;
         }
 
         if (password !== confirmPassword) {
+            console.log("Failed confirm password validation");
             setNotification('Password confirmation must match Password entered above');
             document.getElementById('confirm-password-input')?.classList.add('invalid-entry');
             return;
@@ -123,11 +131,14 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
             email: email,
             password: password
         }
+        console.log("User: ", user);
 
         try {
+            console.log("Calling database");
             const response = await axios.post('/api/users/', user);
             // log the user in and store the token in localStorage
             const token = response.data.token;
+            console.log(token);
             localStorage.setItem('odysseyToken', token);
             navigate('/adventures');
 
@@ -155,7 +166,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
                             type="email"
                             id="email-input"
                             name="email-input"
-                            pattern="^([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([\da-z.-]{1,253})\.([a-z.]{2,6})$"
+                            // pattern="([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([0-9a-z.-]{1,253})\.([a-z.]{2,6})"
                             className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg w-full px-1 py-2 mt-2`}
                             value={email}
                             onChange={handleInputChange}
@@ -173,7 +184,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
                             autoComplete="new-password"
                             id="password-input"
                             name="password-input"
-                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
+                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*"
                             minLength={8}
                             className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg w-full px-1 py-2 mt-2`}
                             value={password}
@@ -192,7 +203,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
                             autoComplete="on"
                             id="confirm-password-input"
                             name="confirm-password-input"
-                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
+                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*"
                             minLength={8}
                             className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg w-full px-1 py-2 mt-2`}
                             value={confirmPassword}

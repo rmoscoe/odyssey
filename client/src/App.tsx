@@ -32,23 +32,23 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Home handlePageChange={handlePageChange}/>}
+          element={<Home handlePageChange={handlePageChange} />}
         />
         <Route
           path="/account/new"
-          element={<CreateAccount handlePageChange={handlePageChange}/>}
+          element={<CreateAccount handlePageChange={handlePageChange} />}
         />
         <Route
           path="/login"
-          element={<Login handlePageChange={handlePageChange}/>}
+          element={<Login handlePageChange={handlePageChange} />}
         />
         <Route
           path="/account/reset-password"
-          element={<ResetPassword handlePageChange={handlePageChange}/>}
+          element={<ResetPassword handlePageChange={handlePageChange} />}
         />
         <Route
           path="/password/reset/confirm/:uidb64/:token"
-          element={<PasswordResetConfirm handlePageChange={handlePageChange}/>}
+          element={<PasswordResetConfirm handlePageChange={handlePageChange} />}
         />
         <Route
           path="/adventures"
@@ -68,9 +68,10 @@ function App() {
         />
         <Route
           path="*"
-          element={<Login handlePageChange={handlePageChange}/>}
+          element={<Login handlePageChange={handlePageChange} />}
         />
       </Routes>
+
       <Footer />
     </BrowserRouter>
   );

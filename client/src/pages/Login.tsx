@@ -14,7 +14,7 @@ export default function Login({ handlePageChange }: PageProps) {
     const [notification, setNotification] = useState('');
     const { theme } = useTheme();
     const navigate = useNavigate();
-
+    
     if (Auth.loggedIn()) {
         navigate('/adventures');
     }
@@ -120,7 +120,7 @@ export default function Login({ handlePageChange }: PageProps) {
                             type="email"
                             id="email-field"
                             name="email-field"
-                            pattern="^([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([\da-z.-]{1,253})\.([a-z.]{2,6})$"
+                            // pattern="([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([0-9a-z.-]{1,253})\.([a-z.]{2,6})"
                             className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mt-2`}
                             value={email}
                             onChange={handleInputChange}
@@ -138,7 +138,7 @@ export default function Login({ handlePageChange }: PageProps) {
                             autoComplete="current-password"
                             id="password-field"
                             name="password-field"
-                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
+                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*"
                             minLength={8}
                             className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mt-2`}
                             value={password}

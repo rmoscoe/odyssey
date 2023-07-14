@@ -10,5 +10,5 @@ class CustomTokenBackend(ModelBackend):
                 return None 
             else:
                 return custom_token.user 
-        except odyssey_token.DoesNotExist:
+        except:
             return None 

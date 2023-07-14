@@ -15,6 +15,8 @@ from django.utils.crypto import get_random_string
 from django.core.serializers import serialize
 import json
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import action
 
 # import aiohttp
 
@@ -89,8 +91,13 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(user)
         return Response(serializer.data, status=200)
     
+    @csrf_exempt
+    @action(detail=False, methods=['post'])
     def login(self, request):
+        print("logging in user")
+        print(request)
         user = authenticate(username=request.data['username'], password=request.data['password'])
+        print(user)
         if user is not None:
             login(request, user)
             key = get_random_string(length=40)

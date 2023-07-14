@@ -28,8 +28,9 @@ class Auth {
 
     async login(user: {username: string, password: string}) {
         try {
-            const response = await axios.post('/api/users/login', user);
-            const token = response.data.token;
+            const response = await axios.post('/api/users/login/', user);
+            console.log(response);
+            const token = response.data.pk;
             localStorage.setItem('odysseyToken', JSON.stringify(token));
             return token;
         } catch (err) {

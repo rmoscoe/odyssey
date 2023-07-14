@@ -22,7 +22,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Configure whitenoise to serve static files
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STORAGES = {
 #     'staticfiles': {
 #         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
@@ -54,11 +54,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'server.apps.ServerConfig',
     'rest_framework',
+    'corsheaders',
+    # 'server.apps.ServerConfig',
+    'server',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -68,6 +71,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = ['https://odyssey-db3a471a3d45.herokuapp.com/', 'http://127.0.0.1:8000', 'http://localhost:8000']
+
+# CSRF_NO_PROTECTION = True
 
 ROOT_URLCONF = 'odyssey_app.urls'
 
@@ -128,10 +137,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-MIME_TYPES = {
-    '.js': 'application/javascript',
-    '.css': 'text/css',
-}
+# MIME_TYPES = {
+#     '.js': 'application/javascript',
+#     '.css': 'text/css',
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -149,7 +158,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'client', 'dist')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'client/dist/assets')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -172,3 +181,12 @@ AUTHENTICATION_BACKENDS = [
     'server.backends.CustomTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}

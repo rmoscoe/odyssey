@@ -124,7 +124,7 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
                             autoComplete="new-password"
                             id="new-password-input"
                             name="new-password-input"
-                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
+                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*"
                             minLength={8}
                             className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mt-2`}
                             value={newPassword}
@@ -143,7 +143,7 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
                             autoComplete="on"
                             id="confirm-new-password-input"
                             name="confirm-new-password-input"
-                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)$"
+                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*"
                             minLength={8}
                             className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full px-1 py-2 mt-2`}
                             value={confirmNewPassword}

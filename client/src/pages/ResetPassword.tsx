@@ -47,7 +47,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
         }
 
         try {
-            const response = await axios.post('/api/password/reset', email);
+            const response = await axios.post('/api/password/reset/', email);
             if (response.status === 200) {
                 setInstructions('Your request to reset your password has been submitted. If the email address you provided matches one on file with Odyssey, you will receive an email momentarily with further instructions.');
                 setNotification('');
@@ -80,7 +80,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
                             type="email"
                             id="email-field"
                             name="email-field"
-                            pattern="^([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([\da-z.-]{1,253})\.([a-z.]{2,6})$"
+                            // pattern="([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([0-9a-z.-]{1,253})\.([a-z.]{2,6})"
                             className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mt-2`}
                             value={email}
                             onChange={handleInputChange}
