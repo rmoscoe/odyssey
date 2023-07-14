@@ -83,7 +83,7 @@ ROOT_URLCONF = 'odyssey_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'client', 'dist')],
+        'DIRS': [os.path.join(BASE_DIR, 'client', 'dist'), os.path.join(BASE_DIR, 'server/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
