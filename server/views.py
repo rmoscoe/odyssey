@@ -1,23 +1,23 @@
-from django.shortcuts import render
-from rest_framework import viewsets
-from server.models import Adventure, Scene, Encounter, Custom_Field, Odyssey_Token
-from django.contrib.auth.models import User
-from server.serializers import AdventureSerializer, UserSerializer, SceneSerializer, EncounterSerializer, CustomFieldSerializer
-from rest_framework.response import Response
+from datetime import timedelta
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .utils import update_secret_key
-from rest_framework.views import APIView
-from .palm import generate_adventure
-from django.utils import timezone
-from datetime import timedelta
-from django.utils.crypto import get_random_string
+from django.contrib.auth.models import User
 from django.core.serializers import serialize
-import json
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from django.utils import timezone
+from django.utils.crypto import get_random_string
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie, csrf_protect
+from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
-
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from server.models import Adventure, Scene, Encounter, Custom_Field, Odyssey_Token
+from server.serializers import AdventureSerializer, UserSerializer, SceneSerializer, EncounterSerializer, CustomFieldSerializer
+from .utils import update_secret_key
+from .palm import generate_adventure
+import json
 # import aiohttp
 
 # Create your views here.
@@ -25,7 +25,16 @@ def home(request):
     context = {}
     return render(request, "index.html", context)
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
+class GetCSRFToken(APIView):
+    permission_classes = (permissions.AllowAny, )
+
+    def get(self, request, format=None):
+        return Response({ 'success': 'CSRF cookie set' })
+
+@method_decorator(csrf_protect, name='dispatch')
 class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.AllowAny, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -38,9 +47,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
             # Check if the username already exists in the database
             if User.objects.filter(username=username).exists():
-                return Response({'error': 'Username already in use'}, status=400)
                 print("Username already in use")
-
+                return Response({'error': 'Username already in use'}, status=400)
+                
             print("Username not in use")
             # Create the user if the username is unique
             user = User.objects.create_user(username, email, password)
