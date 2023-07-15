@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    # 'server.apps.ServerConfig',
     'server',
 ]
 
@@ -73,10 +72,6 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-CSRF_TRUSTED_ORIGINS = ['https://odyssey-db3a471a3d45.herokuapp.com/', 'http://127.0.0.1:8000', 'http://localhost:8000']
-
-# CSRF_NO_PROTECTION = True
 
 ROOT_URLCONF = 'odyssey_app.urls'
 

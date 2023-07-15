@@ -18,9 +18,9 @@ const Header = ({ currentPage }: HeaderProps) => {
 
     const toggleActive = () => setHamburgerActive(!hamburgerActive);
 
-    const handleLogout = (event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => {
+    const handleLogout = async (event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => {
         event.preventDefault();
-        Auth.logout();
+        await Auth.logout();
         navigate('/');
     }
 

@@ -30,7 +30,7 @@ class Auth {
         try {
             const response = await axios.post('/api/users/login/', user);
             console.log(response);
-            const token = response.data.pk;
+            const token = response.data.token;
             localStorage.setItem('odysseyToken', JSON.stringify(token));
             return token;
         } catch (err) {
@@ -38,8 +38,15 @@ class Auth {
         }
     }
 
-    logout() {
-        localStorage.removeItem('odysseyToken');
+    async logout() {
+        try {
+            const token = this.getToken();
+            localStorage.removeItem('odysseyToken');
+            await axios.post('/api/users/logout', { user_id: token.user_id });
+        }
+        catch (err) {
+            console.error(err);
+        }
     }
 }
 

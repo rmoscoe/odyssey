@@ -5,7 +5,7 @@ class Encounter(models.Model):
     progress_choices = Scene.progress_choices
     safe_text_validator = Scene.safe_text_validator
 
-    scene_id = models.ForeignKey(Scene, on_delete=models.CASCADE)
+    scene_id = models.ForeignKey(Scene, on_delete=models.CASCADE, related_name='encounter_set')
     encounter_type = models.CharField(max_length = 31, blank = True, validators = [safe_text_validator])
     description = models.TextField(blank = True, validators = [safe_text_validator])
     stats = models.TextField(blank = True, validators = [safe_text_validator])

@@ -1,5 +1,4 @@
 from django.contrib.auth.backends import ModelBackend
-from django.utils import timezone
 from ..models import odyssey_token
 
 class CustomTokenBackend(ModelBackend):
