@@ -140,7 +140,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
             // log the user in and store the token in localStorage
             const token = response.data.token;
             console.log(token);
-            localStorage.setItem('odysseyToken', token);
+            localStorage.setItem('odysseyToken', JSON.stringify(token));
             navigate('/adventures');
 
         } catch (error) {

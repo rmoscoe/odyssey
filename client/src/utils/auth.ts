@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 interface Token {
     key: string;
@@ -38,11 +39,11 @@ class Auth {
         }
     }
 
-    async logout(csrftoken: string | null | undefined) {
+    async logout() {
         try {
             const token = this.getToken();
             localStorage.removeItem('odysseyToken');
-            await axios.post('/api/users/logout', { user_id: token.user_id }, { headers: { 'X-CSRFToken': csrftoken }});
+            await axios.post('/api/users/logout/', { user_id: token.user_id }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') }});
         }
         catch (err) {
             console.error(err);
