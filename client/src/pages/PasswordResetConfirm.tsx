@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { validatePassword } from '../utils/helpers';
 import axios from 'axios';
+import CSRFToken from '../components/CSRFToken';
 
 type PageProps = {
     handlePageChange: (page: string) => void;
@@ -96,7 +97,7 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
         }
 
         try {
-            const response = await axios.post('/api/password/reset/confirm/', data);
+            const response = await axios.post('/api/password/reset/confirm/', data, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});
             response.status === 200 ? setInstructions('Your password has been successfully updated. Please proceed to login.') : setInstructions('An error occured while setting your new password. Please try again.');
 
         } catch (error) {
@@ -117,6 +118,7 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
                     <Link className={`block link-text text-center mx-auto w-[95%] lg:w-3/5`} to='/login'>Log in.</Link>
                 }
                 <form autoComplete="on" id="new-password-form" className="mt-4 mx-auto w-[95%] lg:w-3/5" onSubmit={handleSubmit}>
+                    <CSRFToken />
                     <div className="mb-4">
                         <label htmlFor="new-password-input" className={`${theme}-label`}>Password</label>
                         <input

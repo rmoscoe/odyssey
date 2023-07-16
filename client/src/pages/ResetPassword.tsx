@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { validateEmail } from '../utils/helpers';
 import axios from 'axios';
+import CSRFToken from '../components/CSRFToken';
 
 type PageProps = {
     handlePageChange: (page: string) => void;
@@ -47,7 +48,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
         }
 
         try {
-            const response = await axios.post('/api/password/reset/', email);
+            const response = await axios.post('/api/password/reset/', email, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});
             if (response.status === 200) {
                 setInstructions('Your request to reset your password has been submitted. If the email address you provided matches one on file with Odyssey, you will receive an email momentarily with further instructions.');
                 setNotification('');
@@ -74,6 +75,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
                     <p className={`text-center mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>{notification}</p>
                 }
                 <form autoComplete="on" id="reset-request-form" className="mx-auto w-[95%] lg:w-3/5" onSubmit={handleResetSubmit}>
+                    <CSRFToken />
                     <div className="mb-4">
                         <label htmlFor="email-field" className={`${theme}-label`}>Email</label>
                         <input

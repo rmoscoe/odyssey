@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { validateEmail, validatePassword } from '../utils/helpers';
 import Auth from '../utils/auth';
+import CSRFToken from '../components/CSRFToken';
 
 type PageProps = {
     handlePageChange: (page: string) => void;
@@ -91,7 +92,7 @@ export default function Login({ handlePageChange }: PageProps) {
         }
 
         try {
-            const token = await Auth.login(user);
+            const token = await Auth.login(user, document.querySelector('.csrf')?.getAttribute('value'));
             if (token) {
                 navigate('/adventures');
             }
@@ -114,6 +115,7 @@ export default function Login({ handlePageChange }: PageProps) {
                     <p className={`text-center mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>{notification}</p>
                 }
                 <form autoComplete="on" id="login-form" className="mx-auto w-[95%] lg:w-3/5" onSubmit={handleLoginSubmit}>
+                    <CSRFToken />
                     <div className="mb-4">
                         <label htmlFor="email-field" className={`${theme}-label`}>Email</label>
                         <input

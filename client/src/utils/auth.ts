@@ -26,9 +26,9 @@ class Auth {
         return tokenString ? JSON.parse(tokenString) : null;
     }
 
-    async login(user: {username: string, password: string}) {
+    async login(user: {username: string, password: string}, csrftoken: string | null | undefined) {
         try {
-            const response = await axios.post('/api/users/login/', user);
+            const response = await axios.post('/api/users/login/', user, { headers: { 'X-CSRFToken': csrftoken }});
             console.log(response);
             const token = response.data.token;
             localStorage.setItem('odysseyToken', JSON.stringify(token));
@@ -38,11 +38,11 @@ class Auth {
         }
     }
 
-    async logout() {
+    async logout(csrftoken: string | null | undefined) {
         try {
             const token = this.getToken();
             localStorage.removeItem('odysseyToken');
-            await axios.post('/api/users/logout', { user_id: token.user_id });
+            await axios.post('/api/users/logout', { user_id: token.user_id }, { headers: { 'X-CSRFToken': csrftoken }});
         }
         catch (err) {
             console.error(err);

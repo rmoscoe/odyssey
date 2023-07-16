@@ -20,7 +20,7 @@ const Header = ({ currentPage }: HeaderProps) => {
 
     const handleLogout = async (event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => {
         event.preventDefault();
-        await Auth.logout();
+        await Auth.logout(document.querySelector('.csrf')?.getAttribute('value'));
         navigate('/');
     }
 

@@ -4,6 +4,7 @@ import { useTheme } from '../utils/ThemeContext';
 import { validateEmail, validatePassword } from '../utils/helpers';
 import axios from 'axios';
 import Auth from '../utils/auth';
+import CSRFToken from '../components/CSRFToken';
 
 type PageProps = {
     handlePageChange: (page: string) => void;
@@ -135,7 +136,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
 
         try {
             console.log("Calling database");
-            const response = await axios.post('/api/users/', user);
+            const response = await axios.post('/api/users/', user, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});
             // log the user in and store the token in localStorage
             const token = response.data.token;
             console.log(token);
@@ -160,6 +161,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
                     <p className={`mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>{notification}</p>
                 }
                 <form autoComplete="on" id="signup-form" className="mx-auto w-[95%] lg:w-3/5" onSubmit={handleSubmit}>
+                    <CSRFToken />
                     <div className="mb-4">
                         <label htmlFor="email-input" className={`${theme}-label`}>Email</label>
                         <input
