@@ -13,12 +13,12 @@ type AdventureProps = {
         campaign_setting: string | null;
         exposition: string | null;
         incitement: string | null;
-        scenes: [{
+        scene_set: [{
             id: number;
             sequence: number;
             challenge: string | null;
             setting: string | null;
-            encounters: [{
+            encounter_set: [{
                 id: number;
                 encounter_type: string | null;
                 description: string | null;

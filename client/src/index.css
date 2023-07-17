@@ -545,6 +545,121 @@
   color: rgb(0, 0, 255);
 }
 
+.modal {
+  align-items: center;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  position: fixed;
+  z-index: 40;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.modal .is-active {
+  display: flex;
+}
+
+.modal-background {
+  background-color: rgba(10,10,10,.86);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.modal-card {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh-40px);
+  overflow: hidden;
+  position: relative;
+}
+
+.modal-card-head {
+  border-top-left-radius: 6px;border-top-right-radius: 6px;
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: flex-start;
+  padding: 20px;
+  position: relative;
+}
+
+.modal-card-title {
+  flex-grow: 1;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.delete {
+  user-select: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background-color: rgba(10,10,10,.2);
+  border-radius: 9999px;    
+  cursor: pointer;
+  pointer-events: auto;
+  display: inline-block;
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-size: 0;
+  height: 20px;
+  max-height: 20px;
+  max-width: 20px;
+  min-height: 20px;
+  min-width: 20px;
+  outline: 0;
+  position: relative;
+  vertical-align: top;
+  width: 20px;
+  margin: 0;
+  padding: 1px 6px;
+}
+
+.delete::before {
+  height: 2px;
+  width: 50%;
+}
+
+.delete::after, .delete::before {
+  content: "";
+  display: block;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%) rotate(45deg);
+  transform-origin: center center;
+}
+
+.delete::after {
+  height: 50%;
+  width: 2px;
+}
+
+.modal-card-body {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: auto;
+  padding: 20px;
+}
+
+.modal-card-foot {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  padding: 20px;
+  position: relative;
+}
+
 /* a {
   font-weight: 500;
   color: #646cff;

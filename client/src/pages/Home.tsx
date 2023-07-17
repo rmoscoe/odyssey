@@ -21,7 +21,7 @@ export default function Home({ handlePageChange }: PageProps) {
     const logInHandler = () => navigate('/login');
 
     return (
-        <main className="mt-[5.5rem] h-screen">
+        <main className="mt-[5.5rem] w-full h-overlay">
             <section id="hero" className={`bg-${theme}-contrast lg:p-1`}>
                 <div className="w-full relative lg:hidden">
                     <img className="w-full lg:hidden" src={theme === 'fantasy' ? '/static/dragon.png' : '/static/space-battle.png'} alt={theme === 'fantasy' ? '3 adventurers facing a large, menacing, red dragon, framed by a stone archway' : 'several spaceships shooting lasers at each other in orbit of a blue planet with nearby explosions'} />

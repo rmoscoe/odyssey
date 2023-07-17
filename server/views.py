@@ -25,18 +25,18 @@ def home(request):
     context = {}
     return render(request, "index.html", context)
 
-class CheckAuthenticatedView(APIView):
-    def get(self, request, format=None):
-        user = self.request.user
-        try:
-            isAuthenticated = user.is_authenticated
+# class CheckAuthenticatedView(APIView):
+#     def get(self, request, format=None):
+#         user = self.request.user
+#         try:
+#             isAuthenticated = user.is_authenticated
 
-            if isAuthenticated:
-                return Response({ 'isAuthenticated': 'success' }, status=200)
-            else:
-                return Response({ 'isAuthenticated': 'error' }, status=400)
-        except:
-            return Response({ 'error': 'Oops! Something went wrong when checking authentication status.'}, status=500)
+#             if isAuthenticated:
+#                 return Response({ 'isAuthenticated': 'success' }, status=200)
+#             else:
+#                 return Response({ 'isAuthenticated': 'error' }, status=400)
+#         except:
+#             return Response({ 'error': 'Oops! Something went wrong when checking authentication status.'}, status=500)
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class GetCSRFToken(APIView):
