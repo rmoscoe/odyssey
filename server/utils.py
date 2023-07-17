@@ -5,6 +5,23 @@ from django.contrib.sessions.models import Session
 from django.contrib.auth import update_session_auth_hash, get_user_model
 from django.conf import settings
 from django.utils.encoding import force_str, force_bytes
+from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+def login_required_ajax(view_func):
+    def wrapped_view(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return view_func(request, *args, **kwargs)
+        else:
+            return JsonResponse({'error': 'Authentication required.'}, status=401)
+    return wrapped_view
+
+class LoginRequiredMixinAjax(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            return JsonResponse({'error': 'Authentication required.'}, status=401)
 
 def rotate_session_keys():
     # Get all active sessions

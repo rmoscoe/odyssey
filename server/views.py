@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from server.models import Adventure, Scene, Encounter, Custom_Field, Odyssey_Token
 from server.serializers import AdventureSerializer, UserSerializer, SceneSerializer, EncounterSerializer, CustomFieldSerializer
-from .utils import update_secret_key
+from .utils import update_secret_key, login_required_ajax, LoginRequiredMixinAjax
 from .palm import generate_adventure
 import json
 
@@ -25,7 +25,6 @@ def home(request):
     context = {}
     return render(request, "index.html", context)
 
-@method_decorator(csrf_protect, name='dispatch')
 class CheckAuthenticatedView(APIView):
     def get(self, request, format=None):
         user = self.request.user
@@ -78,7 +77,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Unable to create user'}, status=400)
 
 
-    @login_required
+    @login_required_ajax
     def partial_update(self, request, *args, **kwargs):
         if 'password' in request.data:
             try:
@@ -138,7 +137,7 @@ class UserViewSet(viewsets.ModelViewSet):
             print("Unable to log out user because %s" % e)
             return Response({ 'error': 'Something went wrong when logging out' }, status=500)
 
-class AdventureViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+class AdventureViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
 # class AdventureViewSet(viewsets.ModelViewSet):
 
     queryset = Adventure.objects.select_related('user_id').prefetch_related('scene_set__encounter_set')
@@ -155,7 +154,7 @@ class AdventureViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
             print("Unable to update adventure because %s" % e)
             return Response({ 'error': 'Something went wrong when updating adventure'}, status=500)
 
-class SceneViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+class SceneViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
 # class SceneViewSet(viewsets.ModelViewSet):
 
     queryset = Scene.objects.all().prefetch_related('encounter_set')
@@ -172,7 +171,7 @@ class SceneViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
             print("Unable to update scene because %s" % e)
             return Response({ 'error': 'Something went wrong when updating scene' }, status=500)
 
-class EncounterViewSet(viewsets.ModelViewSet):
+class EncounterViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
 # class EncounterViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
 
     queryset = Encounter.objects.all()
@@ -189,7 +188,7 @@ class EncounterViewSet(viewsets.ModelViewSet):
             print("Unable to update encounter because %s" % e)
             return Response({ 'error': 'Something went wrong when updating encounter' }, status=500)
 
-class CustomFieldViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+class CustomFieldViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
 
     queryset = Custom_Field.objects.all()
     serializer_class = CustomFieldSerializer
@@ -207,6 +206,7 @@ class CustomFieldViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
 
 class GenerateAdventureView(APIView):
     # Supposedly generate_adventure runs synchronously. If this causes problems, try using async await.
+    @login_required_ajax
     def post(self, request):
         try:
             data = request.data
