@@ -3,6 +3,7 @@ import { useTheme } from '../utils/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import Auth from '../utils/auth';
 import Adventure from '../components/Adventure';
+import DeleteConfirm from '../components/DeleteConfirm';
 import axios from 'axios';
 
 interface AdventureDetailsProps {
@@ -44,6 +45,7 @@ export default function AdventureDetails({ handlePageChange }: AdventureDetailsP
     const { theme } = useTheme();
     const navigate = useNavigate();
     const [adventures, setAdventures] = useState<adventure[]>([]);
+    const [deleteTarget, setDeleteTarget] = useState(0);
 
     if (!Auth.loggedIn()) {
         navigate('/login');
@@ -69,11 +71,14 @@ export default function AdventureDetails({ handlePageChange }: AdventureDetailsP
         }
 
         getAdventures();
-    }, []);
+    });
 
     const newAdventureHandler = () => navigate('/adventures/new');
 
-    const handleDeleteClick = () => {};
+    const handleDeleteClick = (id: number) => {
+        setDeleteTarget(id);        
+        document.querySelector('.modal')?.classList.add('is-active');
+    }
 
     return (
         <main className="mt-[5.5rem] w-full h-overlay p-2">
@@ -91,6 +96,7 @@ export default function AdventureDetails({ handlePageChange }: AdventureDetailsP
                     </div>
                 ))}
             </section>
+            <DeleteConfirm deleteType="adventures" deleteId={deleteTarget}/>
         </main>
     );
 }

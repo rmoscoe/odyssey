@@ -40,10 +40,10 @@ type AdventureProps = {
 export default function Adventure({ adventure, handleDeleteClick }: AdventureProps) {
     const theme = useTheme();
     const navigate = useNavigate();
-    const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scenes, climax, denoument, progress, status } = adventure;
+    const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, denoument, progress, status } = adventure;
 
     const handleTileClick = () => {
-        navigate('/adventures/:adventureId', { state: { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scenes, climax, denoument, progress, status } });
+        navigate('/adventures/:adventureId', { state: { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, denoument, progress, status } });
     }
 
     const handleDelete = async (e: React.MouseEvent) => {
@@ -51,23 +51,23 @@ export default function Adventure({ adventure, handleDeleteClick }: AdventurePro
         handleDeleteClick(id);
     }
 
-    let currentScene = scenes[0];
+    let currentScene = scene_set[0];
     let adventureText = '';
 
-    for (let i = 1; i < scenes.length; i++) {
-        if (scenes[i]?.progress === 'In Progress') {
-            currentScene = scenes[i];
+    for (let i = 1; i < scene_set.length; i++) {
+        if (scene_set[i]?.progress === 'In Progress') {
+            currentScene = scene_set[i];
         }
     }
 
     if (currentScene?.progress === 'Complete') {
         adventureText = climax ? climax : 'This adventure has no content.';
     } else {
-        let currentEncounter = currentScene?.encounters[0];
-        const maxI = currentScene ? (currentScene.encounters.length) : 0;
+        let currentEncounter = currentScene?.encounter_set[0];
+        const maxI = currentScene ? (currentScene.encounter_set.length) : 0;
         for (let i = 1; i < maxI; i++) {
-            if (currentScene?.encounters[i]?.progress === 'In Progress') {
-                currentEncounter = currentScene.encounters[i];
+            if (currentScene?.encounter_set[i]?.progress === 'In Progress') {
+                currentEncounter = currentScene.encounter_set[i];
             }
         }
 
