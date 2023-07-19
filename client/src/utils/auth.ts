@@ -24,6 +24,8 @@ class Auth {
 
     getToken() {
         const tokenString = localStorage.getItem('odysseyToken');
+        console.log(`tokenString: ${tokenString}\tauth 27`);
+        // return tokenString ? tokenString : null;
         return tokenString ? JSON.parse(tokenString) : null;
     }
 
@@ -43,7 +45,7 @@ class Auth {
         try {
             const token = this.getToken();
             localStorage.removeItem('odysseyToken');
-            await axios.post('/api/users/logout/', { user_id: token.user_id }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') }});
+            await axios.post('/api/users/logout/', { user_id: token.fields.user }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') }});
         }
         catch (err) {
             console.error(err);

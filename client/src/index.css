@@ -559,7 +559,7 @@
   top: 0;
 }
 
-.modal .is-active {
+.modal.is-active {
   display: flex;
 }
 
@@ -586,7 +586,7 @@
   display: flex;
   flex-shrink: 0;
   justify-content: flex-start;
-  padding: 20px;
+  padding: 0.5rem;
   position: relative;
 }
 
@@ -601,45 +601,16 @@
   user-select: none;
   -moz-appearance: none;
   -webkit-appearance: none;
-  background-color: rgba(10,10,10,.2);
-  border-radius: 9999px;    
   cursor: pointer;
   pointer-events: auto;
   display: inline-block;
   flex-grow: 0;
   flex-shrink: 0;
-  font-size: 0;
-  height: 20px;
-  max-height: 20px;
-  max-width: 20px;
-  min-height: 20px;
-  min-width: 20px;
   outline: 0;
   position: relative;
   vertical-align: top;
-  width: 20px;
   margin: 0;
   padding: 1px 6px;
-}
-
-.delete::before {
-  height: 2px;
-  width: 50%;
-}
-
-.delete::after, .delete::before {
-  content: "";
-  display: block;
-  left: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%) rotate(45deg);
-  transform-origin: center center;
-}
-
-.delete::after {
-  height: 50%;
-  width: 2px;
 }
 
 .modal-card-body {
@@ -656,8 +627,17 @@
   display: flex;
   flex-shrink: 0;
   justify-content: flex-end;
-  padding: 20px;
+  padding: 0.5rem;
   position: relative;
+}
+
+.text-fade {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 9;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-mask-image: -webkit-linear-gradient(bottom, transparent, #000 40%);
 }
 
 /* a {

@@ -17,13 +17,13 @@ const Nav = ({ currentPage, handleLogout }: NavProps) => {
 
     switch (currentPage) {
         case 'My Adventures':
-            showNav = 'hidden lg: flex';
+            showNav = 'hidden lg:flex';
             break;
         case 'New Adventure':
-            showNav = 'hidden lg: flex';
+            showNav = 'hidden lg:flex';
             break;
         case 'Adventure Details':
-            showNav = 'hidden lg: flex';
+            showNav = 'hidden lg:flex';
             break;
         case 'Account Settings':
             showNav = 'hidden';

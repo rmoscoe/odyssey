@@ -38,7 +38,7 @@ type AdventureProps = {
 }
 
 export default function Adventure({ adventure, handleDeleteClick }: AdventureProps) {
-    const theme = useTheme();
+    const { theme } = useTheme();
     const navigate = useNavigate();
     const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, denoument, progress, status } = adventure;
 
@@ -79,24 +79,24 @@ export default function Adventure({ adventure, handleDeleteClick }: AdventurePro
     }
 
     return (
-        <section className={`adventure m-1.5 bg-${theme}-contrast rounded-2xl p-2 w-full lg:m-3 lg:w-5/12`} onClick={handleTileClick}>
+        <section className={`adventure m-2 bg-${theme}-contrast rounded-2xl p-2 w-full lg:m-3 lg:w-5/12`} onClick={handleTileClick}>
             <h3 className={`font-${theme}-heading text-${theme}-heading text-xl`}>{title}</h3>
             <section className="flex justify-between w-full mb-2">
-                <div className="mr-0.5">
-                    <h4 className={`font-${theme}-heading text-${theme}-game-name text-l`}>{game}</h4>
-                    <div className={`h-2 w-full border-${theme}-progress-border bg-${theme}-void rounded-full lg:hidden`}>
-                        <div className={`h-full w-[${progress}%] bg-${theme}-fill rounded-l-full`}></div>
+                <div className="mr-0.5 flex-[1]">
+                    <h4 className={`font-${theme}-heading text-${theme}-game-name text-lg`}>{game}</h4>
+                    <div className={`h-3 mt-1.5 w-full border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full lg:hidden`}>
+                        <div className={`h-full bg-${theme}-progress-fill rounded-full`} style={{width:`${progress}%`}}></div>
                     </div>
                 </div>
-                <div className="button-container flex ml-auto space-x-0.5">
-                    <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1`} onClick={handleDelete}>
+                <div className="button-container flex shrink-0 basis-12 ml-2 space-x-0.5">
+                    <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={handleDelete}>
                         <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                     </button>
                 </div>
             </section>
-            <p className={`hidden font-${theme}-text text-${theme}-neutral mt-1 mb-2 w-full h-64 truncate overflow-hidden fade bg-gradient-to-t from-black via-transparent to-transparent lg:block`}>{adventureText}</p>
-            <div className={`hidden mt-2 mx-auto h-3 w-10/12 border-${theme}-progress-border bg-${theme}-void rounded-full lg:block`}>
-                <div className={`h-full w-[${progress}%] bg-${theme}-fill rounded-l-full`}></div>
+            <p className={`hidden font-${theme}-text text-${theme}-neutral mt-1 mb-2 w-full h-56 text-ellipsis overflow-hidden fade from-[${theme}-contrast] text-fade lg:block`}>{adventureText}</p>
+            <div className={`hidden mt-2 mx-auto h-4 w-10/12 border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full lg:block`}>
+                <div className={`h-full bg-${theme}-progress-fill rounded-l-full`} style={{width:`${progress}%`}}></div>
             </div>
         </section>
     );

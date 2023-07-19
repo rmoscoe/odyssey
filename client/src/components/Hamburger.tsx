@@ -16,28 +16,40 @@ export default function Hamburger({ toggleActive, hamburgerActive, handleLogout 
     const { theme, toggleTheme } = useTheme();
 
     return (
-        <div className={hamburgerActive ? `fixed top-0 left-0 right-0 bg-${theme}-primary font-${theme}-text text-${theme}-accent text-2xl p-2 h-[80vh] w-full` : 'hidden'}>
-            <div role="button" onClick={toggleActive} aria-label="menu" aria-expanded="false">
-                <FontAwesomeIcon className={`font-${theme}-text text-${theme}-accent text-2xl ml-auto`} icon={faX} />
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </div>
-            <section className='my-auto w-full flex justify-center'>
-                <section className="mx-auto mb-3.5 text-sm flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 100 100" style={{ fill: `${theme}-accent` }}>
-                        <Sword />
-                    </svg>
-                    <label className={`relative inline-block w-16 h-6`}>
-                        <input type="checkbox" id="theme-toggle" checked={theme === 'sci-fi'} className={`absolute ml-[5px] cursor-pointer top-0 right-0 bottom-0 left-0 bg-${theme}-toggle-void border-${theme}-toggle-border border-4 rounded-[34px] duration-300 peer before:absolute before:h-4 before:w-4 before:bottom-1 before:left:1 before:bg-${theme}-toggle-switch before:duration-300 before:rounded-[50%] before:peer-checked:translate-x-6`} onChange={toggleTheme} />
-                    </label>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 100 100" style={{ fill: `${theme}-accent` }}>
-                        <Planet />
-                    </svg>
-                </section>
-                <Link to='/account/settings' className='my-3.5 mx-auto text-center'>Account Settings</Link>
-                <Link className={'mt-3.5 mx-auto text-center'} to='#' onClick={handleLogout}>Logout</Link>
+        <div className={hamburgerActive ? `fixed top-0 left-0 right-0 bg-${theme}-primary font-${theme}-text text-${theme}-accent text-3xl p-3 h-[80vh] w-full` : 'hidden'}>
+            <section className="w-full flex justify-end">
+                <div role="button" onClick={toggleActive} aria-label="menu" aria-expanded="false" className="ml-auto">
+                    <FontAwesomeIcon className={`font-${theme}-text text-${theme}-accent text-3xl ml-auto`} icon={faX} />
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </div>
             </section>
+
+            <div className="flex h-full w-full content-center p-2">
+                <section className={'my-auto w-full block'}>
+                    <section className="mx-0 w-full text-m flex justify-center items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 100 100">
+                            <Sword color={theme === 'fantasy' ? '#F7CE65' : '#FF54A4'} />
+                        </svg>
+                        <label className={`relative inline-block w-16 h-7 p-2`}>
+                            <input
+                                type="checkbox"
+                                id="theme-toggle"
+                                checked={theme === 'sci-fi'}
+                                className={`absolute appearance-none mx-2 cursor-pointer top-0 right-0 bottom-0 left-0 bg-${theme}-toggle-void border-${theme}-toggle-border border-4 rounded-[34px] duration-300 peer focus:outline-none`}
+                                onChange={toggleTheme}
+                            />
+                            <span className={`absolute left-3 top-1 h-5 w-5 rounded-full transition-transform duration-300 transform peer-checked:translate-x-5 bg-${theme}-toggle-switch cursor-pointer`}></span>
+                        </label>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 100 100">
+                            <Planet color={theme === 'fantasy' ? '#F7CE65' : '#FF54A4'} />
+                        </svg>
+                    </section>
+                    <Link to='/account/settings' className='block my-4 mx-0 w-full text-center'>Account Settings</Link>
+                    <Link className={'block mt-4 mx-0 w-full text-center'} to='#' onClick={handleLogout}>Logout</Link>
+                </section>
+            </div>
         </div>
     );
 }

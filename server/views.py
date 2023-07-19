@@ -130,6 +130,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def logout(self, request):
         try:
+            print("user_id: %d\tviews.py 133" % request.data['user_id'])
             Odyssey_Token.objects.filter(user_id=request.data['user_id']).delete()
             logout(request)
             return Response({'message': 'Logout successful'}, status=200)

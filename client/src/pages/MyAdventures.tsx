@@ -57,13 +57,17 @@ export default function AdventureDetails({ handlePageChange }: AdventureDetailsP
         const getAdventures = async () => {
             try {
                 const token = Auth.getToken();
-                const userId = token.user_id;
+                const userId = token.fields.user;
+                console.log(`userId: ${userId}\tMyAdventures 61`);
                 const response = await axios.get(`/api/adventures/?user_id=${userId}`)
                 if (response.status === 401) {
                     navigate('/login');
+                } else if (response.data) {
+                    console.log(`response.data: ${response.data}\tMyAdventures 66`)
+                    const adventuresData: adventure[] = response.data;
+                    setAdventures(adventuresData);
                 } else {
-                    const adventuresData: adventure[] = JSON.parse(response.data);
-                setAdventures(adventuresData);
+                    setAdventures([]);
                 }
             } catch (err) {
                 console.error(err);
@@ -71,32 +75,41 @@ export default function AdventureDetails({ handlePageChange }: AdventureDetailsP
         }
 
         getAdventures();
-    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const newAdventureHandler = () => navigate('/adventures/new');
 
     const handleDeleteClick = (id: number) => {
-        setDeleteTarget(id);        
+        setDeleteTarget(id);
         document.querySelector('.modal')?.classList.add('is-active');
     }
 
     return (
         <main className="mt-[5.5rem] w-full h-overlay p-2">
-            <section className="flex mx-auto justify-between px-2 my-2 lg:hidden">
-                <button onClick={newAdventureHandler} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>New Adventure</button>
+            <div className="flex justify-center w-full my-3">
+                <section className="flex mx-auto justify-between px-3 my-3 lg:hidden">
+                    <button onClick={newAdventureHandler} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-6`}>New Adventure</button>
+                </section>
+            </div>
+
+            <h2 className={`font-${theme}-heading text-${theme}-heading text-3xl mx-auto my-3 lg:mx-0 lg:my-5`}>My Adventures</h2>
+
+            <section className="hidden justify-between w-3/5 my-3.5 lg:flex">
+                <button onClick={newAdventureHandler} className={`border-${theme}-accent border-[3px] rounded-xl text-xl bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6`}>New Adventure</button>
             </section>
-            <h2 className={`font-${theme}-heading text-${theme}-heading text-3xl mx-auto mt-2 lg:mx-0`}>My Adventures</h2>
-            <section className="hidden justify-between w-3/5 mt-2 lg:flex">
-                <button onClick={newAdventureHandler} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>New Adventure</button>
-            </section>
-            <section className="mt-2 flex justify-around content-around">
+
+            {adventures.length === 0 &&
+                <p className={`${theme}-text my-3 text-center mx-auto`}>No adventures to display. Try creating a new adventure.</p>
+            }
+
+            <section className="my-3.5 flex flex-wrap justify-around content-around">
                 {adventures.map((adventure, i) => (
-                    <div key={i}>
-                        <Adventure adventure={adventure} handleDeleteClick={handleDeleteClick} key={`adventure-${i}`} />
-                    </div>
+                    <Adventure adventure={adventure} handleDeleteClick={handleDeleteClick} key={`adventure-${i}`} />
                 ))}
             </section>
-            <DeleteConfirm deleteType="adventures" deleteId={deleteTarget}/>
+
+            <DeleteConfirm deleteType="adventures" deleteId={deleteTarget} />
         </main>
     );
 }

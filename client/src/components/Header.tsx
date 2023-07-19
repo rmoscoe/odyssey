@@ -40,7 +40,7 @@ const Header = ({ currentPage }: HeaderProps) => {
             {(currentPage === 'My Adventures' || currentPage === 'New Adventure' || currentPage === 'Adventure Details') &&
                 <>
                     <div role="button" className={"lg:hidden"} onClick={toggleActive} aria-label="menu" aria-expanded="false">
-                        <FontAwesomeIcon className={`font-${theme}-text text-[color:${theme}-accent] text-2xl`} icon={faNavicon} />
+                        <FontAwesomeIcon className={`font-${theme}-text text-${theme}-accent text-2xl`} icon={faNavicon} />
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
