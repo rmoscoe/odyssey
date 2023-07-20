@@ -15,9 +15,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 def login_required_ajax(view_func):
-    def wrapped_view(request, *args, **kwargs):
+    def wrapped_view(*args, **kwargs):
+        request = args[1]
+        print(request)
         if request.user.is_authenticated:
-            return view_func(request, *args, **kwargs)
+            return view_func(*args, **kwargs)
         else:
             return JsonResponse({'error': 'Authentication required.'}, status=401)
     return wrapped_view
@@ -32,9 +34,11 @@ class LoginRequiredMixinAjax(LoginRequiredMixin):
 def rotate_session_keys():
     # Get all active sessions
     sessions = Session.objects.all()
+    print(sessions)
 
     # Rotate session keys and update session hashes
     for session in sessions:
+        print(session)
         session.cycle_key()
         session.save()
 

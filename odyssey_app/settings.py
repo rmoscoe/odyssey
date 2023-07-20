@@ -116,6 +116,22 @@ DATABASES = {
     }
 }
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 86400
+
+# Whether the session cookie should be set on every request. Default: False.
+# SESSION_COOKIE_HTTPONLY = True
+
+# Whether the session cookie should be set as secure (HTTPS-only). Default: False.
+# SESSION_COOKIE_SECURE = True
+
+# The name of the session cookie. Default: 'sessionid'.
+SESSION_COOKIE_NAME = 'odyssey_session_id'
+
+# The domain to which the session cookie should be set. Default: None.
+# SESSION_COOKIE_DOMAIN = 'odyssey-db3a471a3d45.herokuapp.com/'
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

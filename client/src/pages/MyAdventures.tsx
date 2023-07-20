@@ -93,7 +93,7 @@ export default function AdventureDetails({ handlePageChange }: AdventureDetailsP
                 </section>
             </div>
 
-            <h2 className={`font-${theme}-heading text-${theme}-heading text-3xl mx-auto my-3 lg:mx-0 lg:my-5`}>My Adventures</h2>
+            <h2 className={`font-${theme}-heading text-${theme}-heading text-center text-3xl mx-auto my-3 lg:mx-0 lg:my-5 lg:text-left`}>My Adventures</h2>
 
             <section className="hidden justify-between w-3/5 my-3.5 lg:flex">
                 <button onClick={newAdventureHandler} className={`border-${theme}-accent border-[3px] rounded-xl text-xl bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6`}>New Adventure</button>

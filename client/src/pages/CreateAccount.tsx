@@ -5,6 +5,7 @@ import { validateEmail, validatePassword } from '../utils/helpers';
 import axios from 'axios';
 import Auth from '../utils/auth';
 import CSRFToken from '../components/CSRFToken';
+import Spinner from '../components/Spinner';
 
 type PageProps = {
     handlePageChange: (page: string) => void;
@@ -17,6 +18,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     const [notification, setNotification] = useState('');
     const { theme } = useTheme();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     if (Auth.loggedIn()) {
         navigate('/adventures');
@@ -105,11 +107,13 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log("Submitting new user data");
+        setLoading(true);
 
         if (!validateEmail(email)) {
             console.log("Failed email validation");
             setNotification('Please enter a valid email address');
             document.getElementById('email-input')?.classList.add('invalid-entry');
+            setLoading(false);
             return;
         }
 
@@ -117,6 +121,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
             console.log("Failed password validation");
             setNotification('Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")');
             document.getElementById('password-input')?.classList.add('invalid-entry');
+            setLoading(false);
             return;
         }
 
@@ -124,6 +129,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
             console.log("Failed confirm password validation");
             setNotification('Password confirmation must match Password entered above');
             document.getElementById('confirm-password-input')?.classList.add('invalid-entry');
+            setLoading(false);
             return;
         }
 
@@ -141,12 +147,14 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
             const token = response.data.token;
             console.log(token);
             localStorage.setItem('odysseyToken', JSON.stringify(token));
+            setLoading(false);
             navigate('/adventures');
 
         } catch (error) {
             setEmail('');
             setPassword('');
             setConfirmPassword('');
+            setLoading(false);
 
             error === 'Username already in use' ? emailInUse() : setNotification('An error occured while creating an account. Please try again.');
             console.error(error);
@@ -157,6 +165,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
         <main className="mt-[5.5rem] w-full flex justify-center p-2 h-overlay relative">
             <section className={`absolute top-[2%] bottom-7 inset-x-2.5 bg-${theme}-contrast rounded-[2rem] justify-center p-3 lg:w-3/5 lg:mx-auto`}>
                 <h2 className={`font-${theme}-heading text-center text-${theme}-form-heading text-[1.75rem] mx-auto mb-5 lg:text-4xl`}>Create an Account</h2>
+                {loading && <Spinner />}
                 {notification === 'An error occured while creating an account. Please try again.' &&
                     <p className={`mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>{notification}</p>
                 }
@@ -174,6 +183,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
                             onChange={handleInputChange}
                             onBlur={handleEmailLoseFocus}
                             required
+                            disabled={loading}
                         />
                         {(notification === 'Please enter a valid email address' || notification === 'This email address is already in use. Please try a different email address or proceed to login') &&
                             <p className={`${theme}-text mt-2`}>{notification}</p>
@@ -193,6 +203,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
                             onChange={handleInputChange}
                             onBlur={handlePasswordLoseFocus}
                             required
+                            disabled={loading}
                         />
                         {notification === 'Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")' &&
                             <p className={`${theme}-text mt-2`}>{notification}</p>
@@ -212,6 +223,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
                             onChange={handleInputChange}
                             onBlur={handleConfirmPasswordLoseFocus}
                             required
+                            disabled={loading}
                         />
                         {notification === 'Password confirmation must match Password entered above' &&
                             <p className={`${theme}-text mt-2`}>{notification}</p>
@@ -223,6 +235,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
                         id="submit-create-account"
                         className={`mt-4 py-2 w-full border-${theme}-button-alt-border border-[3px] rounded-xl bg-${theme}-primary text-lg text-${theme}-accent font-${theme}-text`}
                         value="Create Account"
+                        disabled={loading}
                     />
                 </form>
                 <p className={`${theme}-text mt-4 mx-auto w-[95%] lg:w-3/5`}>

@@ -78,13 +78,16 @@ class UserViewSet(viewsets.ModelViewSet):
                 return Response({'error': 'Username already in use'}, status=400)
 
             # Create the user if the username is unique
-            user = User.objects.create_user(username, email, password)
+            newUser = User.objects.create_user(username, email, password)
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
             key = get_random_string(length=40)
             token = Odyssey_Token.objects.create(
                 user=user, key=key, expires_at=timezone.now() + timedelta(days=1))
             token_data = serialize('json', [token])
             token_dict = json.loads(token_data)[0]
-            serializer = UserSerializer(user)
+            serializer = UserSerializer(newUser)
             return Response({'user': serializer.data, 'token': token_dict}, status=200)
         except Exception as e:
             print("Unable to create user because %s" % e)
@@ -94,21 +97,28 @@ class UserViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         if 'password' in request.data:
             try:
+                print(request.user)
                 user = User.objects.get(username=request.user.username)
+                print(user)
                 user.set_password(request.data['password'])
+                print("Password set")
                 user.save()
+                print ("User saved")
             except User.DoesNotExist:
                 return Response({'error': 'Unable to reset password'}, status=500)
-            else:
-                update_secret_key()
+        else:
+            update_secret_key()
 
         if 'email' in request.data:
             try:
                 user = self.get_object()
+                print(user)
                 new_email = {
                     'email': request.data['email'], 'username': request.data['email']}
+                print(new_email)
                 serializer = self.get_serializer(
                     user, data=new_email, partial=True)
+                print(serializer)
                 serializer.is_valid(raise_exception=True)
                 self.perform_update(serializer)
             except Exception as e:
@@ -117,6 +127,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
         user = User.objects.get(pk=request.user.id)
         serializer = UserSerializer(user)
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(request, user)
         return Response(serializer.data, status=200)
 
     @action(detail=False, methods=['post'])

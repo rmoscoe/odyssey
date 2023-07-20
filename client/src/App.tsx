@@ -56,7 +56,7 @@ function App() {
         />
         <Route
           path="/account/settings"
-          element={<AccountSettings />}
+          element={<AccountSettings handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/adventures/new"
