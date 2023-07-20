@@ -56,8 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'debug_toolbar',
-    'mail_panel',
+    # 'debug_toolbar',
+    # 'mail_panel',
     'server',
 ]
 
@@ -65,7 +65,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -190,28 +190,28 @@ REST_FRAMEWORK = {
     ]
 }
 
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
+# INTERNAL_IPS = [
+#     '127.0.0.1',
+# ]
 
-DEBUG_TOOLBAR_PANELS = (
-    'debug_toolbar.panels.history.HistoryPanel',
-    'mail_panel.panels.MailToolbarPanel',
-    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-    'debug_toolbar.panels.profiling.ProfilingPanel',
-)
+# DEBUG_TOOLBAR_PANELS = (
+#     'debug_toolbar.panels.history.HistoryPanel',
+#     'mail_panel.panels.MailToolbarPanel',
+#     'debug_toolbar.panels.versions.VersionsPanel',
+#     'debug_toolbar.panels.timer.TimerPanel',
+#     'debug_toolbar.panels.settings.SettingsPanel',
+#     'debug_toolbar.panels.headers.HeadersPanel',
+#     'debug_toolbar.panels.request.RequestPanel',
+#     'debug_toolbar.panels.sql.SQLPanel',
+#     'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+#     'debug_toolbar.panels.templates.TemplatesPanel',
+#     'debug_toolbar.panels.cache.CachePanel',
+#     'debug_toolbar.panels.signals.SignalsPanel',
+#     'debug_toolbar.panels.redirects.RedirectsPanel',
+#     'debug_toolbar.panels.profiling.ProfilingPanel',
+# )
 
-PASSWORD_RESET_TOKEN_GENERATOR = 'server.utils.password_reset_token_generator'
+# PASSWORD_RESET_TOKEN_GENERATOR = 'server.utils.password_reset_token_generator'
 
 # LOGGING = {
 #     'version': 1,

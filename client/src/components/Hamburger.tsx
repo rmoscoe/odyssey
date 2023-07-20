@@ -46,7 +46,7 @@ export default function Hamburger({ toggleActive, hamburgerActive, handleLogout 
                             <Planet color={theme === 'fantasy' ? '#F7CE65' : '#FF54A4'} />
                         </svg>
                     </section>
-                    <Link to='/account/settings' className='block my-4 mx-0 w-full text-center'>Account Settings</Link>
+                    <Link to='/account/settings' onClick={toggleActive} className='block my-4 mx-0 w-full text-center'>Account Settings</Link>
                     <Link className={'block mt-4 mx-0 w-full text-center'} to='#' onClick={handleLogout}>Logout</Link>
                 </section>
             </div>
