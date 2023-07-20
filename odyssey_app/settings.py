@@ -131,7 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': '.utils.CharacterTypesValidator',
+        'NAME': 'odyssey_app.utils.CharacterTypesValidator',
     },
 ]
 
@@ -210,6 +210,8 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.redirects.RedirectsPanel',
     'debug_toolbar.panels.profiling.ProfilingPanel',
 )
+
+PASSWORD_RESET_TOKEN_GENERATOR = 'server.utils.password_reset_token_generator'
 
 # LOGGING = {
 #     'version': 1,

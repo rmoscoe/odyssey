@@ -16,7 +16,7 @@ router.register(r'custom-fields', views.CustomFieldViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('password/reset/', views.CustomPasswordResetView.as_view(), name='reset_password'),
-    path('password/reset/confirm/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name='set_new_password'),
+    path('password/reset/confirm/', views.CustomPasswordResetConfirmView.as_view(), name='set_new_password'),
     # path('adventures/?<user_id>', views.AdventureViewSet.as_view({'get': 'list'}), name='get_user_adventures'),
     path('generate-adventure/', views.GenerateAdventureView.as_view(), name='generate_adventure'),
     path('csrf_cookie/', views.GetCSRFToken.as_view(), name='csrf_cookie')#,

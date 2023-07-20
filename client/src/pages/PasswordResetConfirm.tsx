@@ -4,6 +4,7 @@ import { useTheme } from '../utils/ThemeContext';
 import { validatePassword } from '../utils/helpers';
 import axios from 'axios';
 import CSRFToken from '../components/CSRFToken';
+import Spinner from '../components/Spinner';
 
 type PageProps = {
     handlePageChange: (page: string) => void;
@@ -18,6 +19,7 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
     const [notification, setNotification] = useState('');
     const { theme } = useTheme();
     const [instructions, setInstructions] = useState('Enter your new password below.');
+    const [loading, setLoading] = useState(false);
 
     handlePageChange('Password Reset Confirm');
 
@@ -77,16 +79,19 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setLoading(true);
 
         if (!validatePassword(newPassword)) {
             setNotification('Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")');
             document.getElementById('new-password-input')?.classList.add('invalid-entry');
+            setLoading(false);
             return;
         }
 
         if (newPassword !== confirmNewPassword) {
             setNotification('Password confirmation must match new password entered above');
             document.getElementById('confirm-new-password-input')?.classList.add('invalid-entry');
+            setLoading(false);
             return;
         }
 
@@ -96,13 +101,16 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
             password: newPassword
         }
         console.log(data);
+        
+        let response;
 
         try {
-            const response = await axios.post('/api/password/reset/confirm/', data, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});
-            response.status === 200 ? setInstructions('Your password has been successfully updated. Please proceed to login.') : setInstructions('An error occured while setting your new password. Please try again.');
-
+            response = await axios.post('/api/password/reset/confirm/', data, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});
+            response.status === 200 ? setInstructions('Your password has been successfully updated. Please proceed to login.') : setInstructions('Your request to reset your password has expired. Please return to the Login page and log in or click "Forgot Password" again.');
+            setLoading(false);
         } catch (error) {
-            setNotification('An error occured while setting your new password. Please try again.');
+            response?.status === 400 ? setInstructions('Your request to reset your password has expired. Please return to the Login page and log in or click "Forgot Password" again.') : setInstructions('An error occured while setting your new password. Please try again.');
+            setLoading(false);
             console.error(error);
         }
 
@@ -118,6 +126,7 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
                 {instructions === 'Your password has been successfully updated. Please proceed to login.' &&
                     <Link className={`block link-text text-center mx-auto w-[95%] lg:w-3/5`} to='/login'>Log in.</Link>
                 }
+                {loading && <Spinner />}
                 <form autoComplete="on" id="new-password-form" className="mt-4 mx-auto w-[95%] lg:w-3/5" onSubmit={handleSubmit}>
                     <CSRFToken />
                     <div className="mb-4">
@@ -134,6 +143,7 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
                             onChange={handleInputChange}
                             onBlur={handlePasswordLoseFocus}
                             required
+                            disabled={loading}
                         />
                         {notification === 'Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")' &&
                             <p className={`${theme}-text mt-2`}>{notification}</p>
@@ -153,6 +163,7 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
                             onChange={handleInputChange}
                             onBlur={handleConfirmPasswordLoseFocus}
                             required
+                            disabled={loading}
                         />
                         {notification === 'Password confirmation must match new password entered above' &&
                             <p className={`${theme}-text mt-2`}>{notification}</p>
@@ -164,6 +175,7 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
                         id="submit-reset-password"
                         className={`mt-4 py-2 w-full border-${theme}-button-alt-border border-[3px] rounded-xl bg-${theme}-primary text-${theme}-accent text-lg font-${theme}-text`}
                         value="Submit"
+                        disabled={loading}
                     />
                 </form>
             </section>

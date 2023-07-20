@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator, default_token_generator
 from django.core.mail import send_mail
 from django.core.serializers import serialize
+from django.core.signing import TimestampSigner, BadSignature
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -12,7 +13,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
-from django.utils.encoding import force_bytes
+from django.utils.encoding import force_bytes, force_str
 from django.utils.html import strip_tags
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic.base import View
@@ -284,23 +285,20 @@ class CustomPasswordResetView(APIView):
             user = User.objects.get(email=email)
 
             # Generate reset token
-            token_generator = PasswordResetTokenGenerator()
+            token_generator = TimestampSigner()
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             print(uid)
-            token = token_generator.make_token(user)
+            token = token_generator.sign(uid)
             print(token)
 
             # Send email using your custom email template
-            reset_url = reverse('server:set_new_password', kwargs={'uidb64': uid, 'token': token})
+            reset_url = f"{request.scheme}://{request.get_host()}/password/reset/confirm/{uid}/{token}/"
             print(reset_url)
-            reset_url = request.build_absolute_uri(reset_url)
-            print(reset_url)
-            final_reset_url = reset_url.replace('api/', '')
 
             context = {
                 'protocol': request.scheme,
                 'domain': request.META['HTTP_HOST'],
-                'reset_url': final_reset_url,
+                'reset_url': reset_url,
             }
             email_subject = 'Password Reset Request'
             email_body = render_to_string(
@@ -326,8 +324,11 @@ class CustomPasswordResetView(APIView):
             return Response({'error': 'Something went wrong when sending password reset email'}, status=500)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class CustomPasswordResetConfirmView(View):
+# @method_decorator(csrf_exempt, name='dispatch')
+class CustomPasswordResetConfirmView(APIView):
+    authentication_classes = []  # Allow unauthenticated access
+    permission_classes = [AllowAny]  # Allow unauthenticated access
+
     def post(self, request):
         print("Resetting password")
         User = get_user_model()
@@ -336,22 +337,32 @@ class CustomPasswordResetConfirmView(View):
         uidb64 = request.data.get('uidb64')
         print(uidb64)
         token = request.data.get('token')
-        print(token)
+        print(f"{token}\tviews 339")
 
         try:
-            uid = urlsafe_base64_decode(uidb64).decode()
+            # uid = force_str(urlsafe_base64_decode(uidb64))
+            uid = urlsafe_base64_decode(uidb64)
             print(uid)
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
+            print("No user")
 
-        if user is not None and default_token_generator.check_token(user, token):
-            # If the user and token are valid, update the user's password
-            password = request.data.get('password')
-            user.set_password(password)
-            user.save()
+        print(user)
 
-            return JsonResponse({'message': 'Password reset confirmation successful'}, status=200)
-        else:
-            # Handle invalid token or user here
+        token_generator = TimestampSigner()
+        print(f"{token_generator}\tviews 354")
+
+        try:
+            uid = token_generator.unsign(token, max_age=3600)
+        except BadSignature:
             return JsonResponse({'error': 'Invalid password reset link'}, status=400)
+
+        # If the user and token are valid, update the user's password
+        password = request.data.get('password')
+        print(password)
+        user.set_password(password)
+        print("Password successfully updated, attempting to save")
+        user.save()
+
+        return JsonResponse({'message': 'Password reset confirmation successful'}, status=200)
