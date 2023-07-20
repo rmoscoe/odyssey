@@ -4,6 +4,7 @@ import { useTheme } from '../utils/ThemeContext';
 import { validateEmail } from '../utils/helpers';
 import axios from 'axios';
 import CSRFToken from '../components/CSRFToken';
+import Spinner from '../components/Spinner';
 
 type PageProps = {
     handlePageChange: (page: string) => void;
@@ -14,6 +15,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
     const [notification, setNotification] = useState('');
     const { theme } = useTheme();
     const [instructions, setInstructions] = useState("Enter your email and we'll send you instructions to reset your password.");
+    const [loading, setLoading] = useState(false);
 
     handlePageChange('Reset Password');
 
@@ -40,6 +42,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
 
     const handleResetSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setLoading(true);
 
         if (!validateEmail(email)) {
             setNotification('Please enter a valid email address');
@@ -50,9 +53,11 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
         try {
             const response = await axios.post('/api/password/reset/', { email }, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});
             if (response.status === 200) {
+                setLoading(false);
                 setInstructions('Your request to reset your password has been submitted. If the email address you provided matches one on file with Odyssey, you will receive an email momentarily with further instructions.');
                 setNotification('');
             } else {
+                setLoading(false);
                 setNotification('Oops! Something went wrong. Please try again.');
             }
 
@@ -60,7 +65,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
 
         } catch (error) {
             setEmail('');
-
+            setLoading(false);
             setNotification('Oops! Something went wrong. Please try again.');
             console.error(error);
         }
@@ -74,6 +79,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
                 {notification === 'Oops! Something went wrong. Please try again.' &&
                     <p className={`text-center mx-auto w-[95%] mb-4 ${theme}-text lg:w-3/5`}>{notification}</p>
                 }
+                {loading && <Spinner />}
                 <form autoComplete="on" id="reset-request-form" className="mx-auto w-[95%] lg:w-3/5" onSubmit={handleResetSubmit}>
                     <CSRFToken />
                     <div className="mb-4">
@@ -88,6 +94,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
                             onChange={handleInputChange}
                             onBlur={handleEmailLoseFocus}
                             required
+                            disabled={loading}
                         />
                         {notification === 'Please enter a valid email address' &&
                             <p className={`${theme}-text mt-2`}>{notification}</p>
@@ -99,6 +106,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
                         id="submit-reset-password"
                         className={`mt-4 py-2 w-full border-${theme}-button-alt-border border-[3px] rounded-xl bg-${theme}-primary text-${theme}-accent text-lg font-${theme}-text`}
                         value="Submit"
+                        disabled={loading}
                     />
                 </form>
                 <p className={`${theme}-text mt-4 mx-auto w-[95%] text-center lg:w-3/5`}>Just remembered your password {`${theme}` === 'fantasy' ? 'by casting a memory charm?' : 'with the help of a neural scanner?'} &nbsp;
