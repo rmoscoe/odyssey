@@ -95,6 +95,7 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
             token: tokenValue,
             password: newPassword
         }
+        console.log(data);
 
         try {
             const response = await axios.post('/api/password/reset/confirm/', data, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});

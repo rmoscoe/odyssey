@@ -100,10 +100,10 @@ export default function AdventureDetails({ handlePageChange }: AdventureDetailsP
             </section>
 
             {adventures.length === 0 &&
-                <p className={`${theme}-text my-3 text-center mx-auto`}>No adventures to display. Try creating a new adventure.</p>
+                <p className={`${theme}-text my-24 text-center mx-auto`}>No adventures to display. Try creating a new adventure.</p>
             }
 
-            <section className="my-3.5 flex flex-wrap justify-around content-around">
+            <section className="mt-4 flex flex-wrap justify-around content-around">
                 {adventures.map((adventure, i) => (
                     <Adventure adventure={adventure} handleDeleteClick={handleDeleteClick} key={`adventure-${i}`} />
                 ))}

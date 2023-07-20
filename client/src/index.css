@@ -640,6 +640,16 @@
   -webkit-mask-image: -webkit-linear-gradient(bottom, transparent, #000 40%);
 }
 
+input.bg-sci-fi-field:-internal-autofill-selected {
+  background-color: #455055!important;
+  color: #D9D9D9!important;
+}
+
+input.bg-fantasy-field:-internal-autofill-selected {
+  background-color: #FFFEE8!important;
+  color: #930C10!important;
+}
+
 /* a {
   font-weight: 500;
   color: #646cff;

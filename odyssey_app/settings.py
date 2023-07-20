@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'debug_toolbar',
+    'mail_panel',
     'server',
 ]
 
@@ -63,6 +65,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -162,15 +165,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.office365.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' #'mail_panel.backend.MailToolbarBackend'
+EMAIL_HOST = 'smtp-mail.outlook.com' #'smtp.office365.com' #smtp-mail.outlook.com
 EMAIL_PORT = '587'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'admin@omegagamingstudios.com'
 EMAIL_SUBJECT_PREFIX = 'Odyssey'
 PASSWORD_RESET_TIMEOUT = 3600
+SERVER_EMAIL = 'admin@omegagamingstudios.com'
 
 AUTHENTICATION_BACKENDS = [
     'server.backends.CustomTokenBackend',
@@ -185,3 +189,42 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ]
 }
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
+DEBUG_TOOLBAR_PANELS = (
+    'debug_toolbar.panels.history.HistoryPanel',
+    'mail_panel.panels.MailToolbarPanel',
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+    'debug_toolbar.panels.profiling.ProfilingPanel',
+)
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'mail_admins': {
+#             'level': 'ERROR',
+#             'class': 'django.utils.log.AdminEmailHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['mail_admins'],
+#             'level': 'ERROR',
+#             'propagate': True,
+#         },
+#     },
+# }

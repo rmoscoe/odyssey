@@ -48,7 +48,7 @@ export default function ResetPassword({ handlePageChange }: PageProps) {
         }
 
         try {
-            const response = await axios.post('/api/password/reset/', email, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});
+            const response = await axios.post('/api/password/reset/', { email }, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});
             if (response.status === 200) {
                 setInstructions('Your request to reset your password has been submitted. If the email address you provided matches one on file with Odyssey, you will receive an email momentarily with further instructions.');
                 setNotification('');
