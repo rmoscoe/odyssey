@@ -9,19 +9,20 @@ import { faX, faSkull, faRadiation } from '@fortawesome/free-solid-svg-icons';
 type DeleteProps = {
     deleteType: string;
     deleteId: number;
+    setDeleting: (value: boolean) => void;
 }
 
-export default function DeleteConfirm({ deleteType, deleteId }: DeleteProps) {
+export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: DeleteProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
-    const [deleting, setDeleting] = useState(false);
+    const [reloadRequired, setReloadRequired] = useState(false);
 
     useEffect(() => {
-        if (deleting) {
+        if (reloadRequired) {
             window.location.reload();
-            setDeleting(false);
+            setReloadRequired(false);
         }
-    }, [deleting]);
+    }, [reloadRequired]);
 
     let deleteContent: string;
 
@@ -38,6 +39,9 @@ export default function DeleteConfirm({ deleteType, deleteId }: DeleteProps) {
         case 'custom-fields':
             deleteContent = "custom field";
             break;
+        case 'chapters':
+            deleteContent = "part of the adventure";
+            break;
         default:
             deleteContent = "unknown content";
     }
@@ -47,17 +51,24 @@ export default function DeleteConfirm({ deleteType, deleteId }: DeleteProps) {
     }
 
     const handleDeleteConfirm = async () => {
-        try {
+        if (deleteType === 'adventures') {
+            try {
+                closeModal();
+                const response = await axios.delete(`/api/${deleteType}/${deleteId}/`, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+                if (response.status === 401) {
+                    navigate('/login');
+                }
+                if (response.status === 204) {
+                    setReloadRequired(true);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        if (deleteType === 'chapters') {
+            setDeleting(true);
             closeModal();
-            const response = await axios.delete(`/api/${deleteType}/${deleteId}/`, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
-            if (response.status === 401) {
-                navigate('/login');
-            }
-            if (response.status === 204) {
-                setDeleting(true);
-            }
-        } catch (err) {
-            console.error(err);
         }
     }
 

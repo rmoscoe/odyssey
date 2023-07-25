@@ -80,7 +80,7 @@ export default function AdventureDetails({ handlePageChange }: AdventureDetailsP
 
     const newAdventureHandler = () => navigate('/adventures/new');
 
-    const handleDeleteClick = (id: number) => {
+    const handleDeleteClick = (id=0) => {
         setDeleteTarget(id);
         document.querySelector('.modal')?.classList.add('is-active');
     }

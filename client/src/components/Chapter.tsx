@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPencil, faFloppyDisk, faPlus } from '@fortawesome/free-solid-svg-icons';
 import Scene from './Scene';
 
 type Encounter = {
-    id: number;
+    id: number | undefined;
     encounter_type: string | null;
     description: string | null;
     stats: string | null;
@@ -23,20 +23,32 @@ type Scene = {
 interface ChapterProps {
     chapterTitle: string;
     chapterContent: string | Scene[] | null;
-    handleDeleteClick: (id: number) => void;
+    handleDeleteClick: () => void;
+    deleting: boolean;
+    setDeleting: (value: boolean) => void;
+    chapterToDelete: string;
+    setChapterToDelete: (value: string) => void;
 }
 
-export default function Chapter({ chapterTitle, chapterContent, handleDeleteClick }: ChapterProps) {
+export default function Chapter({ chapterTitle, chapterContent, handleDeleteClick, deleting, setDeleting, chapterToDelete, setChapterToDelete }: ChapterProps) {
     const { theme } = useTheme();
     const [chapterText, setChapterText] = useState('');
     const [editContent, setEditContent] = useState(false);
     const [content, setContent] = useState('');
     const [editScene, setEditScene] = useState(false);
-    const [sceneToEdit, setSceneToEdit] = useState(0);
+    const [sceneToEdit, setSceneToEdit] = useState(1);
 
     if (typeof chapterContent === 'string') {
         setChapterText(chapterContent);
     }
+
+    useEffect(() => {
+        if (deleting && chapterToDelete === chapterTitle) {
+            setChapterText('');
+            setDeleting(false);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [deleting, chapterToDelete]);
 
     let title = '';
 
@@ -72,7 +84,8 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
     }
 
     const deleteChapter = () => {
-        setChapterText('');
+        setChapterToDelete(chapterTitle);
+        handleDeleteClick();
     }
 
     const addScene = (pos = 0) => {
@@ -159,7 +172,7 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
                 }
                 {title === 'Plot' &&
                     <div className="p-3">
-                        <Scene scenes={chapterContent} handleDeleteClick={handleDeleteClick} editScene={editScene} sceneToEdit={sceneToEdit} />
+                        <Scene scenes={Array.isArray(chapterContent) ? chapterContent : []} handleDeleteClick={handleDeleteClick} editScene={editScene} sceneToEdit={sceneToEdit} />
                     </div>
                 }
             </section>
