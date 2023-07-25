@@ -60,7 +60,7 @@ function App() {
         />
         <Route
           path="/adventures/new"
-          element={<NewAdventure />}
+          element={<NewAdventure handlePageChange={handlePageChange}/>}
         />
         <Route
           path="/adventures/:adventureId"

@@ -4,7 +4,7 @@ import { useTheme } from '../utils/ThemeContext';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faX } from '@fortawesome/free-solid-svg-icons';
+import { faX, faSkull, faRadiation } from '@fortawesome/free-solid-svg-icons';
 
 type DeleteProps = {
     deleteType: string;
@@ -23,28 +23,22 @@ export default function DeleteConfirm({ deleteType, deleteId }: DeleteProps) {
         }
     }, [deleting]);
 
-    let cardHeading = "Delete ";
     let deleteContent: string;
 
     switch (deleteType) {
         case 'adventures':
-            cardHeading += "Adventure";
             deleteContent = "adventure";
             break;
         case 'scenes':
-            cardHeading += "Scene";
             deleteContent = "scene";
             break;
         case 'encounters':
-            cardHeading += "Encounter";
             deleteContent = "encounter";
             break;
         case 'custom-fields':
-            cardHeading += "Custom Field";
             deleteContent = "custom field";
             break;
         default:
-            cardHeading += "Unknown";
             deleteContent = "unknown content";
     }
 
@@ -70,19 +64,31 @@ export default function DeleteConfirm({ deleteType, deleteId }: DeleteProps) {
     return (
         <div className="modal">
             <div className="modal-background" onClick={closeModal}></div>
-            <div className={`modal-card w-11/12 lg:my-0 lg:mx-auto lg:w-[640px] rounded-[6px] bg-${theme}-contrast`}>
-                <header className={`modal-card-head bg-${theme}-primary`}>
-                    <p className={`modal-card-title font-${theme}-heading text-${theme}-heading text-2xl`}>{cardHeading}</p>
-                    <button className={`delete border-${theme}-accent bg-${theme}-primary border-2 rounded-full aspect-square`} aria-label="close" onClick={closeModal}>
+            <div className={`modal-card w-11/12 lg:my-0 lg:mx-auto lg:w-[640px] rounded-[6px] bg-${theme}-primary`}>
+                <header className={`modal-card-head`}>
+                    <p className={`modal-card-title font-${theme}-heading text-${theme}-accent text-2xl`}>Danger</p>
+                    <button className={`delete bg-${theme}-primary aspect-square`} aria-label="close" onClick={closeModal}>
                         <FontAwesomeIcon className={`font-${theme}-text text-${theme}-accent text-xl ml-auto`} icon={faX} />
                     </button>
                 </header>
                 <section className="modal-card-body min-h-fit py-11">
-                    <p className={`${theme}-text`}>Are you sure you wish to delete this {deleteContent}? This action cannot be undone.</p>
+                    <div className={`hidden lg:block lg:w-1/4`}>
+                        <FontAwesomeIcon className={`text-${theme}-accent h-24 w-24`} icon={theme === 'fantasy' ? faSkull : faRadiation} />
+                    </div>
+                    <div className="w-full lg:w-3/4 lg:pl-6">
+                        <p className={`font-${theme}-text text-${theme}-accent text-lg w-full`}>Are you sure you wish to delete this {deleteContent}? This action cannot be undone.</p>
+                        <div className="hidden items-center shrink-0 justify-end p-2 w-full lg:flex">
+                            <button className={`button border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 ml-3`} onClick={closeModal}>Cancel</button>
+                            <button className={`button border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 ml-3`} onClick={handleDeleteConfirm}>Delete</button>
+                        </div>
+                    </div>
+
                 </section>
                 <footer className={`modal-card-foot bg-${theme}-primary`}>
-                    <button className={`button border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 ml-3`} onClick={closeModal}>Cancel</button>
-                    <button className={`button border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 ml-3`} onClick={handleDeleteConfirm}>Delete</button>
+                    <div className="flex justify-around mt-5 w-full lg:hidden">
+                        <button className={`button border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6`} onClick={closeModal}>Cancel</button>
+                        <button className={`button border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6`} onClick={handleDeleteConfirm}>Delete</button>
+                    </div>
                 </footer>
             </div>
         </div>

@@ -618,6 +618,7 @@
   flex-shrink: 1;
   overflow: auto;
   padding: 20px;
+  display: flex;
 }
 
 .modal-card-foot {
@@ -638,6 +639,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-mask-image: -webkit-linear-gradient(bottom, transparent, #000 40%);
+}
+
+.text-fade.chapter{
+  -webkit-line-clamp: 4;
 }
 
 input.bg-sci-fi-field:-internal-autofill-selected {
@@ -668,6 +673,30 @@ input.bg-fantasy-field:-internal-autofill-selected {
   height: 40px;
   animation: spin 1s linear infinite;
   margin: 20px auto; /* Adjust the margin as needed */
+}
+
+.fantasy-dropdown-choice {
+  @apply font-fantasy-text text-fantasy-neutral text-base
+}
+
+.sci-fi-dropdown-choice {
+  @apply font-sci-fi-text text-sci-fi-neutral text base
+}
+
+.fantasy-dropdown-choice.selected {
+  @apply text-fantasy-accent bg-fantasy-primary
+}
+
+.sci-fi-dropdown-choice.selected {
+  @apply text-sci-fi-field bg-sci-fi-neutral
+}
+
+.fantasy-dropdown-choice:hover {
+  @apply text-fantasy-text!important bg-fantasy-secondary!important
+}
+
+.sci-fi-dropdown-choice:hover {
+  @apply text-sci-fi-accent!important bg-sci-fi-primary!important
 }
 
 @keyframes spin {
