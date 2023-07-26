@@ -45,6 +45,9 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
         case 'scene':
             deleteContent = "scene";
             break;
+        case 'encounter':
+            deleteContent = "encounter";
+            break;
         default:
             deleteContent = "unknown content";
     }
@@ -75,8 +78,12 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
         }
 
         if (deleteType === 'scene') {
-            setDeleting ? setDeleting('chapter') : console.error("Cannot delete scene because setDeleting() is not available");
+            setDeleting ? setDeleting('scene') : console.error("Cannot delete scene because setDeleting() is not available");
             closeModal();
+        }
+
+        if (deleteType === 'encounter') {
+            setDeleting ? setDeleting('encounter') : console.error("Cannot delete encounter because setDeleting() is not available");
         }
     }
 

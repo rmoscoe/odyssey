@@ -33,7 +33,7 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
     const { theme } = useTheme();
     const [edit, setEdit] = useState(editScene);
     const [editEncounter, setEditEncounter] = useState(false);
-    const [encounterToEdit, setEncounterToEdit] = useState(0);
+    // const [encounterToEdit, setEncounterToEdit] = useState(0);
     const [currentScene, setCurrentScene] = useState(sceneToEdit);
     const [challengeText, setChallengeText] = useState('');
     const [settingText, setSettingText] = useState('');
@@ -42,16 +42,22 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
     const [clue, setClue] = useState<string | null>(null);
     const [addPlotTwist, setAddPlotTwist] = useState(false);
     const [addClue, setAddClue] = useState(false);
+    const [deleteIdx, setDeleteIdx] = useState(0);
 
     useEffect(() => {
         if (deleting === 'scene') {
-            const idx = scenes.findIndex(scene => scene.sequence === currentScene);
-            scenes.splice(idx, 1);
-            for (let i = idx; i < scenes.length; i++) {
+            scenes.splice(deleteIdx, 1);
+            for (let i = deleteIdx; i < scenes.length; i++) {
                 scenes[i].sequence--;
             }
             setDeleting('');
         }
+
+        if (deleting === 'encounter') {
+            scenes[currentScene - 1].encounter_set.splice(deleteIdx, 1);
+            setDeleting('');
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deleting]);
 
@@ -63,6 +69,11 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
         setEncounters(scenes[idx].encounter_set);
         setPlotTwist(scenes[idx].plot_twist ? scenes[idx].plot_twist : '');
         setClue(scenes[idx].clue ? scenes[idx].clue : '');
+    }
+
+    const deleteScene = (idx: number) => {
+        setDeleteIdx(idx);
+        handleDeleteClick();
     }
 
     const addSceneBefore = (idx: number) => {
@@ -84,6 +95,19 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
         setEdit(true);
     }
 
+    const addEncounterBefore = (idx: number) => {
+        for (let i = scenes[currentScene - 1].encounter_set.length; i >= idx; i--) {
+            scenes[currentScene - 1].encounter_set[i] = scenes[currentScene - 1].encounter_set[i - 1];
+        }
+
+        scenes[currentScene - 1].encounter_set[idx] = {
+            id: undefined,
+            encounter_type: '',
+            description: '',
+            stats: null
+        }
+    }
+
     const saveScene = () => {
         const idx = currentScene - 1;
         scenes[idx].challenge = challengeText;
@@ -92,6 +116,7 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
         scenes[idx].plot_twist = plotTwist !== null && plotTwist.length > 0 ? plotTwist : null;
         scenes[idx].clue = clue !== null && clue.length > 0 ? clue : null;
         setAddPlotTwist(false);
+        setAddClue(false);
         setEdit(false);
     }
 
@@ -109,7 +134,7 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
             stats: null
         }
 
-        setEncounterToEdit(pos + 1);
+        // setEncounterToEdit(pos + 1);
         setEditEncounter(true);
     }
 
@@ -148,7 +173,7 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
                         <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={clickEditScene}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPencil} />
                         </button>
-                        <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={handleDeleteClick}>
+                        <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => deleteScene(i)}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
                     </div>
@@ -208,7 +233,7 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
                 }
                 <div className="space-y-2">
                     {scene.encounter_set.map((encounter, j) => (
-                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} />
+                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore}/>
                     ))}
                 </div>
                 {scene.plot_twist &&
