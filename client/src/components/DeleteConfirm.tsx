@@ -9,7 +9,7 @@ import { faX, faSkull, faRadiation } from '@fortawesome/free-solid-svg-icons';
 type DeleteProps = {
     deleteType: string;
     deleteId: number;
-    setDeleting: (value: string) => void;
+    setDeleting?: (value: string) => void;
 }
 
 export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: DeleteProps) {
@@ -70,12 +70,12 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
         }
 
         if (deleteType === 'chapters') {
-            setDeleting('chapter');
+            setDeleting ? setDeleting('chapter') : console.error("Cannot delete chapter because setDeleting() is not available");
             closeModal();
         }
 
         if (deleteType === 'scene') {
-            setDeleting('scene');
+            setDeleting ? setDeleting('chapter') : console.error("Cannot delete scene because setDeleting() is not available");
             closeModal();
         }
     }

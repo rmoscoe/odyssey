@@ -102,6 +102,7 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
         if (chapterContent.length > 0) {
             for (let i = chapterContent.length; i >= pos; i--) {
                 chapterContent[i] = chapterContent[i - 1];
+                chapterContent[i].sequence ++;
             }
         }
 
@@ -132,7 +133,7 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
     }
 
     return (
-        <section className={`adventure m-2 bg-${theme}-contrast rounded-2xl p-2 w-full lg:m-3 lg:w-5/12`}>
+        <section className={`m-2 bg-${theme}-contrast rounded-2xl p-2 w-full`}>
             <section className="flex justify-between w-full mb-2">
                 <h3 className={`font-${theme}-heading text-${theme}-heading text-xl`}>{title}</h3>
                 {title !== 'Plot' && !editContent &&
@@ -163,7 +164,7 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
 
             <section className="w-full p-2">
                 {title !== 'Plot' && !editContent &&
-                    <p className={`${theme}-text text-fade chapter`}>{chapterText}</p>
+                    <p className={`${theme}-text chapter`}>{chapterText}</p>
                 }
                 {title !== 'Plot' && editContent &&
                     <textarea

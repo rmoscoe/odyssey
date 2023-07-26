@@ -27,6 +27,8 @@ export default {
         'fantasy-progress-void': '#290000',
         'fantasy-progress-border': '#930C10',
         'fantasy-progress-fill': '#FFFEBD',
+        'fantasy-scene': '#930C10',
+        'fantasy-scene-text': '#F7CE65',
         'sci-fi-primary': '#1352FF',
         'sci-fi-accent': '#FF54A4',
         'sci-fi-heading': '#D9D9D9',
@@ -45,7 +47,9 @@ export default {
         'sci-fi-game-name': '#D9D9D9',
         'sci-fi-progress-void': '#FF54A4',
         'sci-fi-progress-border': '#D9D9D9',
-        'sci-fi-progress-fill': '#1352FF'
+        'sci-fi-progress-fill': '#1352FF',
+        'sci-fi-scene': '#455055',
+        'sci-fi-scene-text': '#D9D9D9',
       },
       fontFamily: {
         'fantasy-title': ['Yatra One', 'Macondo Swash Caps', 'cursive', 'Arial', 'sans-serif'],
