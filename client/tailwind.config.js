@@ -45,7 +45,7 @@ export default {
         'sci-fi-game-name': '#D9D9D9',
         'sci-fi-progress-void': '#FF54A4',
         'sci-fi-progress-border': '#D9D9D9',
-        'sci-fi-progress-fill': '#1352FF',
+        'sci-fi-progress-fill': '#1352FF'
       },
       fontFamily: {
         'fantasy-title': ['Yatra One', 'Macondo Swash Caps', 'cursive', 'Arial', 'sans-serif'],

@@ -9,7 +9,7 @@ import { faX, faSkull, faRadiation } from '@fortawesome/free-solid-svg-icons';
 type DeleteProps = {
     deleteType: string;
     deleteId: number;
-    setDeleting: (value: boolean) => void;
+    setDeleting: (value: string) => void;
 }
 
 export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: DeleteProps) {
@@ -42,6 +42,9 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
         case 'chapters':
             deleteContent = "part of the adventure";
             break;
+        case 'scene':
+            deleteContent = "scene";
+            break;
         default:
             deleteContent = "unknown content";
     }
@@ -67,7 +70,12 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
         }
 
         if (deleteType === 'chapters') {
-            setDeleting(true);
+            setDeleting('chapter');
+            closeModal();
+        }
+
+        if (deleteType === 'scene') {
+            setDeleting('scene');
             closeModal();
         }
     }

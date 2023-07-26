@@ -3,6 +3,7 @@ import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPencil, faFloppyDisk, faPlus } from '@fortawesome/free-solid-svg-icons';
 import Scene from './Scene';
+import Carousel, { ScrollMode } from 'nuka-carousel';
 
 type Encounter = {
     id: number | undefined;
@@ -11,7 +12,7 @@ type Encounter = {
     stats: string | null;
 }
 
-type Scene = {
+type SceneData = {
     sequence: number;
     challenge: string | null;
     setting: string | null;
@@ -22,10 +23,10 @@ type Scene = {
 
 interface ChapterProps {
     chapterTitle: string;
-    chapterContent: string | Scene[] | null;
+    chapterContent: string | SceneData[] | null;
     handleDeleteClick: () => void;
-    deleting: boolean;
-    setDeleting: (value: boolean) => void;
+    deleting: string;
+    setDeleting: (value: string) => void;
     chapterToDelete: string;
     setChapterToDelete: (value: string) => void;
 }
@@ -43,9 +44,9 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
     }
 
     useEffect(() => {
-        if (deleting && chapterToDelete === chapterTitle) {
+        if (deleting === 'chapter' && chapterToDelete === chapterTitle) {
             setChapterText('');
-            setDeleting(false);
+            setDeleting('');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deleting, chapterToDelete]);
@@ -124,6 +125,12 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
         setChapterText(inputValue);
     }
 
+    const defaultControlsConfig = {
+        nextButtonClassName: `${theme}-next`,
+        pagingDotsClassName: `${theme}-dot`,
+        prevButtonClassName: `${theme}-prev`
+    }
+
     return (
         <section className={`adventure m-2 bg-${theme}-contrast rounded-2xl p-2 w-full lg:m-3 lg:w-5/12`}>
             <section className="flex justify-between w-full mb-2">
@@ -143,7 +150,7 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
                         <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={saveChapter}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faFloppyDisk} />
                         </button>
-                    </div> 
+                    </div>
                 }
                 {title === 'Plot' && !editScene &&
                     <div className="button-container flex shrink-0 basis-12 ml-2 space-x-0.5">
@@ -171,9 +178,9 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
                     </textarea>
                 }
                 {title === 'Plot' &&
-                    <div className="p-3">
-                        <Scene scenes={Array.isArray(chapterContent) ? chapterContent : []} handleDeleteClick={handleDeleteClick} editScene={editScene} sceneToEdit={sceneToEdit} />
-                    </div>
+                    <Carousel adaptiveHeight={true} scrollMode={"remainder" as ScrollMode} cellSpacing={18} className="p-3" defaultControlsConfig={defaultControlsConfig} >
+                        <Scene scenes={Array.isArray(chapterContent) ? chapterContent : []} handleDeleteClick={handleDeleteClick} editScene={editScene} sceneToEdit={sceneToEdit} deleting={deleting} setDeleting={setDeleting} />
+                    </Carousel>
                 }
             </section>
         </section>
