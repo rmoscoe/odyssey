@@ -38,6 +38,7 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
     const [content, setContent] = useState('');
     const [editScene, setEditScene] = useState(false);
     const [sceneToEdit, setSceneToEdit] = useState(1);
+    const [currentScene, setCurrentScene] = useState(1);
 
     if (typeof chapterContent === 'string') {
         setChapterText(chapterContent);
@@ -129,7 +130,8 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
     const defaultControlsConfig = {
         nextButtonClassName: `${theme}-next`,
         pagingDotsClassName: `${theme}-dot`,
-        prevButtonClassName: `${theme}-prev`
+        prevButtonClassName: `${theme}-prev`,
+        afterSlide: (idx: number) => {setCurrentScene(idx + 1);}
     }
 
     return (
@@ -180,7 +182,7 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
                 }
                 {title === 'Plot' &&
                     <Carousel adaptiveHeight={true} scrollMode={"remainder" as ScrollMode} cellSpacing={18} className="p-3" defaultControlsConfig={defaultControlsConfig} >
-                        <Scene scenes={Array.isArray(chapterContent) ? chapterContent : []} handleDeleteClick={handleDeleteClick} editScene={editScene} sceneToEdit={sceneToEdit} deleting={deleting} setDeleting={setDeleting} />
+                        <Scene scenes={Array.isArray(chapterContent) ? chapterContent : []} handleDeleteClick={handleDeleteClick} editScene={editScene} sceneToEdit={sceneToEdit} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setCurrentScene={setCurrentScene}/>
                     </Carousel>
                 }
             </section>

@@ -1,7 +1,7 @@
 import google.generativeai as palm
 import os
 
-def generate_adventure(game, players, scenes, encounters, plot_twists, clues, campaign_setting=None, level=None, experience=None, context=None):
+def generate_adventure(game, players, scenes, encounters, plot_twists, clues, homebrew_description=None, campaign_setting=None, level=None, experience=None, context=None):
     api_key = os.environ.get('API_KEY')
     null_plot_twists = 100 - plot_twists
     null_clues = 100 - clues
@@ -31,7 +31,14 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ca
     if experience is not None:
         prompt += f""" with {experience} experience points"""
 
-    prompt += f""". The rising action should include {scenes} scenes. Each encounter is a trap, enemies, a puzzle (in which case, describe the solution), or some other obstacle. Respond in JSON using the following format:
+    prompt += ". "
+    
+    if homebrew_description is not None:
+        prompt += f"""The following is a description of {game}, a homebrew roleplaying game:
+        {homebrew_description}
+        """
+
+    prompt += f"""The rising action should include {scenes} scenes. Each encounter is a trap, enemies, a puzzle (in which case, describe the solution), or some other obstacle. Respond in JSON using the following format:
     {{
         Exposition: "Background knowledge the players might possess, if any, or prologue. Use between 0 and 250 characters for the exposition.",
         Incitement: "The event that directly involves the players and starts the adventure",

@@ -27,14 +27,15 @@ interface SceneProps {
     sceneToEdit: number;
     deleting: string;
     setDeleting: (value: string) => void;
+    currentScene: number;
+    setCurrentScene: (value: number) => void;
 }
 
-export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdit, deleting, setDeleting }: SceneProps) {
+export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdit, deleting, setDeleting, currentScene, setCurrentScene }: SceneProps) {
     const { theme } = useTheme();
     const [edit, setEdit] = useState(editScene);
     const [editEncounter, setEditEncounter] = useState(false);
     // const [encounterToEdit, setEncounterToEdit] = useState(0);
-    const [currentScene, setCurrentScene] = useState(sceneToEdit);
     const [challengeText, setChallengeText] = useState('');
     const [settingText, setSettingText] = useState('');
     const [encounters, setEncounters] = useState<Encounter[]>([]);
