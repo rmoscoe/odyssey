@@ -6,10 +6,10 @@ import Scene from './Scene';
 import Carousel, { ScrollMode } from 'nuka-carousel';
 
 type Encounter = {
-    id: number | undefined;
+    id?: number | undefined;
     encounter_type: string | null;
     description: string | null;
-    stats: string | null;
+    stats?: string | null;
 }
 
 type SceneData = {
@@ -21,9 +21,14 @@ type SceneData = {
     clue: string | null;
 }
 
-interface ChapterProps {
+type chapterObject = {
     chapterTitle: string;
     chapterContent: string | SceneData[] | null;
+}
+
+interface ChapterProps {
+    chapter: chapterObject;
+    setChapter: (value: chapterObject) => void;
     handleDeleteClick: () => void;
     deleting: string;
     setDeleting: (value: string) => void;
@@ -32,22 +37,30 @@ interface ChapterProps {
     setDeleteType: (value: string) => void;
 }
 
-export default function Chapter({ chapterTitle, chapterContent, handleDeleteClick, deleting, setDeleting, chapterToDelete, setChapterToDelete, setDeleteType }: ChapterProps) {
+export default function Chapter({ chapter, setChapter, handleDeleteClick, deleting, setDeleting, chapterToDelete, setChapterToDelete, setDeleteType }: ChapterProps) {
     const { theme } = useTheme();
-    const [chapterText, setChapterText] = useState('');
+    // const [chapterText, setChapterText] = useState('');
     const [editContent, setEditContent] = useState(false);
     const [content, setContent] = useState('');
     const [editScene, setEditScene] = useState(false);
     const [sceneToEdit, setSceneToEdit] = useState(1);
     const [currentScene, setCurrentScene] = useState(1);
 
-    if (typeof chapterContent === 'string') {
-        setChapterText(chapterContent);
+    const { chapterTitle, chapterContent } = chapter;
+
+    const [scenes, setScenes] = useState<SceneData[]>([]);
+
+    // if (typeof chapterContent === 'string') {
+    //     setChapterText(chapterContent);
+    // }
+
+    if (typeof chapterContent !== 'string') {
+        setScenes(chapterContent?.slice() ?? []);
     }
 
     useEffect(() => {
         if (deleting === 'chapter' && chapterToDelete === chapterTitle) {
-            setChapterText('');
+            setChapter(chapterTitle === 'Rising Action' ? { chapterTitle, chapterContent: [] } : { chapterTitle, chapterContent: '' });
             setDeleting('');
             setDeleteType('');
         }
@@ -78,12 +91,18 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
 
     const editChapter = () => {
         setEditContent(true);
-        setContent(chapterText);
+        if (typeof chapterContent === 'string') {
+            setContent(chapterContent);
+        }
     }
 
     const saveChapter = () => {
-        setChapterText(content);
+        const newContent = content ?? scenes;
         setContent('');
+        setChapter({
+            chapterTitle,
+            chapterContent: newContent
+        });
         setEditContent(false);
     }
 
@@ -99,18 +118,22 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
             return;
         }
 
+        let updatedChapterContent: SceneData[];
+
         if (chapterContent === null) {
-            chapterContent = [];
+            updatedChapterContent = [];
+        } else {
+            updatedChapterContent = chapterContent.slice();
         }
 
-        if (chapterContent.length > 0) {
-            for (let i = chapterContent.length; i >= pos; i--) {
-                chapterContent[i] = chapterContent[i - 1];
-                chapterContent[i].sequence ++;
+        if (updatedChapterContent.length > 0) {
+            for (let i = updatedChapterContent.length; i >= pos; i--) {
+                updatedChapterContent[i] = updatedChapterContent[i - 1];
+                updatedChapterContent[i].sequence++;
             }
         }
 
-        chapterContent[pos] = {
+        const newScene = {
             sequence: pos + 1,
             challenge: '',
             setting: '',
@@ -118,6 +141,13 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
             plot_twist: null,
             clue: null
         }
+
+        updatedChapterContent[pos] = newScene;
+
+        setChapter({
+            chapterTitle,
+            chapterContent: updatedChapterContent,
+        });
 
         setSceneToEdit(pos + 1);
         setEditScene(true);
@@ -127,14 +157,14 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
         const { target } = e;
         const inputValue = target.innerText;
 
-        setChapterText(inputValue);
+        setContent(inputValue);
     }
 
     const defaultControlsConfig = {
         nextButtonClassName: `${theme}-next`,
         pagingDotsClassName: `${theme}-dot`,
         prevButtonClassName: `${theme}-prev`,
-        afterSlide: (idx: number) => {setCurrentScene(idx + 1);}
+        afterSlide: (idx: number) => { setCurrentScene(idx + 1); }
     }
 
     return (
@@ -169,7 +199,7 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
 
             <section className="w-full p-2">
                 {title !== 'Plot' && !editContent &&
-                    <p className={`${theme}-text chapter`}>{chapterText}</p>
+                    <p className={`${theme}-text chapter`}>{typeof chapterContent === 'string' ? chapterContent : 'Cannot display scenes here.'}</p>
                 }
                 {title !== 'Plot' && editContent &&
                     <textarea
@@ -180,12 +210,12 @@ export default function Chapter({ chapterTitle, chapterContent, handleDeleteClic
                         onChange={handleInputChange}
                         rows={4}
                     >
-                        {chapterText}
+                        {typeof chapterContent === 'string' ? chapterContent : 'Cannot display scenes here.'}
                     </textarea>
                 }
                 {title === 'Plot' &&
                     <Carousel adaptiveHeight={true} scrollMode={"remainder" as ScrollMode} cellSpacing={18} className="p-3" defaultControlsConfig={defaultControlsConfig} >
-                        <Scene scenes={Array.isArray(chapterContent) ? chapterContent : []} handleDeleteClick={handleDeleteClick} editScene={editScene} sceneToEdit={sceneToEdit} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setCurrentScene={setCurrentScene} setDeleteType={setDeleteType}/>
+                        <Scene scenes={scenes} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} sceneToEdit={sceneToEdit} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setCurrentScene={setCurrentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} />
                     </Carousel>
                 }
             </section>

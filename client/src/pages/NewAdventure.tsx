@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../utils/ThemeContext';
 import axios from 'axios';
@@ -10,6 +10,11 @@ import Chapter from '../components/Chapter';
 
 interface PageProps {
     handlePageChange: (page: string) => void;
+}
+
+type chapterObj = {
+    chapterTitle: string,
+    chapterContent: string | object[]
 }
 
 // interface Adventure {
@@ -254,11 +259,32 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const [withClues, setWithClues] = useState<number | undefined>();
     const [context, setContext] = useState('');
     const [notification, setNotification] = useState('');
-    const [chapters, setChapters] = useState<object[]>([]);
+    const [expositionChapter, setExpositionChapter] = useState<chapterObj>({
+        chapterTitle: '',
+        chapterContent: ''
+    });
+    const [incitementChapter, setIncitementChapter] = useState<chapterObj>({
+        chapterTitle: '',
+        chapterContent: ''
+    });
+    const [risingActionChapter, setRisingActionChapter] = useState<chapterObj>({
+        chapterTitle: '',
+        chapterContent: []
+    });
+    const [climaxChapter, setClimaxChapter] = useState<chapterObj>({
+        chapterTitle: '',
+        chapterContent: ''
+    });
+    const [denoumentChapter, setDenoumentChapter] = useState<chapterObj>({
+        chapterTitle: '',
+        chapterContent: ''
+    });
     const [adventure, setAdventure] = useState ({});
     const [deleting, setDeleting] = useState('');
     const [chapterToDelete, setChapterToDelete] = useState('');
     const [deleteType, setDeleteType] = useState('');
+    const [finalGameTitle, setFinalGameTitle] = useState('');
+    const [finalCampaignSetting, setFinalCampaignSetting] = useState('');
 
     if (!Auth.loggedIn()) {
         navigate('/login');
@@ -359,9 +385,9 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             context?: string | undefined,
         }
 
-        const selectedGame = gameTitle ? gameTitle : game;
+        setFinalGameTitle(gameTitle ? gameTitle : game);
         const adventureParams: AdventureParams = {
-            game: selectedGame,
+            game: finalGameTitle,
             players: players!,
             scenes: numScenes,
             encounters: maxEncounters,
@@ -411,6 +437,19 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     clue: string | null;
                 }
 
+                setGame('');
+                setGameTitle('');
+                setFinalCampaignSetting(campaignSetting ?? '');
+                setCampaignSetting('');
+                setPlayers(undefined);
+                setLevel(null);
+                setExperience(null);
+                setNumScenes(1);
+                setMaxEncounters(1);
+                setWithPlotTwists(undefined);
+                setWithClues(undefined);
+                setContext('');
+
                 const { Exposition, Incitement, "Rising Action": Rising_Action, Climax, Denoument } = response.data;
                 const chapterData = [{
                     chapterTitle: "Exposition",
@@ -442,7 +481,13 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     chapterData[2].chapterContent.push(scene);
                 });
 
-                setChapters(chapterData);
+                const assignChapters = (fn: React.Dispatch<SetStateAction<chapterObj>>[]) => {
+                    fn.forEach((func, idx) => {
+                        func(chapterData[idx]);
+                    });
+                }
+
+                assignChapters([setExpositionChapter, setIncitementChapter, setRisingActionChapter, setClimaxChapter, setDenoumentChapter]);
             } else {
                 setNotification("Oops! Something went wrong. Please try again.");
             }
@@ -460,7 +505,14 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         document.querySelector('.modal')?.classList.add('is-active');
     }
 
-    const saveAdventure = () => {}
+    const saveAdventure = async () => {
+        setLoading(true);
+
+        // assemble Adventure
+
+
+        //try-catch 1. post adventure 2. post each scene 3. post each encounter 4. setLoading(false) 5. navigate to Adventure Details
+    }
 
     return (
         <></>

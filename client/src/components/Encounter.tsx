@@ -4,10 +4,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPencil, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 
 type Encounter = {
-    id: number | undefined;
+    id?: number | undefined;
     encounter_type: string | null;
     description: string | null;
-    stats: string | null;
+    stats?: string | null;
+}
+
+type SceneData = {
+    sequence: number;
+    challenge: string | null;
+    setting: string | null;
+    encounter_set: Encounter[];
+    plot_twist: string | null;
+    clue: string | null;
+}
+
+type chapterObject = {
+    chapterTitle: string;
+    chapterContent: string | SceneData[] | null;
 }
 
 interface EncounterProps {
@@ -22,9 +36,13 @@ interface EncounterProps {
     setDeleteIdx: (value: number) => void;
     addEncounterBefore: (idx: number) => void;
     setDeleteType: (value: string) => void;
+    chapter: chapterObject;
+    setChapter: (value: chapterObject) => void;
+    scenes: SceneData[];
+    setScenes: (value: SceneData[]) => void;
 }
 
-export default function Encounter({ encounter, handleDeleteClick, editEncounter, sequence, editScene, setDeleteIdx, addEncounterBefore, setDeleteType }: EncounterProps) {
+export default function Encounter({ encounter, handleDeleteClick, editEncounter, sequence, editScene, setDeleteIdx, addEncounterBefore, setDeleteType, chapter, setChapter, scenes, setScenes }: EncounterProps) {
     const { theme } = useTheme();
     const [encounterType, setEncounterType] = useState(encounter.encounter_type);
     const [encounterDescription, setEncounterDescription] = useState(encounter.description);
