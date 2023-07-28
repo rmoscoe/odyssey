@@ -40,9 +40,10 @@ interface EncounterProps {
     setChapter: (value: chapterObject) => void;
     scenes: SceneData[];
     setScenes: (value: SceneData[]) => void;
+    currentScene: number;
 }
 
-export default function Encounter({ encounter, handleDeleteClick, editEncounter, sequence, editScene, setDeleteIdx, addEncounterBefore, setDeleteType, chapter, setChapter, scenes, setScenes }: EncounterProps) {
+export default function Encounter({ encounter, handleDeleteClick, editEncounter, sequence, editScene, setDeleteIdx, addEncounterBefore, setDeleteType, chapter, setChapter, scenes, setScenes, currentScene }: EncounterProps) {
     const { theme } = useTheme();
     const [encounterType, setEncounterType] = useState(encounter.encounter_type);
     const [encounterDescription, setEncounterDescription] = useState(encounter.description);
@@ -50,6 +51,8 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
     // const [currentEncounter, setCurrentEncounter] = useState(encounterToEdit);
     const [typeText, setTypeText] = useState('');
     const [descriptionText, setDescriptionText] = useState('');
+
+    const eSeq = sequence;
 
     const clickEditEncounter = () => {
         setEdit(true);
@@ -72,6 +75,29 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
     const saveEncounter = () => {
         setEncounterType(typeText);
         setEncounterDescription(descriptionText);
+
+        const updatedEncounter = {
+            encounter_type: encounterType,
+            description: encounterDescription
+        }
+
+        const {sequence, challenge, setting, encounter_set, plot_twist, clue} = scenes[currentScene - 1];
+        const updatedEncounterSet = [...encounter_set.slice(0, eSeq), updatedEncounter, ...encounter_set.slice(eSeq)];
+        const updatedScene = {
+            sequence,
+            challenge,
+            setting,
+            encounter_set: updatedEncounterSet,
+            plot_twist,
+            clue
+        }
+        const updatedScenes = [...scenes.slice(0, currentScene - 1), updatedScene, ...scenes.slice(currentScene - 1)];
+
+        setScenes(updatedScenes);
+        setChapter({ chapterTitle: chapter.chapterTitle, chapterContent: scenes });
+
+        setTypeText('');
+        setDescriptionText('');
         setEdit(false);
     }
 
@@ -150,7 +176,7 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
                     </textarea>
                 </>
             }
-            <button className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 my-2`} onClick={() => clickAddEncounterBefore(sequence)}>Add Clue</button>
+            <button className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 my-2`} onClick={() => clickAddEncounterBefore(sequence)}>Add Encounter Before</button>
         </section>
     );
 }
