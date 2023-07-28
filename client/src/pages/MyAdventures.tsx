@@ -41,7 +41,7 @@ type adventure = {
     status: string;
 };
 
-export default function AdventureDetails({ handlePageChange }: AdventureDetailsProps) {
+export default function MyAdventures({ handlePageChange }: AdventureDetailsProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
     const [adventures, setAdventures] = useState<adventure[]>([]);

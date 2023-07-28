@@ -29,9 +29,10 @@ interface SceneProps {
     setDeleting: (value: string) => void;
     currentScene: number;
     setCurrentScene: (value: number) => void;
+    setDeleteType: (value: string) => void;
 }
 
-export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdit, deleting, setDeleting, currentScene, setCurrentScene }: SceneProps) {
+export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdit, deleting, setDeleting, currentScene, setCurrentScene, setDeleteType }: SceneProps) {
     const { theme } = useTheme();
     const [edit, setEdit] = useState(editScene);
     const [editEncounter, setEditEncounter] = useState(false);
@@ -52,11 +53,13 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
                 scenes[i].sequence--;
             }
             setDeleting('');
+            setDeleteType('');
         }
 
         if (deleting === 'encounter') {
             scenes[currentScene - 1].encounter_set.splice(deleteIdx, 1);
             setDeleting('');
+            setDeleteType('');
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,6 +77,7 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
 
     const deleteScene = (idx: number) => {
         setDeleteIdx(idx);
+        setDeleteType('scene')
         handleDeleteClick();
     }
 
@@ -234,7 +238,7 @@ export default function Scene({ scenes, handleDeleteClick, editScene, sceneToEdi
                 }
                 <div className="space-y-2">
                     {scene.encounter_set.map((encounter, j) => (
-                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore}/>
+                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType}/>
                     ))}
                 </div>
                 {scene.plot_twist &&

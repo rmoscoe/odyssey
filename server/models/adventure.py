@@ -18,7 +18,7 @@ class Adventure(models.Model):
     climax = models.TextField(blank=True, validators=[safe_text_validator])
     denoument = models.TextField(blank=True, validators=[safe_text_validator])
     progress = models.FloatField(default=0)
-    status = models.CharField(max_length = 10, choices = statuses)
+    status = models.CharField(max_length = 10, choices = statuses, default='active')
 
     class Meta:
         db_table = 'adventure'

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../utils/ThemeContext';
@@ -5,10 +6,33 @@ import axios from 'axios';
 import Auth from '../utils/auth';
 import CSRFToken from '../components/CSRFToken';
 import Spinner from '../components/Spinner';
+import Chapter from '../components/Chapter';
 
 interface PageProps {
     handlePageChange: (page: string) => void;
 }
+
+// interface Adventure {
+//     title?: string;
+//     game: string;
+//     campaign_setting: string | null;
+//     exposition: string | null;
+//     incitement: string | null;
+//     rising_action: [{
+//         sequence: number;
+//         challenge: string | null;
+//         setting: string | null;
+//         encounters: [{
+//             encounter_type: string | null;
+//             description: string | null;
+//             stats?: string | null;
+//         } | null];
+//         plot_twist: string | null;
+//         clue: string | null;
+//     } | null];
+//     climax: string | null;
+//     denoument: string | null;
+// }
 
 const games = {
     'Ars Magica': {
@@ -230,6 +254,11 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const [withClues, setWithClues] = useState<number | undefined>();
     const [context, setContext] = useState('');
     const [notification, setNotification] = useState('');
+    const [chapters, setChapters] = useState<object[]>([]);
+    const [adventure, setAdventure] = useState ({});
+    const [deleting, setDeleting] = useState('');
+    const [chapterToDelete, setChapterToDelete] = useState('');
+    const [deleteType, setDeleteType] = useState('');
 
     if (!Auth.loggedIn()) {
         navigate('/login');
@@ -243,6 +272,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         const inputValue: string | number | undefined = target.tagName === 'INPUT' ? target.value : target.innerText;
 
         target.classList.remove("invalid-entry");
+        setNotification('');
 
         switch (inputId) {
             case 'game-input':
@@ -315,7 +345,122 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             }
         }
 
+        interface AdventureParams {
+            game: string,
+            players: number,
+            scenes: number,
+            encounters: number,
+            plot_twists: number,
+            clues: number,
+            homebrew_description?: string | null,
+            campaign_setting?: string | null,
+            level?: number | null,
+            experience?: number | null,
+            context?: string | undefined,
+        }
+
+        const selectedGame = gameTitle ? gameTitle : game;
+        const adventureParams: AdventureParams = {
+            game: selectedGame,
+            players: players!,
+            scenes: numScenes,
+            encounters: maxEncounters,
+            plot_twists: withPlotTwists!,
+            clues: withClues!
+        }
+
+        const optionalParams: (keyof AdventureParams)[] = [
+            'homebrew_description',
+            'campaign_setting',
+            'level',
+            'experience',
+            'context',
+          ];
+
+        const stateVariables = [homebrewDescription, campaignSetting, level, experience, context];
+
+        const updateOptionalProperty = <T extends keyof AdventureParams>(
+            key: T,
+            value: AdventureParams[T] | null | undefined
+          ) => {
+            if (value) {
+              adventureParams[key] = value;
+            }
+          };
+          
+          optionalParams.forEach((param, idx) => {
+            updateOptionalProperty(param, stateVariables[idx]);
+          });
+
+        try {
+            const response = await axios.post('/api/generate-adventure/', adventureParams, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value') } });
+            if (response.status === 401) {
+                navigate('/login');
+            } else if (response.data) {
+                type EncounterData = {
+                    type: string | null;
+                    description: string | null;
+                    stats?: string | null;
+                }
+                
+                type SceneData = {
+                    challenge: string | null;
+                    setting: string | null;
+                    encounters: EncounterData[];
+                    plot_twist: string | null;
+                    clue: string | null;
+                }
+
+                const { Exposition, Incitement, "Rising Action": Rising_Action, Climax, Denoument } = response.data;
+                const chapterData = [{
+                    chapterTitle: "Exposition",
+                    chapterContent: Exposition
+                }, {
+                    chapterTitle: "Incitement",
+                    chapterContent: Incitement
+                }, {
+                    chapterTitle: "Rising Action",
+                    chapterContent: []
+                }, {
+                    chapterTitle: "Climax",
+                    chapterContent: Climax
+                }, {
+                    chapterTitle: "Denoument",
+                    chapterContent: Denoument
+                }];
+
+                Rising_Action.forEach((plotObj: SceneData, idx: number) => {
+                    const sequence = idx + 1;
+                    const scene = {
+                        sequence: sequence,
+                        challenge: plotObj.challenge,
+                        setting: plotObj.setting,
+                        encounters: plotObj.encounters,
+                        plot_twist: plotObj.plot_twist,
+                        clue: plotObj.clue
+                    }
+                    chapterData[2].chapterContent.push(scene);
+                });
+
+                setChapters(chapterData);
+            } else {
+                setNotification("Oops! Something went wrong. Please try again.");
+            }
+            
+            setLoading(false);
+
+        } catch (error) {
+            console.error(error);
+            setNotification("Oops! Something went wrong. Please try again.");
+            setLoading(false);
+        }
     }
+
+    const handleDeleteClick = () => {
+        document.querySelector('.modal')?.classList.add('is-active');
+    }
+
+    const saveAdventure = () => {}
 
     return (
         <></>

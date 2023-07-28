@@ -21,9 +21,10 @@ interface EncounterProps {
     editScene: boolean;
     setDeleteIdx: (value: number) => void;
     addEncounterBefore: (idx: number) => void;
+    setDeleteType: (value: string) => void;
 }
 
-export default function Encounter({ encounter, handleDeleteClick, editEncounter, sequence, editScene, setDeleteIdx, addEncounterBefore }: EncounterProps) {
+export default function Encounter({ encounter, handleDeleteClick, editEncounter, sequence, editScene, setDeleteIdx, addEncounterBefore, setDeleteType }: EncounterProps) {
     const { theme } = useTheme();
     const [encounterType, setEncounterType] = useState(encounter.encounter_type);
     const [encounterDescription, setEncounterDescription] = useState(encounter.description);
@@ -40,6 +41,7 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
 
     const deleteEncounter = (idx: number) => {
         setDeleteIdx(idx);
+        setDeleteType('encounter');
         handleDeleteClick();
     }
 

@@ -8,7 +8,7 @@ import { faX, faSkull, faRadiation } from '@fortawesome/free-solid-svg-icons';
 
 type DeleteProps = {
     deleteType: string;
-    deleteId: number;
+    deleteId?: number;
     setDeleting?: (value: string) => void;
 }
 
