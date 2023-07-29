@@ -6,6 +6,7 @@ import axios from 'axios';
 import Auth from '../utils/auth';
 import CSRFToken from '../components/CSRFToken';
 import Spinner from '../components/Spinner';
+import DropdownChoice from '../components/DropdownChoice';
 import Chapter from '../components/Chapter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
@@ -295,16 +296,16 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
 
     handlePageChange('New Adventure');
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { target } = e;
         const inputId = target.id;
-        const inputValue: string | number | undefined = target.tagName === 'INPUT' ? target.value : target.innerText;
+        const inputValue: string | number | undefined = target.tagName === 'TEXTAREA' ? target.innerText : target.value;
 
         target.classList.remove("invalid-entry");
         setNotification('');
 
         switch (inputId) {
-            case 'game-input':
+            case 'game-select':
                 setGame(inputValue);
                 break;
             case 'game-title-input':
@@ -313,7 +314,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             case 'homebrew-description-textarea':
                 setHomebrewDescription(inputValue);
                 break;
-            case 'campaign-setting-input':
+            case 'campaign-setting-select':
                 setCampaignSetting(inputValue);
                 break;
             case 'players-input':
@@ -325,10 +326,10 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             case 'experience-input':
                 setExperience(Number(inputValue));
                 break;
-            case 'num-scenes-input':
+            case 'num-scenes-select':
                 setNumScenes(Number(inputValue));
                 break;
-            case 'max-encounters-input':
+            case 'max-encounters-select':
                 setMaxEncounters(Number(inputValue));
                 break;
             case 'with-plot-twists-input':
@@ -345,9 +346,9 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         }
     }
 
-    const fieldLoseFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const fieldLoseFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { target } = e;
-        const inputValue: string | number | undefined = target.tagName === 'INPUT' ? target.value : target.innerText;
+        const inputValue: string | number | undefined = target.tagName === 'TEXTAREA' ? target.innerText : target.value;
 
         if (target.required && inputValue === ('' || null || undefined)) {
             target.classList.add("invalid-entry");
@@ -362,7 +363,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         if (form instanceof HTMLFormElement) {
             const inputElements: (HTMLInputElement | HTMLTextAreaElement)[] = Array.from(form.querySelectorAll('input, textarea'));
             inputElements.forEach(input => {
-                if (input.required && ((input.tagName === 'INPUT' && input.value === ('' || null || undefined)) || (input.tagName === 'TEXTAREA' && input.innerText === ''))) {
+                if (input.required && (((input.tagName === 'INPUT' || input.tagName === 'SELECT') && input.value === ('' || null || undefined)) || (input.tagName === 'TEXTAREA' && input.innerText === ''))) {
                     input.classList.add('invalid-entry');
                     setNotification("One or more required fields is missing input.");
                 }
@@ -637,7 +638,91 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     }
 
                     <section className="flex space-x-3 space-y-3">
-                        
+                        <div>
+                            <label htmlFor="game-select" className={`${theme}-label`}>Game*</label>
+                            <select
+                                id="game-select"
+                                name="game-select"
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                onChange={handleInputChange}
+                                onBlur={fieldLoseFocus}
+                                disabled={loading}
+                                required
+                            >
+                                <option value="" className={`${theme}-dropdown-choice`}>Select a game</option>
+                                <DropdownChoice choices={Object.keys(games)} />
+                            </select>
+                        </div>
+                        {(game === 'homebrew (unpublished)' || game === 'Other') &&
+                            <div>
+                                <p className={`${theme}-text mb-1.5`}>Enter the title of the unlisted game here.</p>
+                                <label htmlFor="game-title-input" className={`${theme}-label`}>Game Title*</label>
+                                <input
+                                    type="text"
+                                    id="game-title-input"
+                                    name="game-title-input"
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    autoComplete="off"
+                                    onChange={handleInputChange}
+                                    onBlur={fieldLoseFocus}
+                                    value={gameTitle ?? ''}
+                                    disabled={loading}
+                                    required
+                                />
+                            </div>
+                        }
+                        {game === 'homebrew (unpublished)' &&
+                            <div>
+                                <p className={`${theme}-text mb-1.5`}>Enter a description of the unpublished game here. For best results, include the genre and a short description of the world or setting of the game.</p>
+                                <label htmlFor="homebrew-description-textarea" className={`${theme}-label`}>Description*</label>
+                                <textarea
+                                    id="homebrew-description-textarea"
+                                    name="homebrew-description-textarea"
+                                    rows={6}
+                                    value={homebrewDescription ?? ''}
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    maxLength={300}
+                                    onChange={handleInputChange}
+                                    onBlur={fieldLoseFocus}
+                                    disabled={loading}
+                                    required
+                                >
+                                    {homebrewDescription}
+                                </textarea>
+                            </div>
+                        }
+                        {games[game as keyof typeof games].settings &&
+                            <div>
+                                <label htmlFor="campaign-setting-select" className={`${theme}-label`}>Campaign Setting</label>
+                                <select
+                                    id="campaign-setting-select"
+                                    name="campaign-setting-select"
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    onChange={handleInputChange}
+                                    onBlur={fieldLoseFocus}
+                                    disabled={loading}
+                                >
+                                    <option value="" className={`${theme}-dropdown-choice`}>Select a campaign setting</option>
+                                    <DropdownChoice choices={games[game as keyof typeof games].settings ?? ['']} />
+                                </select>
+                            </div>
+                        }
+                        <div>
+                            <label htmlFor="players-input" className={`${theme}-label`}>Players*</label>
+                            <input
+                                type="number"
+                                id="players-input"
+                                name="players-input"
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                autoComplete="off"
+                                step={1}
+                                onChange={handleInputChange}
+                                onBlur={fieldLoseFocus}
+                                value={players}
+                                disabled={loading}
+                                required
+                            />
+                        </div>
                     </section>
                 </form>
 

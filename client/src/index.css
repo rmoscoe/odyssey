@@ -756,6 +756,42 @@ input.bg-fantasy-field:-internal-autofill-selected {
   fill: #F7CE65;
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-moz-number-spin-up,
+input[type="number"]::-moz-number-spin-down {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"].bg-fantasy-field::-webkit-inner-spin-button::after, input[type="number"].bg-fantasy-field::-moz-number-spin-up::before {
+  content: '▲';
+  background-color: #930C10;
+  border: 2px solid #F7CE65;
+  color: #F7CE65;
+}
+
+input[type="number"].bg-fantasy-field::-webkit-inner-spin-button::before, input[type="number"].bg-fantasy-field::-moz-number-spin-up::before {
+  content: '▼';
+  background-color: #930C10;
+  border: 2px solid #F7CE65;
+  color: #F7CE65;
+}
+
+input[type="number"].bg-sci-fi-field::-webkit-inner-spin-button::after, input[type="number"].bg-fantasy-field::-moz-number-spin-up::before {
+  content: '▲';
+  background-color: #1352FF;
+  border: 2px solid #FF54A4;
+  color: #FF54A4;
+}
+
+input[type="number"].bg-sci-fi-field::-webkit-inner-spin-button::before, input[type="number"].bg-fantasy-field::-moz-number-spin-up::before {
+  content: '▼';
+  background-color: #1352FF;
+  border: 2px solid #FF54A4;
+  color: #FF54A4;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);

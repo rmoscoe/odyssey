@@ -2,15 +2,14 @@ import { useTheme } from '../utils/ThemeContext';
 
 interface DropdownChoiceProps {
     choices: string[];
-    handleMenuClick: () => void;
 }
 
-export default function DropdownChoice({ choices, handleMenuClick }: DropdownChoiceProps) {
+export default function DropdownChoice({ choices }: DropdownChoiceProps) {
     const { theme } = useTheme();
 
     return choices.map((choice, i) => (
-        <div onClick={handleMenuClick} key={`choice-${i}`} className={`${theme}-dropdown-choice`} >
+        <option key={`choice-${i}`} value={choice} className={`${theme}-dropdown-choice`} >
             {choice}
-        </div>
+        </option>
     ));
 }
