@@ -7,6 +7,9 @@ import Auth from '../utils/auth';
 import CSRFToken from '../components/CSRFToken';
 import Spinner from '../components/Spinner';
 import Chapter from '../components/Chapter';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faX } from '@fortawesome/free-solid-svg-icons';
+import Cookies from 'js-cookie';
 
 interface PageProps {
     handlePageChange: (page: string) => void;
@@ -224,7 +227,7 @@ const games = {
         settings: null,
         experience: ["points"]
     },
-    'Traveller':{
+    'Traveller': {
         settings: ["", "Reft Sector", "The Trojan Reach"],
         experience: ["points"]
     },
@@ -279,7 +282,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         chapterTitle: '',
         chapterContent: ''
     });
-    const [adventureTitle, setAdventureTitle] = useState ('');
+    const [adventureTitle, setAdventureTitle] = useState('');
     const [deleting, setDeleting] = useState('');
     const [chapterToDelete, setChapterToDelete] = useState('');
     const [deleteType, setDeleteType] = useState('');
@@ -365,7 +368,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                 }
             });
 
-            if (notification==="One or more required fields is missing input.") {
+            if (notification === "One or more required fields is missing input.") {
                 setLoading(false);
                 return;
             }
@@ -401,25 +404,25 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             'level',
             'experience',
             'context',
-          ];
+        ];
 
         const stateVariables = [homebrewDescription, campaignSetting, level, experience, context];
 
         const updateOptionalProperty = <T extends keyof AdventureParams>(
             key: T,
             value: AdventureParams[T] | null | undefined
-          ) => {
+        ) => {
             if (value) {
-              adventureParams[key] = value;
+                adventureParams[key] = value;
             }
-          };
-          
-          optionalParams.forEach((param, idx) => {
+        };
+
+        optionalParams.forEach((param, idx) => {
             updateOptionalProperty(param, stateVariables[idx]);
-          });
+        });
 
         try {
-            const response = await axios.post('/api/generate-adventure/', adventureParams, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value') } });
+            const response = await axios.post('/api/generate-adventure/', adventureParams, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
             if (response.status === 401) {
                 navigate('/login');
             } else if (response.data) {
@@ -428,7 +431,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     description: string | null;
                     stats?: string | null;
                 }
-                
+
                 type SceneData = {
                     challenge: string | null;
                     setting: string | null;
@@ -491,7 +494,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             } else {
                 setNotification("Oops! Something went wrong. Please try again.");
             }
-            
+
             setLoading(false);
 
         } catch (error) {
@@ -532,7 +535,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
 
         //try-catch 1. post adventure 2. post each scene 3. post each encounter 4. setLoading(false) 5. navigate to Adventure Details
         try {
-            const response = await axios.post('/api/adventures/', adventurePayload, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value') } });
+            const response = await axios.post('/api/adventures/', adventurePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
 
             if (response.status === 401) {
                 navigate('/login');
@@ -565,7 +568,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                         clue
                     }
 
-                    const sceneResponse = await axios.post('/api/scenes/', scenePayload, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value') } });
+                    const sceneResponse = await axios.post('/api/scenes/', scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
 
                     if (sceneResponse.status === 401) {
                         navigate('/login');
@@ -582,7 +585,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                 description
                             }
 
-                            const encounterResponse = await axios.post('/api/encounters/', encounterPayload, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value') } });
+                            const encounterResponse = await axios.post('/api/encounters/', encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
 
                             if (encounterResponse.status !== 201) {
                                 setNotification('Oops! Something went wrong. Please try again.');
@@ -604,7 +607,47 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         }
     }
 
+    const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving scene ${i + 1}`), 'Saving encounters'];
+
     return (
-        <></>
+        <main className="mt-[5.5rem] w-full h-overlay p-2">
+            <section className="relative w-full mb-3">
+                <h2 className={`font-${theme}-heading text-${theme}-heading text-center text-3xl mx-auto`}>New Adventure</h2>
+                <button className={`absolute inset-y-0 right-0 border-${theme}-button-border bg-${theme}-primary border-2 rounded-full p-1 aspect-square lg:rounded-2xl`} onClick={() => navigate('/adventures')}>
+                    <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faX} />
+                </button>
+                {notification && !savingNotifications.includes(notification) && notification !== 'One or more required fields is missing input.' &&
+                    <p className={`${theme}-text my-3 text-center`}>{notification}</p>
+                }
+            </section>
+            {loading &&
+                <section className="modal-background z-20 flex justify-center content-center">
+                    <Spinner />
+                    {savingNotifications.includes(notification) &&
+                        <p className={`${theme}-text mt-3 text-center`}>{notification}</p>
+                    }
+                </section>
+            }
+
+            <section className="lg:flex ">
+                <form autoComplete="off" id="new-adventure-form" className="mx-auto w-full lg:w-[48%] pt-3" onSubmit={generateNewAdventure}>
+                    <CSRFToken />
+                    {notification === 'One or more required fields is missing input.' &&
+                        <p className={`${theme}-text mb-3 text-center`}>{notification}</p>
+                    }
+
+                    <section className="flex space-x-3 space-y-3">
+                        
+                    </section>
+                </form>
+
+                <section className="lg:w-[4%]">
+                    <div className={`rounded-t-lg w-full h-3 bg-gradient-to-b from-${theme}-secondary to-30% to-${theme}-contrast from lg:w-1/2 lg:h-full lg:bg-gradient-to-r lg:rounded-l-lg`}></div>
+                    <div className={`rounded-b-lg w-full h-3 bg-gradient-to-t from-${theme}-secondary to-30% to-${theme}-contrast from lg:w-1/2 lg:h-full lg:bg-gradient-to-l lg:rounded-r-lg`}></div>
+                </section>
+
+                <section></section>
+            </section>
+        </main>
     );
 }
