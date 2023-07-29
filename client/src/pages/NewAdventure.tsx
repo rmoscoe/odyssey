@@ -279,7 +279,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         chapterTitle: '',
         chapterContent: ''
     });
-    const [adventure, setAdventure] = useState ({});
+    const [adventureTitle, setAdventureTitle] = useState ('');
     const [deleting, setDeleting] = useState('');
     const [chapterToDelete, setChapterToDelete] = useState('');
     const [deleteType, setDeleteType] = useState('');
@@ -508,10 +508,100 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const saveAdventure = async () => {
         setLoading(true);
 
-        // assemble Adventure
+        // Validate
+        setNotification("Validating");
+        if (adventureTitle === '') {
+            setNotification("Please give your adventure a title.");
+            document.getElementById('adventure-title-input')?.classList.add("invalid-entry");
+            setLoading(false);
+            return;
+        }
 
+        // assemble Adventure
+        setNotification("Saving adventure");
+        const adventurePayload = {
+            title: adventureTitle,
+            user_id: Auth.getToken().fields.user,
+            game: finalGameTitle,
+            campaign_setting: finalCampaignSetting,
+            exposition: expositionChapter.chapterContent,
+            incitement: incitementChapter.chapterContent,
+            climax: climaxChapter.chapterContent,
+            denoument: denoumentChapter.chapterContent
+        }
 
         //try-catch 1. post adventure 2. post each scene 3. post each encounter 4. setLoading(false) 5. navigate to Adventure Details
+        try {
+            const response = await axios.post('/api/adventures/', adventurePayload, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value') } });
+
+            if (response.status === 401) {
+                navigate('/login');
+            } else if (response.data) {
+                type Scene = {
+                    sequence: number,
+                    challenge: string,
+                    setting: string,
+                    encounter_set: {
+                        id?: number,
+                        encounter_type: string,
+                        description: string,
+                        stats?: string
+                    }[],
+                    plot_twist: string | null,
+                    clue: string | null
+                }
+                const adventureId = response.data.id;
+                const scenesArr = Array.isArray(risingActionChapter.chapterContent) ? risingActionChapter.chapterContent : [];
+
+                scenesArr.forEach(async (scene, idx) => {
+                    setNotification(`Saving Scene ${idx + 1}`);
+                    const { sequence, challenge, setting, plot_twist, clue } = scene as Scene;
+                    const scenePayload = {
+                        adventure_id: adventureId,
+                        sequence,
+                        challenge,
+                        setting,
+                        plot_twist,
+                        clue
+                    }
+
+                    const sceneResponse = await axios.post('/api/scenes/', scenePayload, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value') } });
+
+                    if (sceneResponse.status === 401) {
+                        navigate('/login');
+                    } else if (sceneResponse.data) {
+                        const sceneId = sceneResponse.data.id;
+                        const { encounter_set } = scene as Scene;
+
+                        encounter_set.forEach(async encounter => {
+                            setNotification('Saving encounters');
+                            const { encounter_type, description } = encounter;
+                            const encounterPayload = {
+                                scene_id: sceneId,
+                                encounter_type,
+                                description
+                            }
+
+                            const encounterResponse = await axios.post('/api/encounters/', encounterPayload, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value') } });
+
+                            if (encounterResponse.status !== 201) {
+                                setNotification('Oops! Something went wrong. Please try again.');
+                            }
+                        });
+                    } else {
+                        setNotification('Oops! Something went wrong. Please try again.');
+                    }
+                })
+            } else {
+                setNotification('Oops! Something went wrong. Please try again.');
+            }
+
+            setLoading(false);
+        } catch (err) {
+            console.error(err);
+            setNotification("Oops! Something went wrong. Please try again.");
+            setLoading(false);
+        }
     }
 
     return (
