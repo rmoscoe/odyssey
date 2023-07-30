@@ -28,7 +28,7 @@ type chapterObject = {
 
 interface ChapterProps {
     chapter: chapterObject;
-    setChapter: (value: chapterObject) => void;
+    setChapter: React.Dispatch<React.SetStateAction<chapterObject>>;
     handleDeleteClick: () => void;
     deleting: string;
     setDeleting: (value: string) => void;

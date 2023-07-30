@@ -9,16 +9,33 @@ import Spinner from '../components/Spinner';
 import DropdownChoice from '../components/DropdownChoice';
 import Chapter from '../components/Chapter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faX } from '@fortawesome/free-solid-svg-icons';
+import { faX, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
+import DeleteConfirm from '../components/DeleteConfirm';
 
 interface PageProps {
     handlePageChange: (page: string) => void;
 }
 
-type chapterObj = {
+type Encounter = {
+    id?: number | undefined;
+    encounter_type: string | null;
+    description: string | null;
+    stats?: string | null;
+}
+
+type SceneData = {
+    sequence: number;
+    challenge: string | null;
+    setting: string | null;
+    encounter_set: Encounter[];
+    plot_twist: string | null;
+    clue: string | null;
+}
+
+type ChapterObject = {
     chapterTitle: string,
-    chapterContent: string | object[]
+    chapterContent: string | SceneData[] | null
 }
 
 // interface Adventure {
@@ -263,23 +280,23 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const [withClues, setWithClues] = useState<number | undefined>();
     const [context, setContext] = useState('');
     const [notification, setNotification] = useState('');
-    const [expositionChapter, setExpositionChapter] = useState<chapterObj>({
+    const [expositionChapter, setExpositionChapter] = useState<ChapterObject>({
         chapterTitle: '',
         chapterContent: ''
     });
-    const [incitementChapter, setIncitementChapter] = useState<chapterObj>({
+    const [incitementChapter, setIncitementChapter] = useState<ChapterObject>({
         chapterTitle: '',
         chapterContent: ''
     });
-    const [risingActionChapter, setRisingActionChapter] = useState<chapterObj>({
+    const [risingActionChapter, setRisingActionChapter] = useState<ChapterObject>({
         chapterTitle: '',
         chapterContent: []
     });
-    const [climaxChapter, setClimaxChapter] = useState<chapterObj>({
+    const [climaxChapter, setClimaxChapter] = useState<ChapterObject>({
         chapterTitle: '',
         chapterContent: ''
     });
-    const [denoumentChapter, setDenoumentChapter] = useState<chapterObj>({
+    const [denoumentChapter, setDenoumentChapter] = useState<ChapterObject>({
         chapterTitle: '',
         chapterContent: ''
     });
@@ -289,6 +306,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const [deleteType, setDeleteType] = useState('');
     const [finalGameTitle, setFinalGameTitle] = useState('');
     const [finalCampaignSetting, setFinalCampaignSetting] = useState('');
+    const [adventure, setAdventure] = useState(false);
 
     if (!Auth.loggedIn()) {
         navigate('/login');
@@ -340,6 +358,9 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                 break;
             case 'context-textarea':
                 setContext(inputValue);
+                break;
+            case 'adventure-title-input':
+                setAdventureTitle(inputValue);
                 break;
             default:
                 console.error(`Error: Input field ${inputId} not recognized.`);
@@ -485,13 +506,14 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     chapterData[2].chapterContent.push(scene);
                 });
 
-                const assignChapters = (fn: React.Dispatch<SetStateAction<chapterObj>>[]) => {
+                const assignChapters = (fn: React.Dispatch<SetStateAction<ChapterObject>>[]) => {
                     fn.forEach((func, idx) => {
                         func(chapterData[idx]);
                     });
                 }
 
                 assignChapters([setExpositionChapter, setIncitementChapter, setRisingActionChapter, setClimaxChapter, setDenoumentChapter]);
+                setAdventure(true);
             } else {
                 setNotification("Oops! Something went wrong. Please try again.");
             }
@@ -610,6 +632,9 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
 
     const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving scene ${i + 1}`), 'Saving encounters'];
 
+    const chapterSet = [expositionChapter, incitementChapter, risingActionChapter, climaxChapter, denoumentChapter];
+    const setChapterSet = [setExpositionChapter, setIncitementChapter, setRisingActionChapter, setClimaxChapter, setDenoumentChapter];
+
     return (
         <main className="mt-[5.5rem] w-full h-overlay p-2">
             <section className="relative w-full mb-3">
@@ -723,6 +748,119 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                 required
                             />
                         </div>
+                        {games[game as keyof typeof games].experience.includes('levels') &&
+                            <div>
+                                <label htmlFor="level-input" className={`${theme}-label`}>Experience Level</label>
+                                <input
+                                    type="number"
+                                    id="level-input"
+                                    name="level-input"
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    autoComplete="off"
+                                    onChange={handleInputChange}
+                                    onBlur={fieldLoseFocus}
+                                    value={level ?? undefined}
+                                    disabled={loading}
+                                />
+                            </div>
+                        }
+                        {games[game as keyof typeof games].experience.includes('points') &&
+                            <div>
+                                <label htmlFor="experience-input" className={`${theme}-label`}>Experience Points</label>
+                                <input
+                                    type="number"
+                                    id="experience-input"
+                                    name="experience-input"
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    autoComplete="off"
+                                    onChange={handleInputChange}
+                                    onBlur={fieldLoseFocus}
+                                    value={experience ?? undefined}
+                                    disabled={loading}
+                                />
+                            </div>
+                        }
+                        <div>
+                            <label htmlFor="num-scenes-select" className={`${theme}-label`}># of Scenes*</label>
+                            <select
+                                id="num-scenes-select"
+                                name="num-scenes-select"
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                onChange={handleInputChange}
+                                onBlur={fieldLoseFocus}
+                                disabled={loading}
+                                required
+                            >
+                                <option value={1} className={`${theme}-dropdown-choice`} selected>1</option>
+                                <DropdownChoice choices={Array.from({ length: 6 }, (_, i) => i + 2)} />
+                            </select>
+                        </div>
+                        <div>
+                            <label htmlFor="max-encounters-select" className={`${theme}-label`}>Max Encounters per Scene*</label>
+                            <select
+                                id="max-encounters-select"
+                                name="max-encounters-select"
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                onChange={handleInputChange}
+                                onBlur={fieldLoseFocus}
+                                disabled={loading}
+                                required
+                            >
+                                <option value={1} className={`${theme}-dropdown-choice`} selected>1</option>
+                                <DropdownChoice choices={Array.from({ length: 6 }, (_, i) => i + 2)} />
+                            </select>
+                        </div>
+                        <div>
+                            <label htmlFor="with-plot-twists-input" className={`${theme}-label`}>Scenes with Plot Twists*</label>
+                            <div className="flex content-center">
+                                <input
+                                    type="number"
+                                    id="with-plot-twists-input"
+                                    name="with-plot-twists-input"
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    autoComplete="off"
+                                    onChange={handleInputChange}
+                                    onBlur={fieldLoseFocus}
+                                    value={withPlotTwists}
+                                    disabled={loading}
+                                />
+                            </div>
+                            <p className={`${theme}-label ml-1`}>%</p>
+                        </div>
+                        <div>
+                            <label htmlFor="with-clues-input" className={`${theme}-label`}>Scenes with Clues*</label>
+                            <div className="flex content-center">
+                                <input
+                                    type="number"
+                                    id="with-clues-input"
+                                    name="with-clues-input"
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    autoComplete="off"
+                                    onChange={handleInputChange}
+                                    onBlur={fieldLoseFocus}
+                                    value={withClues}
+                                    disabled={loading}
+                                />
+                            </div>
+                            <p className={`${theme}-label ml-1`}>%</p>
+                        </div>
+                    </section>
+
+                    <section className="space-y-3">
+                        <label htmlFor="context-textarea" className={`${theme}-label`}>Additional Context &#40;optional&#41;. You may add additional information for the AI to consider, such as a summary of past adventures, an inspiration or theme you have in mind, or a description of the players' nemesis:*</label>
+                        <textarea
+                            id="context-textarea"
+                            name="context-textarea"
+                            rows={5}
+                            value={context}
+                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                            maxLength={250}
+                            onChange={handleInputChange}
+                            onBlur={fieldLoseFocus}
+                            disabled={loading}
+                        >
+                            {context}
+                        </textarea>
                     </section>
                 </form>
 
@@ -731,8 +869,40 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     <div className={`rounded-b-lg w-full h-3 bg-gradient-to-t from-${theme}-secondary to-30% to-${theme}-contrast from lg:w-1/2 lg:h-full lg:bg-gradient-to-l lg:rounded-r-lg`}></div>
                 </section>
 
-                <section></section>
+                <section>
+                    {!adventure &&
+                        <p className={`${theme}-text mt-3 text-center w-full`}>Adventure will display here once generated.</p>
+                    }
+
+                    {adventure &&
+                        <section className="flex content-end">
+                            <div className="mr-2">
+                                <label htmlFor="adventure-title-input" className={`${theme}-label`}>Enter a Title*</label>
+                                <input
+                                    type="text"
+                                    id="adventure-title-input"
+                                    name="adventure-title-input"
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    autoComplete="off"
+                                    onChange={handleInputChange}
+                                    onBlur={fieldLoseFocus}
+                                    value={adventureTitle}
+                                    disabled={loading}
+                                    required
+                                />
+                            </div>
+                            <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={saveAdventure}>
+                                <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faFloppyDisk} />
+                            </button>
+                        </section>
+                    }
+                    {chapterSet.map((chapter, i) => (
+                        <Chapter chapter={chapter} key={`chapter-${i}`} setChapter={setChapterSet[i]} handleDeleteClick={handleDeleteClick} deleting={deleting} setDeleting={setDeleting} chapterToDelete={chapterToDelete} setChapterToDelete={setChapterToDelete} setDeleteType={setDeleteType}/>
+                    ))}
+                </section>
             </section>
+
+            <DeleteConfirm deleteType={deleteType} setDeleting={setDeleting} />
         </main>
     );
 }

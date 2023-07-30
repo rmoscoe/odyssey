@@ -1,7 +1,7 @@
 import { useTheme } from '../utils/ThemeContext';
 
 interface DropdownChoiceProps {
-    choices: string[];
+    choices: string[] | number[];
 }
 
 export default function DropdownChoice({ choices }: DropdownChoiceProps) {
