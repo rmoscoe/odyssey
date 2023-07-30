@@ -680,7 +680,7 @@ input.bg-fantasy-field:-internal-autofill-selected {
 }
 
 .sci-fi-dropdown-choice {
-  @apply font-sci-fi-text text-sci-fi-neutral text base
+  @apply font-sci-fi-text text-sci-fi-neutral text-base
 }
 
 .fantasy-dropdown-choice.selected {
@@ -692,11 +692,11 @@ input.bg-fantasy-field:-internal-autofill-selected {
 }
 
 .fantasy-dropdown-choice:hover {
-  @apply text-fantasy-text!important bg-fantasy-secondary!important
+  @apply text-fantasy-text bg-fantasy-secondary
 }
 
 .sci-fi-dropdown-choice:hover {
-  @apply text-sci-fi-accent!important bg-sci-fi-primary!important
+  @apply text-sci-fi-accent bg-sci-fi-primary
 }
 
 .fantasy-next, .fantasy-prev, .sci-fi-next, .sci-fi-prev {

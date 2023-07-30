@@ -30,18 +30,16 @@ interface SceneProps {
     setScenes: (value: SceneData[]) => void;
     handleDeleteClick: () => void;
     editScene: boolean;
-    sceneToEdit: number;
     deleting: string;
     setDeleting: (value: string) => void;
     currentScene: number;
-    setCurrentScene: (value: number) => void;
     setDeleteType: (value: string) => void;
     chapter: chapterObject;
     setChapter: (value: chapterObject) => void;
     addScene: (pos?: number) => void;
 }
 
-export default function Scene({ scenes, setScenes, handleDeleteClick, editScene, sceneToEdit, deleting, setDeleting, currentScene, setCurrentScene, setDeleteType, chapter, setChapter, addScene }: SceneProps) {
+export default function Scene({ scenes, setScenes, handleDeleteClick, editScene, deleting, setDeleting, currentScene, setDeleteType, chapter, setChapter, addScene }: SceneProps) {
     const { theme } = useTheme();
     const [edit, setEdit] = useState(editScene);
     const [editEncounter, setEditEncounter] = useState(false);
@@ -55,7 +53,7 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
     const [addClue, setAddClue] = useState(false);
     const [deleteIdx, setDeleteIdx] = useState(0);
 
-    const { chapterTitle, chapterContent } = chapter;
+    const { chapterTitle } = chapter;
 
     useEffect(() => {
         if (deleting === 'scene') {

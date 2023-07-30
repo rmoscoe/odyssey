@@ -43,7 +43,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
     const [editContent, setEditContent] = useState(false);
     const [content, setContent] = useState('');
     const [editScene, setEditScene] = useState(false);
-    const [sceneToEdit, setSceneToEdit] = useState(1);
+    // const [sceneToEdit, setSceneToEdit] = useState(1);
     const [currentScene, setCurrentScene] = useState(1);
 
     const { chapterTitle, chapterContent } = chapter;
@@ -54,9 +54,14 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
     //     setChapterText(chapterContent);
     // }
 
-    if (typeof chapterContent !== 'string') {
-        setScenes(chapterContent?.slice() ?? []);
-    }
+    useEffect(() => {
+        if (typeof chapterContent !== 'string') {
+            setScenes(chapterContent?.slice() ?? []);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+
 
     useEffect(() => {
         if (deleting === 'chapter' && chapterToDelete === chapterTitle) {
@@ -149,7 +154,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
             chapterContent: updatedChapterContent,
         });
 
-        setSceneToEdit(pos + 1);
+        // setSceneToEdit(pos + 1);
         setEditScene(true);
     }
 
@@ -215,7 +220,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
                 }
                 {title === 'Plot' &&
                     <Carousel adaptiveHeight={true} scrollMode={"remainder" as ScrollMode} cellSpacing={18} className="p-3" defaultControlsConfig={defaultControlsConfig} >
-                        <Scene scenes={scenes} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} sceneToEdit={sceneToEdit} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setCurrentScene={setCurrentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} />
+                        <Scene scenes={scenes} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} />
                     </Carousel>
                 }
             </section>

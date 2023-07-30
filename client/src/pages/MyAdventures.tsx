@@ -57,6 +57,9 @@ export default function MyAdventures({ handlePageChange }: AdventureDetailsProps
         const getAdventures = async () => {
             try {
                 const token = Auth.getToken();
+                if (Auth.isTokenExpired(token)) {
+                    navigate('/login');
+                }
                 const userId = token.fields.user;
                 console.log(`userId: ${userId}\tMyAdventures 61`);
                 const response = await axios.get(`/api/adventures/?user_id=${userId}`)

@@ -716,7 +716,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                 </textarea>
                             </div>
                         }
-                        {games[game as keyof typeof games].settings &&
+                        {games[game as keyof typeof games]?.settings &&
                             <div>
                                 <label htmlFor="campaign-setting-select" className={`${theme}-label`}>Campaign Setting</label>
                                 <select
@@ -748,7 +748,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                 required
                             />
                         </div>
-                        {games[game as keyof typeof games].experience.includes('levels') &&
+                        {games[game as keyof typeof games]?.experience.includes('levels') &&
                             <div>
                                 <label htmlFor="level-input" className={`${theme}-label`}>Experience Level</label>
                                 <input
@@ -764,7 +764,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                 />
                             </div>
                         }
-                        {games[game as keyof typeof games].experience.includes('points') &&
+                        {games[game as keyof typeof games]?.experience.includes('points') &&
                             <div>
                                 <label htmlFor="experience-input" className={`${theme}-label`}>Experience Points</label>
                                 <input
@@ -862,6 +862,13 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                             {context}
                         </textarea>
                     </section>
+                    <input
+                        type="submit"
+                        id="submit-generate-adventure"
+                        className={`mt-4 py-2 ml-auto border-${theme}-button-border border-[3px] rounded-xl bg-${theme}-primary text-${theme}-accent text-lg font-${theme}-text`}
+                        value="Submit"
+                        disabled={loading}
+                    />
                 </form>
 
                 <section className="lg:w-[4%]">
