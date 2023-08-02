@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { SetStateAction, useState } from 'react';
+import React, { SetStateAction, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../utils/ThemeContext';
 import axios from 'axios';
@@ -257,7 +257,7 @@ const games = {
         settings: null,
         experience: ["points"]
     },
-    'Wraith: The Oblivion:': {
+    'Wraith: The Oblivion': {
         settings: null,
         experience: ["points"]
     }
@@ -307,12 +307,90 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const [finalGameTitle, setFinalGameTitle] = useState('');
     const [finalCampaignSetting, setFinalCampaignSetting] = useState('');
     const [adventure, setAdventure] = useState(false);
+    // const [formResetCounter, setFormResetCounter] = useState(0);
+    const formRef = useRef<HTMLFormElement>(null);
+    const [contentHeight, setContentHeight] = useState(document.getElementById('content-container')?.offsetHeight);
+    const [inputHeight, setInputHeight] = useState(document.querySelector('input')?.offsetHeight);
+
+    const contentContainerRef = useRef<HTMLElement | null>(null);
+    // const prevOffsetHeightRef = useRef<number | null>(null);
+    // const contentHeightRef = useRef<number | null>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
+    // useEffect(() => { console.log("Resetting Form") }, [formResetCounter]);
+    useEffect(() => {
+        const contentContainer = contentContainerRef.current;
+
+        if (!contentContainer) return;
+
+        const handleResize = () => {
+            const newOffsetHeight = contentContainer.offsetHeight;
+
+            if (newOffsetHeight !== contentHeight) {
+                setContentHeight(newOffsetHeight);
+                console.log('Content height changed:', newOffsetHeight);
+            }
+        };
+
+        const observer = new ResizeObserver(handleResize);
+
+        observer.observe(contentContainer);
+
+        return () => {
+            observer.unobserve(contentContainer);
+        };
+    }, [contentHeight]);
+
+    useEffect(() => {
+        const inputEl = inputRef.current;
+
+        if (!inputEl) return;
+
+        const handleResize = () => {
+            const newInputHeight = inputEl.offsetHeight;
+
+            if (newInputHeight !== inputHeight) {
+                setInputHeight(newInputHeight);
+            }
+        };
+
+        const observer = new ResizeObserver(handleResize);
+
+        observer.observe(inputEl);
+
+        return () => {
+            observer.unobserve(inputEl);
+        }
+    }, [inputHeight]);
+
+    useEffect(() => {
+        if (game !== 'homebrew (unpublished)' && game !== 'Other') {
+            setGameTitle(null)
+        }
+        if (gameTitle !== null && gameTitle !== '') {
+            console.log("Setting finalGameTitle equal to gameTitle");
+            setFinalGameTitle(gameTitle);
+        } else {
+            setFinalGameTitle(game);
+        }
+    }, [game, gameTitle]);
 
     if (!Auth.loggedIn()) {
         navigate('/login');
     }
 
     handlePageChange('New Adventure');
+    console.log("Input Height: " + inputHeight);
+
+    const cols = window.innerWidth < 1024 ? 30 : 47;
+    // const contentHeight = document.getElementById('content-container')?.offsetHeight;
+    // const inputHeight = document.getElementById('players-input')?.clientHeight;
+    const sectionStyle = window.innerWidth >= 1024 ? { height: `${contentHeight}px` } : {};
+    const inputHeightStyle = { height: `${inputHeight}px` };
+    const arrowButtonContainerStyle = {
+        width: `${inputHeight ? inputHeight / 2 : 26.5}px`,
+        height: `${inputHeight}px`
+    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { target } = e;
@@ -382,9 +460,9 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
 
         const form: HTMLElement | null = document.getElementById('adventure-form');
         if (form instanceof HTMLFormElement) {
-            const inputElements: (HTMLInputElement | HTMLTextAreaElement)[] = Array.from(form.querySelectorAll('input, textarea'));
+            const inputElements: (HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement)[] = Array.from(form.querySelectorAll('input, textarea, select'));
             inputElements.forEach(input => {
-                if (input.required && (((input.tagName === 'INPUT' || input.tagName === 'SELECT') && input.value === ('' || null || undefined)) || (input.tagName === 'TEXTAREA' && input.innerText === ''))) {
+                if (input.required && (((input.tagName === 'INPUT' || input.tagName === 'SELECT') && (input.value === '' || input.value === null || input.value === undefined)) || (input.tagName === 'TEXTAREA' && input.innerText === ''))) {
                     input.classList.add('invalid-entry');
                     setNotification("One or more required fields is missing input.");
                 }
@@ -410,22 +488,21 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             context?: string | undefined,
         }
 
-        setFinalGameTitle(gameTitle ? gameTitle : game);
+        console.log("Final Game Title: " + finalGameTitle);
         const adventureParams: AdventureParams = {
-            game: finalGameTitle,
-            players: players!,
-            scenes: numScenes,
-            encounters: maxEncounters,
-            plot_twists: withPlotTwists!,
-            clues: withClues!
+            "game": finalGameTitle,
+            "players": players!,
+            "scenes": numScenes,
+            "encounters": maxEncounters,
+            "plot_twists": withPlotTwists!,
+            "clues": withClues!,
         }
 
         const optionalParams: (keyof AdventureParams)[] = [
-            'homebrew_description',
-            'campaign_setting',
-            'level',
-            'experience',
-            'context',
+            "homebrew_description",
+            "campaign_setting",
+            "level",
+            "experience",
         ];
 
         const stateVariables = [homebrewDescription, campaignSetting, level, experience, context];
@@ -442,6 +519,8 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         optionalParams.forEach((param, idx) => {
             updateOptionalProperty(param, stateVariables[idx]);
         });
+
+        console.log(`adventureParams: ${JSON.stringify(adventureParams)}`);
 
         try {
             const response = await axios.post('/api/generate-adventure/', adventureParams, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
@@ -462,18 +541,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     clue: string | null;
                 }
 
-                setGame('');
-                setGameTitle('');
-                setFinalCampaignSetting(campaignSetting ?? '');
-                setCampaignSetting('');
-                setPlayers(undefined);
-                setLevel(null);
-                setExperience(null);
-                setNumScenes(1);
-                setMaxEncounters(1);
-                setWithPlotTwists(undefined);
-                setWithClues(undefined);
-                setContext('');
+                console.log(`Palm 2 Adventure: ${JSON.stringify(response.data)}`);
 
                 const { Exposition, Incitement, "Rising Action": Rising_Action, Climax, Denoument } = response.data;
                 const chapterData = [{
@@ -514,12 +582,81 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
 
                 assignChapters([setExpositionChapter, setIncitementChapter, setRisingActionChapter, setClimaxChapter, setDenoumentChapter]);
                 setAdventure(true);
+
+
             } else {
                 setNotification("Oops! Something went wrong. Please try again.");
             }
 
+            setContentHeight(() => document.getElementById('content-container')?.offsetHeight);
+            setNotification('');
             setLoading(false);
+            setGame(() => '');
+            setGameTitle(() => '');
+            setHomebrewDescription(() => '');
+            setFinalCampaignSetting(() => campaignSetting ?? '');
+            setCampaignSetting(() => '');
+            setPlayers(() => undefined);
+            setLevel(() => null);
+            setExperience(() => null);
+            setNumScenes(() => 1);
+            setMaxEncounters(() => 1);
+            setWithPlotTwists(() => undefined);
+            setWithClues(() => undefined);
+            setContext(() => '');
 
+            // setFormResetCounter(prevCounter => prevCounter + 1);
+
+            // console.log(`Resetting form state. Game: ${game}, Players: ${players}`);
+
+            // if (form instanceof HTMLFormElement) {
+            //     const inputElements: (HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement)[] = Array.from(form.querySelectorAll('input, textarea, select'));
+            //     inputElements.forEach(element => {
+            //         const inputId = element.id;
+            //         switch (inputId) {
+            //             case 'game-select':
+            //                 element.value = game;
+            //                 break;
+            //             case 'game-title-input':
+            //                 element.value = gameTitle ?? '';
+            //                 break;
+            //             case 'homebrew-description-textarea':
+            //                 element.innerText = homebrewDescription ?? '';
+            //                 break;
+            //             case 'campaign-setting-select':
+            //                 element.value = campaignSetting ?? '';
+            //                 break;
+            //             case 'players-input':
+            //                 element.value = players;
+            //                 break;
+            //             case 'level-input':
+            //                 element.value = level;
+            //                 break;
+            //             case 'experience-input':
+            //                 element.value = experience;
+            //                 break;
+            //             case 'num-scenes-select':
+            //                 element.value = numScenes ?? 1;
+            //                 break;
+            //             case 'max-encounters-select':
+            //                 element.value = maxEncounters ?? 1;
+            //                 break;
+            //             case 'with-plot-twists-input':
+            //                 element.value = withPlotTwists;
+            //                 break;
+            //             case 'with-clues-input':
+            //                 element.value = withClues;
+            //                 break;
+            //             case 'context-textarea':
+            //                 element.value = context ?? '';
+            //                 break;
+            //             default:
+            //                 console.error(`Error: Input field ${inputId} not recognized.`);
+            //         }
+            //     });
+            // }
+
+            formRef.current?.reset();
         } catch (error) {
             console.error(error);
             setNotification("Oops! Something went wrong. Please try again.");
@@ -579,7 +716,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                 const adventureId = response.data.id;
                 const scenesArr = Array.isArray(risingActionChapter.chapterContent) ? risingActionChapter.chapterContent : [];
 
-                scenesArr.forEach(async (scene, idx) => {
+                scenesArr?.forEach(async (scene, idx) => {
                     setNotification(`Saving Scene ${idx + 1}`);
                     const { sequence, challenge, setting, plot_twist, clue } = scene as Scene;
                     const scenePayload = {
@@ -599,7 +736,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                         const sceneId = sceneResponse.data.id;
                         const { encounter_set } = scene as Scene;
 
-                        encounter_set.forEach(async encounter => {
+                        encounter_set?.forEach(async encounter => {
                             setNotification('Saving encounters');
                             const { encounter_type, description } = encounter;
                             const encounterPayload = {
@@ -635,11 +772,14 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const chapterSet = [expositionChapter, incitementChapter, risingActionChapter, climaxChapter, denoumentChapter];
     const setChapterSet = [setExpositionChapter, setIncitementChapter, setRisingActionChapter, setClimaxChapter, setDenoumentChapter];
 
+    console.log(`chapterSet: ${JSON.stringify(chapterSet)}`);
+    console.log(`Adventure state: ${adventure}`);
+
     return (
-        <main className="mt-[5.5rem] w-full h-overlay p-2">
+        <main className="mt-[5.5rem] mb-6 w-full h-overlay p-2 max-w-[100vw]">
             <section className="relative w-full mb-3">
                 <h2 className={`font-${theme}-heading text-${theme}-heading text-center text-3xl mx-auto`}>New Adventure</h2>
-                <button className={`absolute inset-y-0 right-0 border-${theme}-button-border bg-${theme}-primary border-2 rounded-full p-1 aspect-square lg:rounded-2xl`} onClick={() => navigate('/adventures')}>
+                <button className={`absolute inset-y-0 right-0 border-${theme}-accent bg-${theme}-primary border-2 rounded-full p-1 aspect-square lg:rounded-2xl`} onClick={() => navigate('/adventures')}>
                     <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faX} />
                 </button>
                 {notification && !savingNotifications.includes(notification) && notification !== 'One or more required fields is missing input.' &&
@@ -647,32 +787,35 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                 }
             </section>
             {loading &&
-                <section className="modal-background z-20 flex justify-center content-center">
+                <section className="modal-background z-20 flex justify-center items-center">
                     <Spinner />
                     {savingNotifications.includes(notification) &&
-                        <p className={`${theme}-text mt-3 text-center`}>{notification}</p>
+                        <p className={`${theme}-text mt-3 text-center z-40`}>{notification}</p>
                     }
                 </section>
             }
 
-            <section className="lg:flex ">
-                <form autoComplete="off" id="new-adventure-form" className="mx-auto w-full lg:w-[48%] pt-3" onSubmit={generateNewAdventure}>
+            <section className="block w-full lg:flex" id="content-container" ref={contentContainerRef}>
+                <form autoComplete="off" id="new-adventure-form" className="mx-auto w-full lg:w-[48%] pt-3" onSubmit={generateNewAdventure} ref={formRef}>
                     <CSRFToken />
                     {notification === 'One or more required fields is missing input.' &&
                         <p className={`${theme}-text mb-3 text-center`}>{notification}</p>
                     }
 
-                    <section className="flex space-x-3 space-y-3">
-                        <div>
-                            <label htmlFor="game-select" className={`${theme}-label`}>Game*</label>
+                    <section className="flex flex-wrap space-x-3 space-y-3 items-end">
+                        <div className="ml-3">
+                            <label htmlFor="game-select" className={`${theme}-label block`}>Game*</label>
                             <select
                                 id="game-select"
                                 name="game-select"
-                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 max-w-full block h-[${inputHeight}px]`}
                                 onChange={handleInputChange}
                                 onBlur={fieldLoseFocus}
                                 disabled={loading}
                                 required
+                                key={'game-select'}
+                                value={game}
+                                style={inputHeightStyle}
                             >
                                 <option value="" className={`${theme}-dropdown-choice`}>Select a game</option>
                                 <DropdownChoice choices={Object.keys(games)} />
@@ -681,36 +824,40 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                         {(game === 'homebrew (unpublished)' || game === 'Other') &&
                             <div>
                                 <p className={`${theme}-text mb-1.5`}>Enter the title of the unlisted game here.</p>
-                                <label htmlFor="game-title-input" className={`${theme}-label`}>Game Title*</label>
+                                <label htmlFor="game-title-input" className={`${theme}-label block`}>Game Title*</label>
                                 <input
                                     type="text"
                                     id="game-title-input"
                                     name="game-title-input"
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
                                     autoComplete="off"
                                     onChange={handleInputChange}
                                     onBlur={fieldLoseFocus}
                                     value={gameTitle ?? ''}
                                     disabled={loading}
                                     required
+                                    key={'game-title-input'}
+                                    defaultValue={gameTitle ?? ''}
                                 />
                             </div>
                         }
                         {game === 'homebrew (unpublished)' &&
                             <div>
                                 <p className={`${theme}-text mb-1.5`}>Enter a description of the unpublished game here. For best results, include the genre and a short description of the world or setting of the game.</p>
-                                <label htmlFor="homebrew-description-textarea" className={`${theme}-label`}>Description*</label>
+                                <label htmlFor="homebrew-description-textarea" className={`${theme}-label block`}>Description*</label>
                                 <textarea
                                     id="homebrew-description-textarea"
                                     name="homebrew-description-textarea"
                                     rows={6}
-                                    value={homebrewDescription ?? ''}
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    // value={homebrewDescription ?? ''}
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
                                     maxLength={300}
+                                    cols={cols}
                                     onChange={handleInputChange}
                                     onBlur={fieldLoseFocus}
                                     disabled={loading}
                                     required
+                                    key={'homebrew-description-textarea'}
                                 >
                                     {homebrewDescription}
                                 </textarea>
@@ -718,14 +865,16 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                         }
                         {games[game as keyof typeof games]?.settings &&
                             <div>
-                                <label htmlFor="campaign-setting-select" className={`${theme}-label`}>Campaign Setting</label>
+                                <label htmlFor="campaign-setting-select" className={`${theme}-label block`}>Campaign Setting</label>
                                 <select
                                     id="campaign-setting-select"
                                     name="campaign-setting-select"
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block h-[${inputHeight}px]`}
                                     onChange={handleInputChange}
                                     onBlur={fieldLoseFocus}
                                     disabled={loading}
+                                    key={'campaign-setting-select'}
+                                    style={inputHeightStyle}
                                 >
                                     <option value="" className={`${theme}-dropdown-choice`}>Select a campaign setting</option>
                                     <DropdownChoice choices={games[game as keyof typeof games].settings ?? ['']} />
@@ -733,131 +882,174 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                             </div>
                         }
                         <div>
-                            <label htmlFor="players-input" className={`${theme}-label`}>Players*</label>
-                            <input
-                                type="number"
-                                id="players-input"
-                                name="players-input"
-                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
-                                autoComplete="off"
-                                step={1}
-                                onChange={handleInputChange}
-                                onBlur={fieldLoseFocus}
-                                value={players}
-                                disabled={loading}
-                                required
-                            />
+                            <label htmlFor="players-input" className={`${theme}-label block`}>Players*</label>
+                            <div className="flex">
+                                <input
+                                    type="number"
+                                    id="players-input"
+                                    name="players-input"
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                    autoComplete="off"
+                                    step={1}
+                                    onChange={handleInputChange}
+                                    onBlur={fieldLoseFocus}
+                                    value={players}
+                                    disabled={loading}
+                                    required
+                                    key={'players-input'}
+                                    defaultValue={players}
+                                    ref={inputRef}
+                                />
+                                <div className="box-border" style={arrowButtonContainerStyle}>
+                                    <button type="button" className={`${theme}-increase-button h-1/2 box-border aspect-square`} onClick={() => setPlayers(players ? players + 1 : 1)}>▲</button>
+                                    <button type="button" className={`${theme}-decrease-button h-1/2 box-border aspect-square`} onClick={() => setPlayers(players && players > 1 ? players - 1 : 1)}>▼</button>
+                                </div>
+                            </div>
                         </div>
                         {games[game as keyof typeof games]?.experience.includes('levels') &&
                             <div>
-                                <label htmlFor="level-input" className={`${theme}-label`}>Experience Level</label>
-                                <input
-                                    type="number"
-                                    id="level-input"
-                                    name="level-input"
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
-                                    autoComplete="off"
-                                    onChange={handleInputChange}
-                                    onBlur={fieldLoseFocus}
-                                    value={level ?? undefined}
-                                    disabled={loading}
-                                />
+                                <label htmlFor="level-input" className={`${theme}-label block`}>Experience Level</label>
+                                <div className="flex">
+                                    <input
+                                        type="number"
+                                        id="level-input"
+                                        name="level-input"
+                                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                        autoComplete="off"
+                                        onChange={handleInputChange}
+                                        onBlur={fieldLoseFocus}
+                                        value={level ?? undefined}
+                                        disabled={loading}
+                                        key={'level-input'}
+                                        defaultValue={level ?? undefined}
+                                    />
+                                    <div className="box-border" style={arrowButtonContainerStyle}>
+                                        <button type="button" className={`${theme}-increase-button h-1/2 box-border aspect-square`} onClick={() => setLevel(level ? level + 1 : 1)}>▲</button>
+                                        <button type="button" className={`${theme}-decrease-button h-1/2 box-border aspect-square`} onClick={() => setLevel(level && level > 1 ? level - 1 : 1)}>▼</button>
+                                    </div>
+                                </div>
                             </div>
                         }
                         {games[game as keyof typeof games]?.experience.includes('points') &&
                             <div>
-                                <label htmlFor="experience-input" className={`${theme}-label`}>Experience Points</label>
-                                <input
-                                    type="number"
-                                    id="experience-input"
-                                    name="experience-input"
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
-                                    autoComplete="off"
-                                    onChange={handleInputChange}
-                                    onBlur={fieldLoseFocus}
-                                    value={experience ?? undefined}
-                                    disabled={loading}
-                                />
+                                <label htmlFor="experience-input" className={`${theme}-label block`}>Experience Points</label>
+                                <div className="flex">
+                                    <input
+                                        type="number"
+                                        id="experience-input"
+                                        name="experience-input"
+                                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                        autoComplete="off"
+                                        onChange={handleInputChange}
+                                        onBlur={fieldLoseFocus}
+                                        value={experience ?? undefined}
+                                        disabled={loading}
+                                        key={'experience-input'}
+                                        defaultValue={experience ?? undefined}
+                                    />
+                                    <div className="box-border" style={arrowButtonContainerStyle}>
+                                        <button type="button" className={`${theme}-increase-button h-1/2 box-border aspect-square`} onClick={() => setExperience(experience ? experience + 1 : 1)}>▲</button>
+                                        <button type="button" className={`${theme}-decrease-button h-1/2 box-border aspect-square`} onClick={() => setExperience(experience && experience > 0 ? experience - 1 : 0)}>▼</button>
+                                    </div>
+                                </div>
                             </div>
                         }
                         <div>
-                            <label htmlFor="num-scenes-select" className={`${theme}-label`}># of Scenes*</label>
+                            <label htmlFor="num-scenes-select" className={`${theme}-label block`}># of Scenes*</label>
                             <select
                                 id="num-scenes-select"
                                 name="num-scenes-select"
-                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block h-[${inputHeight}px]`}
                                 onChange={handleInputChange}
                                 onBlur={fieldLoseFocus}
                                 disabled={loading}
                                 required
+                                key={'num-scenes-select'}
+                                style={inputHeightStyle}
                             >
                                 <option value={1} className={`${theme}-dropdown-choice`} selected>1</option>
                                 <DropdownChoice choices={Array.from({ length: 6 }, (_, i) => i + 2)} />
                             </select>
                         </div>
                         <div>
-                            <label htmlFor="max-encounters-select" className={`${theme}-label`}>Max Encounters per Scene*</label>
+                            <label htmlFor="max-encounters-select" className={`${theme}-label block`}>Max Encounters per Scene*</label>
                             <select
                                 id="max-encounters-select"
                                 name="max-encounters-select"
-                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block h-[${inputHeight}px]`}
                                 onChange={handleInputChange}
                                 onBlur={fieldLoseFocus}
                                 disabled={loading}
                                 required
+                                key={'max-encounters-select'}
+                                style={inputHeightStyle}
                             >
                                 <option value={1} className={`${theme}-dropdown-choice`} selected>1</option>
                                 <DropdownChoice choices={Array.from({ length: 6 }, (_, i) => i + 2)} />
                             </select>
                         </div>
                         <div>
-                            <label htmlFor="with-plot-twists-input" className={`${theme}-label`}>Scenes with Plot Twists*</label>
-                            <div className="flex content-center">
+                            <label htmlFor="with-plot-twists-input" className={`${theme}-label block`}>Scenes with Plot Twists*</label>
+                            <div className="flex">
                                 <input
                                     type="number"
                                     id="with-plot-twists-input"
                                     name="with-plot-twists-input"
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
                                     autoComplete="off"
                                     onChange={handleInputChange}
                                     onBlur={fieldLoseFocus}
                                     value={withPlotTwists}
                                     disabled={loading}
+                                    key={'with-plot-twists-input'}
+                                    defaultValue={withPlotTwists}
                                 />
+                                <div className="box-border" style={arrowButtonContainerStyle}>
+                                    <button type="button" className={`${theme}-increase-button h-1/2 box-border aspect-square`} onClick={() => setWithPlotTwists(withPlotTwists && withPlotTwists < 100 ? (Math.floor(withPlotTwists / 5) + 1) * 5 : withPlotTwists ? 100 : 5)}>▲</button>
+                                    <button type="button" className={`${theme}-decrease-button h-1/2 box-border aspect-square`} onClick={() => setWithPlotTwists(withPlotTwists && withPlotTwists > 5 ? (Math.floor(withPlotTwists / 5) - 1) * 5 : 0)}>▼</button>
+                                </div>
+                                <p className={`${theme}-label my-auto ml-1`}>%</p>
                             </div>
-                            <p className={`${theme}-label ml-1`}>%</p>
                         </div>
                         <div>
-                            <label htmlFor="with-clues-input" className={`${theme}-label`}>Scenes with Clues*</label>
-                            <div className="flex content-center">
+                            <label htmlFor="with-clues-input" className={`${theme}-label block`}>Scenes with Clues*</label>
+                            <div className="flex">
                                 <input
                                     type="number"
                                     id="with-clues-input"
                                     name="with-clues-input"
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
                                     autoComplete="off"
                                     onChange={handleInputChange}
                                     onBlur={fieldLoseFocus}
                                     value={withClues}
                                     disabled={loading}
+                                    key={'with-clues-input'}
+                                    defaultValue={withClues}
                                 />
+                                <div className="box-border" style={arrowButtonContainerStyle}>
+                                    <button type="button" className={`${theme}-increase-button h-1/2 box-border aspect-square`} onClick={() => setWithClues(withClues && withClues < 100 ? (Math.floor(withClues / 5) + 1) * 5 : withClues ? 100 : 5)}>▲</button>
+                                    <button type="button" className={`${theme}-decrease-button h-1/2 box-border aspect-square`} onClick={() => setWithClues(withClues && withClues > 5 ? (Math.floor(withClues / 5) - 1) * 5 : 0)}>▼</button>
+                                </div>
+                                <p className={`${theme}-label my-auto ml-1`}>%</p>
                             </div>
-                            <p className={`${theme}-label ml-1`}>%</p>
                         </div>
                     </section>
 
-                    <section className="space-y-3">
-                        <label htmlFor="context-textarea" className={`${theme}-label`}>Additional Context &#40;optional&#41;. You may add additional information for the AI to consider, such as a summary of past adventures, an inspiration or theme you have in mind, or a description of the players' nemesis:*</label>
+                    <section className="space-y-3 ml-3 mt-3">
+                        <label htmlFor="context-textarea" className={`${theme}-label block`}>Additional Context &#40;optional&#41;. You may add additional information for the AI to consider, such as a summary of past adventures, an inspiration or theme you have in mind, or a description of the players' nemesis:*</label>
                         <textarea
                             id="context-textarea"
                             name="context-textarea"
                             rows={5}
-                            value={context}
-                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
+                            // value={context}
+                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
                             maxLength={250}
+                            cols={cols}
                             onChange={handleInputChange}
                             onBlur={fieldLoseFocus}
                             disabled={loading}
+                            key={'context-textarea'}
                         >
                             {context}
                         </textarea>
@@ -865,47 +1057,49 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     <input
                         type="submit"
                         id="submit-generate-adventure"
-                        className={`mt-4 py-2 ml-auto border-${theme}-button-border border-[3px] rounded-xl bg-${theme}-primary text-${theme}-accent text-lg font-${theme}-text`}
+                        className={`mt-4 py-2 px-3 ml-auto border-${theme}-accent border-[3px] rounded-xl bg-${theme}-primary text-${theme}-accent text-lg font-${theme}-text w-full lg:w-fit lg:ml-auto`}
                         value="Submit"
                         disabled={loading}
                     />
                 </form>
 
-                <section className="lg:w-[4%]">
-                    <div className={`rounded-t-lg w-full h-3 bg-gradient-to-b from-${theme}-secondary to-30% to-${theme}-contrast from lg:w-1/2 lg:h-full lg:bg-gradient-to-r lg:rounded-l-lg`}></div>
-                    <div className={`rounded-b-lg w-full h-3 bg-gradient-to-t from-${theme}-secondary to-30% to-${theme}-contrast from lg:w-1/2 lg:h-full lg:bg-gradient-to-l lg:rounded-r-lg`}></div>
+                <section className={`block static h-6 w-full lg:flex lg:w-[4%] lg:h-[${contentHeight}px]`} style={sectionStyle}>
+                    <div className={`rounded-t-lg w-full h-3 ${theme}-gradient-start lg:w-1/2 lg:h-full lg:rounded-l-lg lg:rounded-tr-none`}></div>
+                    <div className={`rounded-b-lg w-full h-3 ${theme}-gradient-end lg:w-1/2 lg:h-full lg:rounded-r-lg lg:rounded-bl-none`}></div>
                 </section>
 
-                <section>
+                <section className="block static w-full lg:w-[48%]">
                     {!adventure &&
                         <p className={`${theme}-text mt-3 text-center w-full`}>Adventure will display here once generated.</p>
                     }
 
-                    {adventure &&
-                        <section className="flex content-end">
-                            <div className="mr-2">
-                                <label htmlFor="adventure-title-input" className={`${theme}-label`}>Enter a Title*</label>
-                                <input
-                                    type="text"
-                                    id="adventure-title-input"
-                                    name="adventure-title-input"
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2`}
-                                    autoComplete="off"
-                                    onChange={handleInputChange}
-                                    onBlur={fieldLoseFocus}
-                                    value={adventureTitle}
-                                    disabled={loading}
-                                    required
-                                />
+                    {adventure && chapterSet &&
+                        <section className="flex flex-wrap content-end">
+                            <div>
+                                <div className="mr-2 w-full">
+                                    <label htmlFor="adventure-title-input" className={`${theme}-label block`}>Enter a Title*</label>
+                                    <input
+                                        type="text"
+                                        id="adventure-title-input"
+                                        name="adventure-title-input"
+                                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                        autoComplete="off"
+                                        onChange={handleInputChange}
+                                        onBlur={fieldLoseFocus}
+                                        value={adventureTitle}
+                                        disabled={loading}
+                                        required
+                                    />
+                                </div>
+                                <button className={`border-${theme}-accent bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={saveAdventure}>
+                                    <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faFloppyDisk} />
+                                </button>
                             </div>
-                            <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={saveAdventure}>
-                                <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faFloppyDisk} />
-                            </button>
+                            {chapterSet?.map((chapter, i) => (
+                                <Chapter chapter={chapter} key={`chapter-${i}`} setChapter={setChapterSet[i]} handleDeleteClick={handleDeleteClick} deleting={deleting} setDeleting={setDeleting} chapterToDelete={chapterToDelete} setChapterToDelete={setChapterToDelete} setDeleteType={setDeleteType} />
+                            ))}
                         </section>
                     }
-                    {chapterSet.map((chapter, i) => (
-                        <Chapter chapter={chapter} key={`chapter-${i}`} setChapter={setChapterSet[i]} handleDeleteClick={handleDeleteClick} deleting={deleting} setDeleting={setDeleting} chapterToDelete={chapterToDelete} setChapterToDelete={setChapterToDelete} setDeleteType={setDeleteType}/>
-                    ))}
                 </section>
             </section>
 

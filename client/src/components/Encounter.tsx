@@ -121,6 +121,8 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
         }
     }
 
+    console.log(`Encounter: ${JSON.stringify(encounter)}`);
+
     return (
         <section className={`p-2 bg-${theme}-secondary rounded-2xl w-full`}>
             <section className="flex justify-between w-full">

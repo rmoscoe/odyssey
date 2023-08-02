@@ -270,18 +270,17 @@ class GenerateAdventureView(APIView):
     def post(self, request):
         try:
             data = request.data
-            campaign_setting = data.get('campaign_setting')
-            level = data.get('level')
-            experience = data.get('experience')
-            context = data.get('context')
+            campaign_setting = data.get("campaign_setting")
+            level = data.get("level")
+            experience = data.get("experience")
+            context = data.get("context")
 
-            adventure = generate_adventure(data['game'], data['players'], data['scenes'], data['encounters'], data['plot_twists'],
-                                           data['clues'], campaign_setting, level, experience, context).strip('"```json\\n').rstrip('\\n```"')
+            adventure = generate_adventure(data["game"], data["players"], data["scenes"], data["encounters"], data["plot_twists"], data["clues"], campaign_setting, level, experience, context).strip('"```json\\n').rstrip('\\n```"')
 
             adventure_dict = json.loads(adventure)
             serialized_adventure = json.dumps(adventure_dict)
 
-            return HttpResponse(serialized_adventure, content_type='application/json')
+            return HttpResponse(serialized_adventure, content_type="application/json")
         except Exception as e:
             print("Unable to generate adventure because %s" % e)
             return Response({'error': 'Something went wrong when generating adventure'}, status=500)

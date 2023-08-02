@@ -9,14 +9,14 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
     palm.configure(api_key=api_key)
 
     defaults = {
-        'model': 'models/text-bison-001',
-        'temperature': 0.95,
-        'candidate_count': 1,
-        'top_k': 10000,
-        'top_p': 0.95,
-        'max_output_tokens': 1024,
-        'stop_sequences': [],
-        'safety_settings': [{"category":"HARM_CATEGORY_DEROGATORY","threshold":1},{"category":"HARM_CATEGORY_TOXICITY","threshold":1},{"category":"HARM_CATEGORY_VIOLENCE","threshold":3},{"category":"HARM_CATEGORY_SEXUAL","threshold":3},{"category":"HARM_CATEGORY_MEDICAL","threshold":2},{"category":"HARM_CATEGORY_DANGEROUS","threshold":2}],
+        "model": 'models/text-bison-001',
+        "temperature": 0.95,
+        "candidate_count": 1,
+        "top_k": 10000,
+        "top_p": 0.95,
+        "max_output_tokens": 1024,
+        "stop_sequences": [],
+        "safety_settings": [{"category":"HARM_CATEGORY_DEROGATORY","threshold":1},{"category":"HARM_CATEGORY_TOXICITY","threshold":1},{"category":"HARM_CATEGORY_VIOLENCE","threshold":3},{"category":"HARM_CATEGORY_SEXUAL","threshold":3},{"category":"HARM_CATEGORY_MEDICAL","threshold":2},{"category":"HARM_CATEGORY_DANGEROUS","threshold":2}],
     }
     prompt = f"""Write an adventure for the {game} roleplaying game, """
     

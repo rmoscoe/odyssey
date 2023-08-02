@@ -4,6 +4,6 @@ export default function Spinner() {
     const { theme } = useTheme();
 
     return (
-        <div className={`${theme}-spinner`}></div>
+        <div className={`${theme}-spinner z-30`}></div>
     );
 }

@@ -21,6 +21,11 @@
   -webkit-text-size-adjust: 100%;
 } */
 
+button {
+  line-height: normal;
+  padding: auto
+}
+
 .fantasy-title {
   @apply text-fantasy-accent text-4xl font-fantasy-title text-center mx-auto my-auto lg:mx-0 lg:text-left
 }
@@ -564,7 +569,7 @@
 }
 
 .modal-background {
-  background-color: rgba(10,10,10,.86);
+  background-color: rgba(255, 255, 255, .5);
   bottom: 0;
   left: 0;
   position: fixed;
@@ -663,6 +668,7 @@ input.bg-fantasy-field:-internal-autofill-selected {
   height: 40px;
   animation: spin 1s linear infinite;
   margin: 20px auto; /* Adjust the margin as needed */
+  z-index: 50;
 }
 
 .sci-fi-spinner {
@@ -673,14 +679,23 @@ input.bg-fantasy-field:-internal-autofill-selected {
   height: 40px;
   animation: spin 1s linear infinite;
   margin: 20px auto; /* Adjust the margin as needed */
+  z-index: 50;
 }
 
 .fantasy-dropdown-choice {
-  @apply font-fantasy-text text-fantasy-neutral text-base
+  @apply font-fantasy-text text-fantasy-neutral text-base whitespace-pre-wrap
 }
 
 .sci-fi-dropdown-choice {
-  @apply font-sci-fi-text text-sci-fi-neutral text-base
+  @apply font-sci-fi-text text-sci-fi-neutral text-base whitespace-pre-wrap
+}
+
+.wrap-menu-text {
+  -moz-white-space: pre-wrap;
+  -o-white-space: pre-wrap;
+  white-space: pre-wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .fantasy-dropdown-choice.selected {
@@ -764,32 +779,44 @@ input[type="number"]::-moz-number-spin-down {
   margin: 0;
 }
 
-input[type="number"].bg-fantasy-field::-webkit-inner-spin-button::after, input[type="number"].bg-fantasy-field::-moz-number-spin-up::before {
-  content: '▲';
-  background-color: #930C10;
+.fantasy-increase-button {
+  background-color: #930C10!important;
   border: 2px solid #F7CE65;
   color: #F7CE65;
 }
 
-input[type="number"].bg-fantasy-field::-webkit-inner-spin-button::before, input[type="number"].bg-fantasy-field::-moz-number-spin-up::before {
-  content: '▼';
-  background-color: #930C10;
+.fantasy-decrease-button {
+  background-color: #930C10!important;
   border: 2px solid #F7CE65;
   color: #F7CE65;
 }
 
-input[type="number"].bg-sci-fi-field::-webkit-inner-spin-button::after, input[type="number"].bg-fantasy-field::-moz-number-spin-up::before {
-  content: '▲';
-  background-color: #1352FF;
+.sci-fi-increase-button {
+  background-color: #1352FF!important;
   border: 2px solid #FF54A4;
   color: #FF54A4;
 }
 
-input[type="number"].bg-sci-fi-field::-webkit-inner-spin-button::before, input[type="number"].bg-fantasy-field::-moz-number-spin-up::before {
-  content: '▼';
-  background-color: #1352FF;
+.sci-fi-decrease-button {
+  background-color: #1352FF!important;
   border: 2px solid #FF54A4;
   color: #FF54A4;
+}
+
+.fantasy-gradient-start {
+  background-image: linear-gradient(to bottom, #FFFEBD, #F7CE65 45%, #F7CE65);
+}
+
+.fantasy-gradient-end {
+  background-image: linear-gradient(to top, #FFFEBD, #F7CE65 45%, #F7CE65);
+}
+
+.sci-fi-gradient-start {
+  background-image: linear-gradient(to bottom, #31333B, #FF54A4 45%, #FF54A4);
+}
+
+.sci-fi-gradient-end {
+  background-image: linear-gradient(to top, #31333B, #FF54A4 45%, #FF54A4);
 }
 
 @keyframes spin {
@@ -799,6 +826,24 @@ input[type="number"].bg-sci-fi-field::-webkit-inner-spin-button::before, input[t
     100% {
         transform: rotate(360deg);
     }
+}
+
+@media screen and (min-width: 1024px) {
+  .fantasy-gradient-start {
+    background-image: linear-gradient(to right, #FFFEBD, #F7CE65 45%, #F7CE65);
+  }
+
+  .fantasy-gradient-end {
+    background-image: linear-gradient(to left, #FFFEBD, #F7CE65 45%, #F7CE65);
+  }
+
+  .sci-fi-gradient-start {
+    background-image: linear-gradient(to right, #31333B, #FF54A4 45%, #FF54A4);
+  }
+
+  .sci-fi-gradient-end {
+    background-image: linear-gradient(to left, #31333B, #FF54A4 45%, #FF54A4);
+  }
 }
 
 /* a {

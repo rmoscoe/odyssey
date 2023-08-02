@@ -8,7 +8,7 @@ export default function DropdownChoice({ choices }: DropdownChoiceProps) {
     const { theme } = useTheme();
 
     return choices.map((choice, i) => (
-        <option key={`choice-${i}`} value={choice} className={`${theme}-dropdown-choice`} >
+        <option key={`choice-${i}`} value={choice} className={`${theme}-dropdown-choice wrap-menu-text py-2 max-w-[30ch]`} >
             {choice}
         </option>
     ));

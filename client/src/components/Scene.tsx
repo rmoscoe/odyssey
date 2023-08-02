@@ -81,6 +81,8 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deleting]);
 
+    console.log(`scenes: ${JSON.stringify(scenes)}`);
+
     const clickEditScene = () => {
         setEdit(true);
         const idx = currentScene - 1;
@@ -253,7 +255,7 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
                     </div>
                 }
                 <div className="space-y-2 mb-3">
-                    {scene.encounter_set.map((encounter, j) => (
+                    {scene.encounter_set?.map((encounter, j) => (
                         <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} scenes={scenes} setScenes={setScenes} currentScene={currentScene}/>
                     ))}
                 </div>
