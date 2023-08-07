@@ -61,12 +61,10 @@ export default function MyAdventures({ handlePageChange }: AdventureDetailsProps
                     navigate('/login');
                 }
                 const userId = token.fields.user;
-                console.log(`userId: ${userId}\tMyAdventures 61`);
                 const response = await axios.get(`/api/adventures/?user_id=${userId}`)
                 if (response.status === 401) {
                     navigate('/login');
                 } else if (response.data) {
-                    console.log(`response.data: ${response.data}\tMyAdventures 66`)
                     const adventuresData: adventure[] = response.data;
                     setAdventures(adventuresData);
                 } else {

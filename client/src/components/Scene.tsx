@@ -43,7 +43,6 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
     const { theme } = useTheme();
     const [edit, setEdit] = useState(editScene);
     const [editEncounter, setEditEncounter] = useState(false);
-    // const [encounterToEdit, setEncounterToEdit] = useState(0);
     const [challengeText, setChallengeText] = useState('');
     const [settingText, setSettingText] = useState('');
     const [encounters, setEncounters] = useState<Encounter[]>([]);
@@ -80,8 +79,6 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deleting]);
-
-    console.log(`scenes: ${JSON.stringify(scenes)}`);
 
     const clickEditScene = () => {
         setEdit(true);
@@ -142,24 +139,6 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
         setAddClue(false);
         setEdit(false);
     }
-
-    // const addEncounter = (pos = 0) => {
-    //     if (scenes[sceneToEdit].encounter_set.length > 0) {
-    //         for (let i = scenes[sceneToEdit].encounter_set.length; i >= pos; i--) {
-    //             scenes[sceneToEdit].encounter_set[i] = scenes[sceneToEdit].encounter_set[i - 1];
-    //         }
-    //     }
-
-    //     scenes[sceneToEdit].encounter_set[pos] = {
-    //         id: undefined,
-    //         encounter_type: '',
-    //         description: '',
-    //         stats: null
-    //     }
-
-    //     // setEncounterToEdit(pos + 1);
-    //     setEditEncounter(true);
-    // }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         e.preventDefault();

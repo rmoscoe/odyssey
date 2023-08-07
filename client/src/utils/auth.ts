@@ -24,15 +24,12 @@ class Auth {
 
     getToken() {
         const tokenString = localStorage.getItem('odysseyToken');
-        console.log(`tokenString: ${tokenString}\tauth 27`);
-        // return tokenString ? tokenString : null;
         return tokenString ? JSON.parse(tokenString) : null;
     }
 
     async login(user: {username: string, password: string}, csrftoken: string | null | undefined) {
         try {
             const response = await axios.post('/api/users/login/', user, { headers: { 'X-CSRFToken': csrftoken }});
-            console.log(response);
             const token = response.data.token;
             localStorage.setItem('odysseyToken', JSON.stringify(token));
             return token;

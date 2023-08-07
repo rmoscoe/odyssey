@@ -38,28 +38,6 @@ type ChapterObject = {
     chapterContent: string | SceneData[] | null
 }
 
-// interface Adventure {
-//     title?: string;
-//     game: string;
-//     campaign_setting: string | null;
-//     exposition: string | null;
-//     incitement: string | null;
-//     rising_action: [{
-//         sequence: number;
-//         challenge: string | null;
-//         setting: string | null;
-//         encounters: [{
-//             encounter_type: string | null;
-//             description: string | null;
-//             stats?: string | null;
-//         } | null];
-//         plot_twist: string | null;
-//         clue: string | null;
-//     } | null];
-//     climax: string | null;
-//     denoument: string | null;
-// }
-
 const games = {
     'Ars Magica': {
         settings: ["", "Mythic Europe", "Realms of Power", "The New World", "The Mythic North", "The Mythic East"],
@@ -307,17 +285,13 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const [finalGameTitle, setFinalGameTitle] = useState('');
     const [finalCampaignSetting, setFinalCampaignSetting] = useState('');
     const [adventure, setAdventure] = useState(false);
-    // const [formResetCounter, setFormResetCounter] = useState(0);
     const formRef = useRef<HTMLFormElement>(null);
     const [contentHeight, setContentHeight] = useState(document.getElementById('content-container')?.offsetHeight);
     const [inputHeight, setInputHeight] = useState(document.querySelector('input')?.offsetHeight);
 
     const contentContainerRef = useRef<HTMLElement | null>(null);
-    // const prevOffsetHeightRef = useRef<number | null>(null);
-    // const contentHeightRef = useRef<number | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
-    // useEffect(() => { console.log("Resetting Form") }, [formResetCounter]);
     useEffect(() => {
         const contentContainer = contentContainerRef.current;
 
@@ -328,7 +302,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
 
             if (newOffsetHeight !== contentHeight) {
                 setContentHeight(newOffsetHeight);
-                console.log('Content height changed:', newOffsetHeight);
             }
         };
 
@@ -368,7 +341,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             setGameTitle(null)
         }
         if (gameTitle !== null && gameTitle !== '') {
-            console.log("Setting finalGameTitle equal to gameTitle");
             setFinalGameTitle(gameTitle);
         } else {
             setFinalGameTitle(game);
@@ -380,11 +352,8 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     }
 
     handlePageChange('New Adventure');
-    console.log("Input Height: " + inputHeight);
 
     const cols = window.innerWidth < 1024 ? 30 : 47;
-    // const contentHeight = document.getElementById('content-container')?.offsetHeight;
-    // const inputHeight = document.getElementById('players-input')?.clientHeight;
     const sectionStyle = window.innerWidth >= 1024 ? { height: `${contentHeight}px` } : {};
     const inputHeightStyle = { height: `${inputHeight}px` };
     const arrowButtonContainerStyle = {
@@ -488,7 +457,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             context?: string | undefined,
         }
 
-        console.log("Final Game Title: " + finalGameTitle);
         const adventureParams: AdventureParams = {
             "game": finalGameTitle,
             "players": players!,
@@ -520,8 +488,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             updateOptionalProperty(param, stateVariables[idx]);
         });
 
-        console.log(`adventureParams: ${JSON.stringify(adventureParams)}`);
-
         try {
             const response = await axios.post('/api/generate-adventure/', adventureParams, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
             if (response.status === 401) {
@@ -540,8 +506,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     plot_twist: string | null;
                     clue: string | null;
                 }
-
-                console.log(`Palm 2 Adventure: ${JSON.stringify(response.data)}`);
 
                 const { Exposition, Incitement, "Rising Action": Rising_Action, Climax, Denoument } = response.data;
                 const chapterData = [{
@@ -605,57 +569,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             setWithClues(() => undefined);
             setContext(() => '');
 
-            // setFormResetCounter(prevCounter => prevCounter + 1);
-
-            // console.log(`Resetting form state. Game: ${game}, Players: ${players}`);
-
-            // if (form instanceof HTMLFormElement) {
-            //     const inputElements: (HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement)[] = Array.from(form.querySelectorAll('input, textarea, select'));
-            //     inputElements.forEach(element => {
-            //         const inputId = element.id;
-            //         switch (inputId) {
-            //             case 'game-select':
-            //                 element.value = game;
-            //                 break;
-            //             case 'game-title-input':
-            //                 element.value = gameTitle ?? '';
-            //                 break;
-            //             case 'homebrew-description-textarea':
-            //                 element.innerText = homebrewDescription ?? '';
-            //                 break;
-            //             case 'campaign-setting-select':
-            //                 element.value = campaignSetting ?? '';
-            //                 break;
-            //             case 'players-input':
-            //                 element.value = players;
-            //                 break;
-            //             case 'level-input':
-            //                 element.value = level;
-            //                 break;
-            //             case 'experience-input':
-            //                 element.value = experience;
-            //                 break;
-            //             case 'num-scenes-select':
-            //                 element.value = numScenes ?? 1;
-            //                 break;
-            //             case 'max-encounters-select':
-            //                 element.value = maxEncounters ?? 1;
-            //                 break;
-            //             case 'with-plot-twists-input':
-            //                 element.value = withPlotTwists;
-            //                 break;
-            //             case 'with-clues-input':
-            //                 element.value = withClues;
-            //                 break;
-            //             case 'context-textarea':
-            //                 element.value = context ?? '';
-            //                 break;
-            //             default:
-            //                 console.error(`Error: Input field ${inputId} not recognized.`);
-            //         }
-            //     });
-            // }
-
             formRef.current?.reset();
         } catch (error) {
             console.error(error);
@@ -693,7 +606,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             denoument: denoumentChapter.chapterContent
         }
 
-        //try-catch 1. post adventure 2. post each scene 3. post each encounter 4. setLoading(false) 5. navigate to Adventure Details
         try {
             const response = await axios.post('/api/adventures/', adventurePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
 
@@ -772,9 +684,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const chapterSet = [expositionChapter, incitementChapter, risingActionChapter, climaxChapter, denoumentChapter];
     const setChapterSet = [setExpositionChapter, setIncitementChapter, setRisingActionChapter, setClimaxChapter, setDenoumentChapter];
 
-    console.log(`chapterSet: ${JSON.stringify(chapterSet)}`);
-    console.log(`Adventure state: ${adventure}`);
-
     return (
         <main className="mt-[5.5rem] mb-6 w-full h-overlay p-2 max-w-[100vw]">
             <section className="relative w-full mb-3">
@@ -849,7 +758,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                     id="homebrew-description-textarea"
                                     name="homebrew-description-textarea"
                                     rows={6}
-                                    // value={homebrewDescription ?? ''}
                                     className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
                                     maxLength={300}
                                     cols={cols}
@@ -1042,7 +950,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                             id="context-textarea"
                             name="context-textarea"
                             rows={5}
-                            // value={context}
                             className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
                             maxLength={250}
                             cols={cols}

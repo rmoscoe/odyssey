@@ -28,7 +28,6 @@ interface EncounterProps {
     encounter: Encounter;
     handleDeleteClick: () => void;
     editEncounter: boolean;
-    // encounterToEdit: number;
     deleting: string;
     setDeleting: (value: string) => void;
     sequence: number;
@@ -48,7 +47,6 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
     const [encounterType, setEncounterType] = useState(encounter.encounter_type);
     const [encounterDescription, setEncounterDescription] = useState(encounter.description);
     const [edit, setEdit] = useState(editEncounter);
-    // const [currentEncounter, setCurrentEncounter] = useState(encounterToEdit);
     const [typeText, setTypeText] = useState('');
     const [descriptionText, setDescriptionText] = useState('');
 
@@ -68,7 +66,6 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
 
     const clickAddEncounterBefore = (idx: number) => {
         addEncounterBefore(idx);
-        // setCurrentEncounter(idx);
         setEdit(true);
     }
 
@@ -120,8 +117,6 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
                 saveEncounter();
         }
     }
-
-    console.log(`Encounter: ${JSON.stringify(encounter)}`);
 
     return (
         <section className={`p-2 bg-${theme}-secondary rounded-2xl w-full`}>

@@ -100,7 +100,6 @@ export default function PasswordResetConfirm({ handlePageChange }: PageProps) {
             token: tokenValue,
             password: newPassword
         }
-        console.log(data);
         
         let response;
 

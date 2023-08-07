@@ -34,11 +34,9 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
 
     useEffect(() => {
         const retrieveEmail = async () => {
-            console.log("Retrieving email");
             const pk = Auth.getToken().fields.user;
             try {
                 const user = await axios.get(`/api/users/${pk}/`);
-                console.log(user);
                 setEmail(user.data.email);
             } catch (err) {
                 console.error(err);
@@ -95,7 +93,6 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     }
 
     const handleEmailLoseFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-        console.log("Validating email");
         if (email && !validateEmail(email)) {
             setNotification('Please enter a valid email address');
             const inputElement = e.target as HTMLInputElement;
@@ -104,7 +101,6 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     }
 
     const handlePasswordLoseFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-        console.log("Validating password");
         if (password && !validatePassword(password)) {
             setNotification('Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")');
             const inputElement = e.target as HTMLInputElement;
@@ -113,7 +109,6 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     }
 
     const handleConfirmPasswordLoseFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-        console.log("Validaing password confirmation");
         if (password && password !== confirmPassword) {
             setNotification('Password confirmation must match Password entered above');
             const inputElement = e.target as HTMLInputElement;
@@ -122,18 +117,15 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     }
 
     const emailInUse = () => {
-        console.log("Email in use");
         setNotification('This email address is already in use. Please try a different email address or log in using this email address.');
         document.getElementById('change-email')?.classList.add('invalid-entry');
     }
 
     const saveChanges = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Saving changes");
         setLoading(true);
 
         if (email && !validateEmail(email)) {
-            console.log("Failed email validation");
             setNotification('Please enter a valid email address');
             document.getElementById('change-email')?.classList.add('invalid-entry');
             setLoading(false);
@@ -141,7 +133,6 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
         }
 
         if (password && !validatePassword(password)) {
-            console.log("Failed password validation");
             setNotification('Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, and a number. Password cannot be too similar to Email and cannot match common passwords (e.g., "Password1")');
             document.getElementById('change-password')?.classList.add('invalid-entry');
             setLoading(false);
@@ -149,7 +140,6 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
         }
 
         if (password && password !== confirmPassword) {
-            console.log("Failed confirm password validation");
             setNotification('Password confirmation must match Password entered above');
             document.getElementById('confirm-change-password')?.classList.add('invalid-entry');
             setLoading(false);
@@ -166,13 +156,10 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
         if (password !== '') {
             user.password = password;
         }
-        
-        console.log("User: ", user);
 
         const pk = Auth.getToken().fields.user;
 
         try {
-            console.log("Calling database");
             await axios.patch(`/api/users/${pk}/`, user, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value') } });
             setLoading(false);
             navigate('/adventures');
@@ -204,7 +191,6 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
                             type="email"
                             id="change-email"
                             name="change-email"
-                            // pattern="([a-z0-9]{1})([a-z0-9_.!#$%&'*+-/=?^`{|}~]{0,63})@([0-9a-z.-]{1,253})\.([a-z.]{2,6})"
                             className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg w-full px-1 py-2 mt-2`}
                             value={email}
                             onChange={handleInputChange}

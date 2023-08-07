@@ -39,20 +39,15 @@ interface ChapterProps {
 
 export default function Chapter({ chapter, setChapter, handleDeleteClick, deleting, setDeleting, chapterToDelete, setChapterToDelete, setDeleteType }: ChapterProps) {
     const { theme } = useTheme();
-    // const [chapterText, setChapterText] = useState('');
     const [editContent, setEditContent] = useState(false);
     const [content, setContent] = useState('');
     const [editScene, setEditScene] = useState(false);
-    // const [sceneToEdit, setSceneToEdit] = useState(1);
+
     const [currentScene, setCurrentScene] = useState(1);
 
     const { chapterTitle, chapterContent } = chapter;
 
     const [scenes, setScenes] = useState<SceneData[]>([]);
-
-    // if (typeof chapterContent === 'string') {
-    //     setChapterText(chapterContent);
-    // }
 
     useEffect(() => {
         if (typeof chapterContent !== 'string') {
@@ -154,7 +149,6 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
             chapterContent: updatedChapterContent,
         });
 
-        // setSceneToEdit(pos + 1);
         setEditScene(true);
     }
 
