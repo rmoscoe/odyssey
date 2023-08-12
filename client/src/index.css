@@ -1,4 +1,10 @@
 @tailwind base;
+
+input[number]::-webkit-inner-spin-button, input[number]::-webkit-outer-spin-button, input::-moz-number-spin-up, input::-moz-number-spin-down {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 @tailwind components;
 
 button {
@@ -751,14 +757,6 @@ input.bg-fantasy-field:-internal-autofill-selected {
   fill: #F7CE65;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-moz-number-spin-up,
-input[type="number"]::-moz-number-spin-down {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 .fantasy-increase-button {
   background-color: #930C10!important;
   border: 2px solid #F7CE65;
@@ -797,6 +795,24 @@ input[type="number"]::-moz-number-spin-down {
 
 .sci-fi-gradient-end {
   background-image: linear-gradient(to top, #31333B, #FF54A4 45%, #FF54A4);
+}
+
+input::-webkit-inner-spin-button, input::-webkit-outer-spin-button, input::-moz-number-spin-up, input::-moz-number-spin-down {
+  -webkit-appearance: none;
+  margin: 0;
+  opacity: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button, input::-moz-number-spin-up, input::-moz-number-spin-down {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
 }
 
 @keyframes spin {

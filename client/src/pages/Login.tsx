@@ -4,6 +4,7 @@ import { useTheme } from '../utils/ThemeContext';
 import { validateEmail, validatePassword } from '../utils/helpers';
 import Auth from '../utils/auth';
 import CSRFToken from '../components/CSRFToken';
+import Cookies from 'js-cookie';
 
 type PageProps = {
     handlePageChange: (page: string) => void;
@@ -92,7 +93,7 @@ export default function Login({ handlePageChange }: PageProps) {
         }
 
         try {
-            const token = await Auth.login(user, document.querySelector('.csrf')?.getAttribute('value'));
+            const token = await Auth.login(user, Cookies.get('csrftoken'));
             if (token) {
                 navigate('/adventures');
             }

@@ -796,7 +796,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                     type="number"
                                     id="players-input"
                                     name="players-input"
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                                     autoComplete="off"
                                     step={1}
                                     onChange={handleInputChange}
@@ -822,7 +822,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                         type="number"
                                         id="level-input"
                                         name="level-input"
-                                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                                         autoComplete="off"
                                         onChange={handleInputChange}
                                         onBlur={fieldLoseFocus}
@@ -846,7 +846,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                         type="number"
                                         id="experience-input"
                                         name="experience-input"
-                                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                                         autoComplete="off"
                                         onChange={handleInputChange}
                                         onBlur={fieldLoseFocus}
@@ -903,7 +903,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                     type="number"
                                     id="with-plot-twists-input"
                                     name="with-plot-twists-input"
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                                     autoComplete="off"
                                     onChange={handleInputChange}
                                     onBlur={fieldLoseFocus}
@@ -926,7 +926,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                     type="number"
                                     id="with-clues-input"
                                     name="with-clues-input"
-                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                    className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                                     autoComplete="off"
                                     onChange={handleInputChange}
                                     onBlur={fieldLoseFocus}
