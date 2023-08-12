@@ -12,7 +12,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='drf')),
     path(api_prefix, include('server.urls', namespace='server')),
-    path('__debug__/', include('debug_toolbar.urls')),
+    # path('__debug__/', include('debug_toolbar.urls')),
     # path('accounts/', include('django.contrib.auth.urls'))
 ]
 
