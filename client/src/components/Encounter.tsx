@@ -5,7 +5,7 @@ import { faTrashAlt, faPencil, faFloppyDisk } from '@fortawesome/free-solid-svg-
 
 type Encounter = {
     id?: number | undefined;
-    encounter_type: string | null;
+    type: string | null;
     description: string | null;
     stats?: string | null;
 }
@@ -14,7 +14,7 @@ type SceneData = {
     sequence: number;
     challenge: string | null;
     setting: string | null;
-    encounter_set: Encounter[];
+    encounters: Encounter[];
     plot_twist: string | null;
     clue: string | null;
 }
@@ -44,7 +44,7 @@ interface EncounterProps {
 
 export default function Encounter({ encounter, handleDeleteClick, editEncounter, sequence, editScene, setDeleteIdx, addEncounterBefore, setDeleteType, chapter, setChapter, scenes, setScenes, currentScene }: EncounterProps) {
     const { theme } = useTheme();
-    const [encounterType, setEncounterType] = useState(encounter.encounter_type);
+    const [encounterType, setEncounterType] = useState(encounter.type);
     const [encounterDescription, setEncounterDescription] = useState(encounter.description);
     const [edit, setEdit] = useState(editEncounter);
     const [typeText, setTypeText] = useState('');
@@ -74,17 +74,17 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
         setEncounterDescription(descriptionText);
 
         const updatedEncounter = {
-            encounter_type: encounterType,
+            type: encounterType,
             description: encounterDescription
         }
 
-        const {sequence, challenge, setting, encounter_set, plot_twist, clue} = scenes[currentScene - 1];
-        const updatedEncounterSet = [...encounter_set.slice(0, eSeq), updatedEncounter, ...encounter_set.slice(eSeq)];
+        const {sequence, challenge, setting, encounters, plot_twist, clue} = scenes[currentScene - 1];
+        const updatedEncounterSet = [...encounters.slice(0, eSeq), updatedEncounter, ...encounters.slice(eSeq)];
         const updatedScene = {
             sequence,
             challenge,
             setting,
-            encounter_set: updatedEncounterSet,
+            encounters: updatedEncounterSet,
             plot_twist,
             clue
         }
@@ -122,7 +122,7 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
         <section className={`p-2 bg-${theme}-secondary rounded-2xl w-full`}>
             <section className="flex justify-between w-full">
                 {!edit &&
-                    <p className={`font-${theme}-text text-${theme}-text text-base`}>Type: {encounter.encounter_type}</p>
+                    <p className={`font-${theme}-text text-${theme}-text text-base`}>Type: {encounter.type}</p>
                 }
                 {edit &&
                     <>

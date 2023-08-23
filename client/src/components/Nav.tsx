@@ -42,7 +42,7 @@ const Nav = ({ currentPage, handleLogout }: NavProps) => {
             }
             {(currentPage === 'My Adventures' || currentPage === 'New Adventure') &&
                 <>
-                    <Link className={'hidden lg:block lg:ml-10'} to='/account-settings'>Account Settings</Link>
+                    <Link className={'hidden lg:block lg:ml-10'} to='/account/settings'>Account Settings</Link>
                     <Link className={'hidden lg:block lg:ml-10'} to='#' onClick={handleLogout}>Logout</Link>
                 </>
             }

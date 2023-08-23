@@ -19,7 +19,7 @@ interface PageProps {
 
 type Encounter = {
     id?: number | undefined;
-    encounter_type: string | null;
+    type: string | null;
     description: string | null;
     stats?: string | null;
 }
@@ -28,7 +28,7 @@ type SceneData = {
     sequence: number;
     challenge: string | null;
     setting: string | null;
-    encounter_set: Encounter[];
+    encounters: Encounter[];
     plot_twist: string | null;
     clue: string | null;
 }
@@ -537,6 +537,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     }
                     chapterData[2].chapterContent.push(scene);
                 });
+                console.log(Rising_Action);
 
                 const assignChapters = (fn: React.Dispatch<SetStateAction<ChapterObject>>[]) => {
                     fn.forEach((func, idx) => {
@@ -616,9 +617,9 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     sequence: number,
                     challenge: string,
                     setting: string,
-                    encounter_set: {
+                    encounters: {
                         id?: number,
-                        encounter_type: string,
+                        type: string,
                         description: string,
                         stats?: string
                     }[],
@@ -646,14 +647,14 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                         navigate('/login');
                     } else if (sceneResponse.data) {
                         const sceneId = sceneResponse.data.id;
-                        const { encounter_set } = scene as Scene;
+                        const { encounters } = scene as Scene;
 
-                        encounter_set?.forEach(async encounter => {
+                        encounters?.forEach(async encounter => {
                             setNotification('Saving encounters');
-                            const { encounter_type, description } = encounter;
+                            const { type, description } = encounter;
                             const encounterPayload = {
                                 scene_id: sceneId,
-                                encounter_type,
+                                type,
                                 description
                             }
 

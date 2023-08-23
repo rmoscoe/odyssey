@@ -7,7 +7,7 @@ import Carousel, { ScrollMode } from 'nuka-carousel';
 
 type Encounter = {
     id?: number | undefined;
-    encounter_type: string | null;
+    type: string | null;
     description: string | null;
     stats?: string | null;
 }
@@ -16,7 +16,7 @@ type SceneData = {
     sequence: number;
     challenge: string | null;
     setting: string | null;
-    encounter_set: Encounter[];
+    encounters: Encounter[];
     plot_twist: string | null;
     clue: string | null;
 }
@@ -137,7 +137,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
             sequence: pos + 1,
             challenge: '',
             setting: '',
-            encounter_set: [],
+            encounters: [],
             plot_twist: null,
             clue: null
         }

@@ -6,7 +6,7 @@ import Encounter from './Encounter';
 
 type Encounter = {
     id?: number | undefined;
-    encounter_type: string | null;
+    type: string | null;
     description: string | null;
     stats?: string | null;
 }
@@ -15,7 +15,7 @@ type SceneData = {
     sequence: number;
     challenge: string | null;
     setting: string | null;
-    encounter_set: Encounter[];
+    encounters: Encounter[];
     plot_twist: string | null;
     clue: string | null;
 }
@@ -67,9 +67,9 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
         }
 
         if (deleting === 'encounter') {
-            const newEncounters = [...scenes[currentScene - 1].encounter_set.slice(0, deleteIdx), ...scenes[currentScene - 1].encounter_set.slice(deleteIdx + 1)]
+            const newEncounters = [...scenes[currentScene - 1].encounters.slice(0, deleteIdx), ...scenes[currentScene - 1].encounters.slice(deleteIdx + 1)]
             const scene = scenes[currentScene - 1];
-            scene.encounter_set = newEncounters;
+            scene.encounters = newEncounters;
 
             setScenes([...scenes.slice(0, currentScene - 1), scene, ...scenes.slice(currentScene + 1)]);
             setChapter({ chapterTitle, chapterContent: scenes });
@@ -85,7 +85,7 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
         const idx = currentScene - 1;
         setChallengeText(scenes[idx].challenge || '');
         setSettingText(scenes[idx].setting || '');
-        setEncounters(scenes[idx].encounter_set);
+        setEncounters(scenes[idx].encounters);
         setPlotTwist(scenes[idx].plot_twist ? scenes[idx].plot_twist : '');
         setClue(scenes[idx].clue ? scenes[idx].clue : '');
     }
@@ -97,16 +97,16 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
     }
 
     const addEncounterBefore = (idx: number) => {
-        const encounterSet = scenes[currentScene - 1].encounter_set;
+        const encounterSet = scenes[currentScene - 1].encounters;
         const newEncounter = {
             id: undefined,
-            encounter_type: '',
+            type: '',
             description: '',
             stats: null
         }
         const newEncounters = [...encounterSet.slice(0, idx), newEncounter, ...encounterSet.slice(idx)];
         const scene = scenes[currentScene - 1];
-        scene.encounter_set = newEncounters;
+        scene.encounters = newEncounters;
         
         setScenes([...scenes.slice(0, currentScene - 1), scene, ...scenes.slice(currentScene + 1)]);
         setChapter({ chapterTitle, chapterContent: scenes });
@@ -120,7 +120,7 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
             sequence: existingScene.sequence,
             challenge: challengeText,
             setting: settingText,
-            encounter_set: encounters,
+            encounters: encounters,
             plot_twist: plotTwist,
             clue: clue
         }
@@ -228,13 +228,13 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
                 {edit &&
                     <div className="relative">
                         <p className="mx-auto text-center font-bold mb-1">Encounters:</p>
-                        <button className={`absolute right-0 inset-y-0 border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => addEncounterBefore(scene.encounter_set !== null ? scene.encounter_set.length : 0)}>
+                        <button className={`absolute right-0 inset-y-0 border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => addEncounterBefore(scene.encounters !== null ? scene.encounters.length : 0)}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                         </button>
                     </div>
                 }
                 <div className="space-y-2 mb-3">
-                    {scene.encounter_set?.map((encounter, j) => (
+                    {scene.encounters?.map((encounter, j) => (
                         <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} scenes={scenes} setScenes={setScenes} currentScene={currentScene}/>
                     ))}
                 </div>
