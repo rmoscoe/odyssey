@@ -26,7 +26,9 @@ type chapterObject = {
 }
 
 interface SceneProps {
+    scene: SceneData;
     scenes: SceneData[];
+    sceneIndex: number;
     setScenes: (value: SceneData[]) => void;
     handleDeleteClick: () => void;
     editScene: boolean;
@@ -39,7 +41,7 @@ interface SceneProps {
     addScene: (pos?: number) => void;
 }
 
-export default function Scene({ scenes, setScenes, handleDeleteClick, editScene, deleting, setDeleting, currentScene, setDeleteType, chapter, setChapter, addScene }: SceneProps) {
+export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDeleteClick, editScene, deleting, setDeleting, currentScene, setDeleteType, chapter, setChapter, addScene }: SceneProps) {
     const { theme } = useTheme();
     const [edit, setEdit] = useState(editScene);
     const [editEncounter, setEditEncounter] = useState(false);
@@ -58,7 +60,7 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
         if (deleting === 'scene') {
             const newScenes = [...scenes.slice(0, deleteIdx), ...scenes.slice(deleteIdx + 1)];
             for (let i = deleteIdx; i < newScenes.length; i++) {
-                scenes[i].sequence--;
+                newScenes[i].sequence--;
             }
             setScenes(newScenes.slice());
             setChapter({ chapterTitle, chapterContent: scenes });
@@ -67,11 +69,11 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
         }
 
         if (deleting === 'encounter') {
-            const newEncounters = [...scenes[currentScene - 1].encounters.slice(0, deleteIdx), ...scenes[currentScene - 1].encounters.slice(deleteIdx + 1)]
-            const scene = scenes[currentScene - 1];
-            scene.encounters = newEncounters;
+            const newEncounters = [...scene.encounters.slice(0, deleteIdx), ...scene.encounters.slice(deleteIdx + 1)];
+            const newScene = {...scene};
+            newScene.encounters = newEncounters;
 
-            setScenes([...scenes.slice(0, currentScene - 1), scene, ...scenes.slice(currentScene + 1)]);
+            setScenes([...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)]);
             setChapter({ chapterTitle, chapterContent: scenes });
             setDeleting('');
             setDeleteType('');
@@ -82,12 +84,11 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
 
     const clickEditScene = () => {
         setEdit(true);
-        const idx = currentScene - 1;
-        setChallengeText(scenes[idx].challenge || '');
-        setSettingText(scenes[idx].setting || '');
-        setEncounters(scenes[idx].encounters);
-        setPlotTwist(scenes[idx].plot_twist ? scenes[idx].plot_twist : '');
-        setClue(scenes[idx].clue ? scenes[idx].clue : '');
+        setChallengeText(scene.challenge || '');
+        setSettingText(scene.setting || '');
+        setEncounters(scene.encounters);
+        setPlotTwist(scene.plot_twist ? scene.plot_twist : '');
+        setClue(scene.clue ? scene.clue : '');
     }
 
     const deleteScene = (idx: number) => {
@@ -97,7 +98,7 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
     }
 
     const addEncounterBefore = (idx: number) => {
-        const encounterSet = scenes[currentScene - 1].encounters;
+        const encounterSet = scene.encounters;
         const newEncounter = {
             id: undefined,
             type: '',
@@ -105,19 +106,17 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
             stats: null
         }
         const newEncounters = [...encounterSet.slice(0, idx), newEncounter, ...encounterSet.slice(idx)];
-        const scene = scenes[currentScene - 1];
-        scene.encounters = newEncounters;
+        const newScene = {...scene};
+        newScene.encounters = newEncounters;
         
-        setScenes([...scenes.slice(0, currentScene - 1), scene, ...scenes.slice(currentScene + 1)]);
+        setScenes([...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)]);
         setChapter({ chapterTitle, chapterContent: scenes });
         setEditEncounter(true);
     }
 
     const saveScene = () => {
-        const idx = currentScene - 1;
-        const existingScene = scenes[idx];
         const updatedScene = {
-            sequence: existingScene.sequence,
+            sequence: scene.sequence,
             challenge: challengeText,
             setting: settingText,
             encounters: encounters,
@@ -125,7 +124,7 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
             clue: clue
         }
         
-        const newScenes = [...scenes.slice(0, idx), updatedScene, ...scenes.slice(idx + 1)];
+        const newScenes = [...scenes.slice(0, sceneIndex), updatedScene, ...scenes.slice(sceneIndex + 1)];
 
         setScenes(newScenes);
         setChapter({ chapterTitle, chapterContent: scenes });
@@ -166,8 +165,8 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
         }
     }
 
-    return scenes.map((scene, i) => (
-        <section className={`p-2 bg-${theme}-scene rounded-2xl w-full`} key={`scene-${i}`}>
+    return (
+        <section className={`mx-4 px-6 py-2 bg-${theme}-scene rounded-2xl w-full`}>
             <section className="flex justify-between w-full mb-2">
                 <h4 className={`font-${theme}-heading text-${theme}-accent text-lg`}>Scene {scene.sequence}</h4>
                 {!edit &&
@@ -175,7 +174,7 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
                         <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={clickEditScene}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPencil} />
                         </button>
-                        <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => deleteScene(i)}>
+                        <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => deleteScene(sceneIndex)}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
                     </div>
@@ -313,7 +312,7 @@ export default function Scene({ scenes, setScenes, handleDeleteClick, editScene,
                     </>
                 }
             </section>
-            <button className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 mb-2`} onClick={() => addScene(i)}>Add Scene Before</button>
+            <button className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 mb-2`} onClick={() => addScene(sceneIndex)}>Add Scene Before</button>
         </section>
-    ));
+    );
 }

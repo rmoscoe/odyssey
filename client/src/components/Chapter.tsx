@@ -214,7 +214,9 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
                 }
                 {title === 'Plot' &&
                     <Carousel adaptiveHeight={true} scrollMode={"remainder" as ScrollMode} cellSpacing={18} className="p-3" defaultControlsConfig={defaultControlsConfig} >
-                        <Scene scenes={scenes} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} />
+                        {scenes.map((scene, i) => (
+                            <Scene key={`scene-${i}`} scene={scene} scenes={scenes} sceneIndex={i} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} />
+                        ))}
                     </Carousel>
                 }
             </section>

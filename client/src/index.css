@@ -492,6 +492,14 @@ button {
   color: #1352FF;
 }
 
+.bg-fantasy-scene {
+  background-color: #930C10;
+}
+
+.bg-sci-fi-scene {
+  background-color: #455055;
+}
+
 .invalid-entry {
   border-color: rgb(244 63 94);
 }
@@ -711,28 +719,44 @@ input.bg-fantasy-field:-internal-autofill-selected {
   cursor: pointer;
 }
 
-.fantasy-next::before {
+.fantasy-next, .fantasy-prev {
+  color: #fffee8!important;
+}
+
+.fantasy-next, .sci-fi-next {
+  transform: translateX(-75%);
+}
+
+.sci-fi-next, .sci-fi-prev {
+  color: #D9D9D9!important;
+}
+
+.fantasy-prev, .sci-fi-prev {
+  transform: translateX(-25%);
+}
+
+.fantasy-next::after {
   content: '>';
   font-size: 32px;
-  color: #290000;
+  color: #fffee8;
   margin-left: 5px;
 }
 
 .fantasy-prev::before {
   content: '<';
   font-size: 32px;
-  color: #290000;
+  color: #fffee8;
   margin-left:5px;
 }
 
-.sci-fi-next::before {
+.sci-fi-next::after {
   content: '>';
   font-size: 32px;
   color: #D9D9D9;
   margin-left:5px;
 }
 
-.sci-fi-previous::before {
+.sci-fi-prev::before {
   content: '<';
   font-size:32px;
   color: #D9D9D9;
