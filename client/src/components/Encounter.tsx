@@ -138,7 +138,7 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
                     </>
                 }
                 {!edit && editScene &&
-                    <div className="button-container flex shrink-0 basis-12 ml-2 space-x-0.5 mb-1">
+                    <div className="button-container flex shrink-0 basis-[5.75rem] ml-2 space-x-0.5 mb-1 justify-between">
                         <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={clickEditEncounter}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPencil} />
                         </button>

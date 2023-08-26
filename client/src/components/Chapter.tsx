@@ -171,7 +171,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
             <section className="flex justify-between w-full mb-2">
                 <h3 className={`font-${theme}-heading text-${theme}-heading text-xl`}>{title}</h3>
                 {title !== 'Plot' && !editContent &&
-                    <div className="button-container flex shrink-0 basis-12 ml-2 space-x-0.5">
+                    <div className="button-container flex basis-[5.75rem] shrink-0 ml-2 space-x-0.5 justify-between">
                         <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={editChapter}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPencil} />
                         </button>
@@ -181,14 +181,14 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
                     </div>
                 }
                 {title !== 'Plot' && editContent &&
-                    <div className="button-container flex shrink-0 basis-12 ml-2 space-x-0.5">
+                    <div className="button-container flex basis-12 shrink-0 ml-2 space-x-0.5">
                         <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={saveChapter}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faFloppyDisk} />
                         </button>
                     </div>
                 }
                 {title === 'Plot' && !editScene &&
-                    <div className="button-container flex shrink-0 basis-12 ml-2 space-x-0.5">
+                    <div className="button-container flex basis-12 shrink-0 ml-2 space-x-0.5">
                         <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => addScene(chapterContent !== null ? chapterContent.length : 0)}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                         </button>
@@ -213,7 +213,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
                     </textarea>
                 }
                 {title === 'Plot' &&
-                    <Carousel adaptiveHeight={true} scrollMode={"remainder" as ScrollMode} cellSpacing={18} className="p-3" defaultControlsConfig={defaultControlsConfig} >
+                    <Carousel adaptiveHeight={true} scrollMode={"remainder" as ScrollMode} cellSpacing={18} defaultControlsConfig={defaultControlsConfig} >
                         {scenes.map((scene, i) => (
                             <Scene key={`scene-${i}`} scene={scene} scenes={scenes} sceneIndex={i} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} />
                         ))}

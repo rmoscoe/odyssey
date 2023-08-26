@@ -170,7 +170,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
             <section className="flex justify-between w-full mb-2">
                 <h4 className={`font-${theme}-heading text-${theme}-accent text-lg`}>Scene {scene.sequence}</h4>
                 {!edit &&
-                    <div className="button-container flex shrink-0 basis-12 ml-2 space-x-0.5">
+                    <div className="button-container flex shrink-0 basis-[5.75rem] ml-2 space-x-0.5 justify-between">
                         <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={clickEditScene}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPencil} />
                         </button>

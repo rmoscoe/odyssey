@@ -718,7 +718,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                             <select
                                 id="game-select"
                                 name="game-select"
-                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 max-w-full block h-[${inputHeight}px]`}
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 max-w-[90vw] block h-[${inputHeight}px]`}
                                 onChange={handleInputChange}
                                 onBlur={fieldLoseFocus}
                                 disabled={loading}
@@ -971,7 +971,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     />
                 </form>
 
-                <section className={`block static h-6 w-full lg:flex lg:w-[4%] lg:h-[${contentHeight}px]`} style={sectionStyle}>
+                <section className={`block static my-6 h-6 w-full lg:flex lg:w-[4%] lg:h-[${contentHeight}px] lg:my-0 mx-2`} style={sectionStyle}>
                     <div className={`rounded-t-lg w-full h-3 ${theme}-gradient-start lg:w-1/2 lg:h-full lg:rounded-l-lg lg:rounded-tr-none`}></div>
                     <div className={`rounded-b-lg w-full h-3 ${theme}-gradient-end lg:w-1/2 lg:h-full lg:rounded-r-lg lg:rounded-bl-none`}></div>
                 </section>
