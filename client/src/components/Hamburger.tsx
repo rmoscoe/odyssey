@@ -15,6 +15,11 @@ interface HamburgerProps {
 export default function Hamburger({ toggleActive, hamburgerActive, handleLogout }: HamburgerProps) {
     const { theme, toggleTheme } = useTheme();
 
+    const mobileLogout = (event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => {
+        toggleActive();
+        handleLogout(event);
+    }
+
     return (
         <div className={hamburgerActive ? `fixed top-0 left-0 right-0 bg-${theme}-primary font-${theme}-text text-${theme}-accent text-3xl p-3 h-[80vh] w-full` : 'hidden'}>
             <section className="w-full flex justify-end">
@@ -47,7 +52,7 @@ export default function Hamburger({ toggleActive, hamburgerActive, handleLogout 
                         </svg>
                     </section>
                     <Link to='/account/settings' onClick={toggleActive} className='block my-4 mx-0 w-full text-center'>Account Settings</Link>
-                    <Link className={'block mt-4 mx-0 w-full text-center'} to='#' onClick={handleLogout}>Logout</Link>
+                    <Link className={'block mt-4 mx-0 w-full text-center'} to='#' onClick={mobileLogout}>Logout</Link>
                 </section>
             </div>
         </div>

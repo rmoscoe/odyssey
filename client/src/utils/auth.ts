@@ -14,7 +14,6 @@ interface Token {
 class Auth {
     loggedIn() {
         const token = this.getToken();
-        console.log("auth.ts 12 Token: " + JSON.stringify(token));
         return !token ? false : !this.isTokenExpired(token);
     }
 

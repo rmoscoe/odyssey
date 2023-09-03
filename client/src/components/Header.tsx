@@ -21,7 +21,7 @@ const Header = ({ currentPage }: HeaderProps) => {
     const handleLogout = async (event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => {
         event.preventDefault();
         await Auth.logout();
-        toggleActive();
+        // toggleActive();
         navigate('/');
     }
 

@@ -270,6 +270,7 @@ class GenerateAdventureView(APIView):
     def post(self, request):
         try:
             data = request.data
+            print("Data: ", data)
             campaign_setting = data.get("campaign_setting")
             level = data.get("level")
             experience = data.get("experience")

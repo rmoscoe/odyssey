@@ -59,7 +59,6 @@ export default function MyAdventures({ handlePageChange }: AdventureDetailsProps
                 const token = Auth.getToken();
                 const userId = token.fields.user;
                 const response = await axios.get(`/api/adventures/?user_id=${userId}`)
-                console.log(response);
                 if (response.status === 401) {
                     navigate('/login');
                 } else if (response.data) {
@@ -81,8 +80,6 @@ export default function MyAdventures({ handlePageChange }: AdventureDetailsProps
         getAdventures();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    console.log("Auth.loggedIn(): " + Auth.loggedIn());
 
     const newAdventureHandler = () => navigate('/adventures/new');
 

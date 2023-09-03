@@ -288,6 +288,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const formRef = useRef<HTMLFormElement>(null);
     const [contentHeight, setContentHeight] = useState(document.getElementById('content-container')?.offsetHeight);
     const [inputHeight, setInputHeight] = useState(document.querySelector('input')?.offsetHeight);
+    // const [adventureSaved, setAdventureSaved] = useState(false);
 
     const contentContainerRef = useRef<HTMLElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -351,7 +352,9 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         if (gameTitle !== null && gameTitle !== '') {
             setFinalGameTitle(gameTitle);
         } else {
-            setFinalGameTitle(game);
+            if (game !== null && game !== '') {
+                setFinalGameTitle(game);
+            }
         }
     }, [game, gameTitle]);
 
@@ -493,6 +496,8 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         });
 
         try {
+            console.log("Final Game Title: ", finalGameTitle);
+            console.log("Adventure Params: ", adventureParams);
             const response = await axios.post('/api/generate-adventure/', adventureParams, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
             if (response.status === 401) {
                 navigate('/login');
@@ -587,9 +592,11 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     }
 
     const saveAdventure = async () => {
+        console.log("Saving...");
         setLoading(true);
 
         // Validate
+        console.log("Validating input");
         setNotification("Validating");
         if (adventureTitle === '') {
             setNotification("Please give your adventure a title.");
@@ -599,6 +606,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         }
 
         // assemble Adventure
+        console.log("Assembling Adventure");
         setNotification("Saving adventure");
         const adventurePayload = {
             title: adventureTitle,
@@ -610,9 +618,12 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             climax: climaxChapter.chapterContent,
             denoument: denoumentChapter.chapterContent
         }
+        console.log("adventurePayload: ", adventurePayload);
 
         try {
+            console.log("Posting Adventure");
             const response = await axios.post('/api/adventures/', adventurePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            console.log("Adventure Response: ", response);
 
             if (response.status === 401) {
                 navigate('/login');
@@ -645,7 +656,10 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                         clue
                     }
 
+                    console.log("Scenes Payload: ", scenePayload);
+
                     const sceneResponse = await axios.post('/api/scenes/', scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+                    console.log(`Scene ${idx + 1} Response: ${sceneResponse}`)
 
                     if (sceneResponse.status === 401) {
                         navigate('/login');
@@ -661,8 +675,10 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                 type,
                                 description
                             }
+                            console.log("Encounter Payload: ", encounterPayload);
 
                             const encounterResponse = await axios.post('/api/encounters/', encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+                            console.log("Encounter Response: ", encounterResponse);
 
                             if (encounterResponse.status !== 201) {
                                 setNotification('Oops! Something went wrong. Please try again.');
@@ -675,8 +691,8 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             } else {
                 setNotification('Oops! Something went wrong. Please try again.');
             }
-
             setLoading(false);
+            // setAdventureSaved(true);
         } catch (err) {
             console.error(err);
             setNotification("Oops! Something went wrong. Please try again.");
