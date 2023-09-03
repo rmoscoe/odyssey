@@ -293,6 +293,14 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
+        if (!Auth.loggedIn()) {
+            navigate('/login');
+            return;
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
         const contentContainer = contentContainerRef.current;
 
         if (!contentContainer) return;
@@ -346,10 +354,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             setFinalGameTitle(game);
         }
     }, [game, gameTitle]);
-
-    if (!Auth.loggedIn()) {
-        navigate('/login');
-    }
 
     handlePageChange('New Adventure');
 
@@ -983,14 +987,14 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
 
                     {adventure && chapterSet &&
                         <section className="flex flex-wrap content-end">
-                            <div>
+                            <div className="flex items-end basis-full mb-3 space-y-2">
                                 <div className="mr-2 w-full">
                                     <label htmlFor="adventure-title-input" className={`${theme}-label block`}>Enter a Title*</label>
                                     <input
                                         type="text"
                                         id="adventure-title-input"
                                         name="adventure-title-input"
-                                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                        className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block w-full`}
                                         autoComplete="off"
                                         onChange={handleInputChange}
                                         onBlur={fieldLoseFocus}

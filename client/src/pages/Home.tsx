@@ -1,6 +1,7 @@
 import { useTheme } from '../utils/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import Auth from '../utils/auth';
+import { useEffect } from 'react'
 
 type PageProps = {
     handlePageChange: (page: string) => void;
@@ -10,9 +11,14 @@ export default function Home({ handlePageChange }: PageProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
 
-    if (Auth.loggedIn()) {
-        navigate('/adventures');
-    }
+    useEffect(() => {
+        if (Auth.loggedIn()) {
+            navigate('/adventures');
+            return;
+        }
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
 
     handlePageChange('Home');
 
@@ -29,7 +35,7 @@ export default function Home({ handlePageChange }: PageProps) {
                     <button onClick={logInHandler} className={`absolute top-2/3 left-[53%] w-[40%] border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Log In</button>
                 </div>
                 <div className={`w-full hidden bg-${theme}-contrast lg:block`}>
-                    <img className="m-1 w-full" src={`/static/hero-${theme}.png`} alt={theme === 'fantasy' ? 'Left: adventurers standing in front of a large, red dragon, framed by a stone archway. Center: many multi-colored polyhedral dice in a bag. Right: Three armored adventurers in a cavern.' : 'Left: a battle between ships in outer space. Center: many multi-colored polyhedral dice in a bag. Right: a futuristic spaceship control room with a control panel that wraps around the front and a center console, flanked by chairs for the pilot and co-pilot.'}/>
+                    <img className="m-1 w-full" src={`/static/hero-${theme}.png`} alt={theme === 'fantasy' ? 'Left: adventurers standing in front of a large, red dragon, framed by a stone archway. Center: many multi-colored polyhedral dice in a bag. Right: Three armored adventurers in a cavern.' : 'Left: a battle between ships in outer space. Center: many multi-colored polyhedral dice in a bag. Right: a futuristic spaceship control room with a control panel that wraps around the front and a center console, flanked by chairs for the pilot and co-pilot.'} />
                 </div>
             </section>
 

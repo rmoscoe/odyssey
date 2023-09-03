@@ -103,7 +103,7 @@ WSGI_APPLICATION = 'odyssey_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
         'NAME': os.environ.get('SCHEMA'),
         'USER': os.environ.get(
             'DB_USER'

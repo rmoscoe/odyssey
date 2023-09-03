@@ -2,20 +2,29 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 interface Token {
-    key: string;
-    expires_at: string;
+    model: string;
+    pk: string;
+    fields: {
+        user: number;
+        created: string;
+        expires_at: string;
+    }
 }
 
 class Auth {
     loggedIn() {
         const token = this.getToken();
-        return !!token && !this.isTokenExpired(token);
+        console.log("auth.ts 12 Token: " + JSON.stringify(token));
+        return !token ? false : !this.isTokenExpired(token);
     }
 
     isTokenExpired(token: Token) {
         try {
-            const expiration = new Date(token.expires_at);
+            const expiration = new Date(token.fields.expires_at);
             const current = new Date();
+            if (expiration < current) {
+                localStorage.removeItem('odysseyToken');
+            }
             return expiration < current;
         } catch (err) {
             return false;
@@ -24,7 +33,8 @@ class Auth {
 
     getToken() {
         const tokenString = localStorage.getItem('odysseyToken');
-        return tokenString ? JSON.parse(tokenString) : null;
+        const token = tokenString ? JSON.parse(tokenString) : undefined;
+        return token;
     }
 
     async login(user: {username: string, password: string}, csrftoken: string | null | undefined) {

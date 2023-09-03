@@ -26,14 +26,14 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
-    if (!Auth.loggedIn()) {
-        navigate('/login');
-    }
-
     handlePageChange('Account Settings');
 
     useEffect(() => {
         const retrieveEmail = async () => {
+            if (!Auth.loggedIn()) {
+                navigate('/login');
+                return;
+            }
             const pk = Auth.getToken().fields.user;
             try {
                 const user = await axios.get(`/api/users/${pk}/`);
@@ -44,7 +44,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
         }
 
         retrieveEmail();
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

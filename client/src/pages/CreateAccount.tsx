@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { validateEmail, validatePassword } from '../utils/helpers';
@@ -20,9 +20,13 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
-    if (Auth.loggedIn()) {
-        navigate('/adventures');
-    }
+    useEffect(() => {
+        if (Auth.loggedIn()) {
+            navigate('/adventures');
+            return;
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     handlePageChange('Create Account');
 

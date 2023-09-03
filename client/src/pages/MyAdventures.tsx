@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Auth from '../utils/auth';
 import Adventure from '../components/Adventure';
 import DeleteConfirm from '../components/DeleteConfirm';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 interface AdventureDetailsProps {
     handlePageChange: (page: string) => void;
@@ -47,21 +47,19 @@ export default function MyAdventures({ handlePageChange }: AdventureDetailsProps
     const [adventures, setAdventures] = useState<adventure[]>([]);
     const [deleteTarget, setDeleteTarget] = useState(0);
 
-    if (!Auth.loggedIn()) {
-        navigate('/login');
-    }
-
     handlePageChange('My Adventures');
 
     useEffect(() => {
         const getAdventures = async () => {
             try {
-                const token = Auth.getToken();
-                if (Auth.isTokenExpired(token)) {
+                if (!Auth.loggedIn()) {
                     navigate('/login');
+                    return;
                 }
+                const token = Auth.getToken();
                 const userId = token.fields.user;
                 const response = await axios.get(`/api/adventures/?user_id=${userId}`)
+                console.log(response);
                 if (response.status === 401) {
                     navigate('/login');
                 } else if (response.data) {
@@ -71,17 +69,24 @@ export default function MyAdventures({ handlePageChange }: AdventureDetailsProps
                     setAdventures([]);
                 }
             } catch (err) {
-                console.error(err);
+                console.error("MyAdventures 72: ", err);
+                if (err instanceof Error) {
+                    if ( err instanceof AxiosError && err.response?.status === 401) {
+                        navigate('/login');
+                    }
+                }
             }
         }
 
         getAdventures();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    console.log("Auth.loggedIn(): " + Auth.loggedIn());
 
     const newAdventureHandler = () => navigate('/adventures/new');
 
-    const handleDeleteClick = (id=0) => {
+    const handleDeleteClick = (id = 0) => {
         setDeleteTarget(id);
         document.querySelector('.modal')?.classList.add('is-active');
     }
