@@ -726,7 +726,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             }
 
             <section className="block w-full lg:flex" id="content-container" ref={contentContainerRef}>
-                <form autoComplete="off" id="new-adventure-form" className="mx-auto w-full lg:w-[48%] pt-3" onSubmit={generateNewAdventure} ref={formRef}>
+                <form autoComplete="off" id="new-adventure-form" className="mx-auto w-full lg:mb-6 lg:w-[48%] pt-3" onSubmit={generateNewAdventure} ref={formRef}>
                     <CSRFToken />
                     {notification === 'One or more required fields is missing input.' &&
                         <p className={`${theme}-text mb-3 text-center`}>{notification}</p>

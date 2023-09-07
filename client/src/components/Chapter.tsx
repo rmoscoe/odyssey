@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -45,13 +46,15 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
 
     const [currentScene, setCurrentScene] = useState(1);
 
-    const { chapterTitle, chapterContent } = chapter;
+    let { chapterTitle, chapterContent } = chapter;
 
     const [scenes, setScenes] = useState<SceneData[]>([]);
 
     useEffect(() => {
         if (typeof chapterContent !== 'string') {
             setScenes(chapterContent?.slice() ?? []);
+        } else {
+            setContent(chapterContent);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -66,6 +69,15 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deleting, chapterToDelete]);
+
+    useEffect(() => {
+        const updateChapter = () => {
+            chapterTitle = chapter.chapterTitle;
+            chapterContent = chapter.chapterContent;
+        }
+
+        updateChapter();
+    }, [chapter]);
 
     let title = '';
 
@@ -97,11 +109,11 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
     }
 
     const saveChapter = () => {
-        const newContent = content ?? scenes;
-        setContent('');
+        // const newContent = content ?? scenes;
+        // setContent('');
         setChapter({
             chapterTitle,
-            chapterContent: newContent
+            chapterContent: content ?? scenes
         });
         setEditContent(false);
     }
@@ -154,7 +166,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { target } = e;
-        const inputValue = target.innerText;
+        const inputValue = target.value;
 
         setContent(inputValue);
     }
@@ -209,7 +221,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
                         onChange={handleInputChange}
                         rows={4}
                     >
-                        {typeof chapterContent === 'string' ? chapterContent : 'Cannot display scenes here.'}
+                        {typeof chapterContent === 'string' ? content : 'Cannot display scenes here.'}
                     </textarea>
                 }
                 {title === 'Plot' &&
