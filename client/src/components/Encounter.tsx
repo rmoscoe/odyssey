@@ -33,7 +33,7 @@ interface EncounterProps {
     sequence: number;
     editScene: boolean;
     setDeleteIdx: (value: number) => void;
-    addEncounterBefore: (idx: number) => void;
+    addEncounterBefore: (event: React.MouseEvent, idx: number) => void;
     setDeleteType: (value: string) => void;
     chapter: chapterObject;
     setChapter: (value: chapterObject) => void;
@@ -52,24 +52,29 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
 
     const eSeq = sequence;
 
-    const clickEditEncounter = () => {
+    const clickEditEncounter = (event: React.MouseEvent) => {
+        event.stopPropagation();
         setEdit(true);
         setTypeText(encounterType || '');
         setDescriptionText(encounterDescription || '');
     }
 
-    const deleteEncounter = (idx: number) => {
+    const deleteEncounter = (event: React.MouseEvent, idx: number) => {
+        event?.stopPropagation()
         setDeleteIdx(idx);
         setDeleteType('encounter');
         handleDeleteClick();
     }
 
-    const clickAddEncounterBefore = (idx: number) => {
-        addEncounterBefore(idx);
+    const clickAddEncounterBefore = (event: React.MouseEvent, idx: number) => {
+        event.stopPropagation();
+        addEncounterBefore(event, idx);
         setEdit(true);
     }
 
-    const saveEncounter = () => {
+    const saveEncounter = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        console.log("Saving encounter...")
         setEncounterType(typeText);
         setEncounterDescription(descriptionText);
 
@@ -78,8 +83,11 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
             description: encounterDescription
         }
 
+        console.log("Updated Encounter: ", updatedEncounter);
+
         const {sequence, challenge, setting, encounters, plot_twist, clue} = scenes[currentScene - 1];
         const updatedEncounterSet = [...encounters.slice(0, eSeq), updatedEncounter, ...encounters.slice(eSeq)];
+        console.log("Updated Encounter Set: ", JSON.stringify(updatedEncounterSet));
         const updatedScene = {
             sequence,
             challenge,
@@ -88,7 +96,9 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
             plot_twist,
             clue
         }
+        console.log("Updated Scene: ", JSON.stringify(updatedScene));
         const updatedScenes = [...scenes.slice(0, currentScene - 1), updatedScene, ...scenes.slice(currentScene - 1)];
+        console.log("Updated Scenes: ", JSON.stringify(updatedScenes));
 
         setScenes(updatedScenes);
         setChapter({ chapterTitle: chapter.chapterTitle, chapterContent: scenes });
@@ -99,7 +109,7 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        e.preventDefault();
+        e.stopPropagation();
 
         const { target } = e;
         const inputId = target.id;
@@ -114,35 +124,34 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
                 break;
             default:
                 console.error('Cannot update form. Invalid field ID');
-                saveEncounter();
         }
     }
 
     return (
-        <section className={`p-2 bg-${theme}-secondary rounded-2xl w-full`}>
-            <section className="flex justify-between w-full">
+        <section className={`p-2 bg-${theme}-secondary rounded-2xl w-full overflow-auto`}>
+            <section className="flex justify-between w-full items-start overflow-auto">
                 {!edit &&
                     <p className={`font-${theme}-text text-${theme}-text text-base`}>Type: {encounter.type}</p>
                 }
                 {edit &&
-                    <>
+                    <div className="flex flex-wrap basis-full mr-3">
                         <label htmlFor="type-field" className={`${theme}-label`}>Type:</label>
                         <input
                             type="text"
                             id="type-field"
                             name="type-field"
-                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text flex shrink-0 basis-full text-lg px-1 py-2 mt-2`}
-                            value={encounterType || ''}
+                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text flex shrink-0 basis-full w-full text-lg px-1 py-2 mt-2`}
+                            value={typeText || ''}
                             onChange={handleInputChange}
                         />
-                    </>
+                    </div>
                 }
                 {!edit && editScene &&
                     <div className="button-container flex shrink-0 basis-[5.75rem] ml-2 space-x-0.5 mb-1 justify-between">
                         <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={clickEditEncounter}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPencil} />
                         </button>
-                        <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => deleteEncounter(sequence)}>
+                        <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={(event) => deleteEncounter(event, sequence)}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
                     </div>
@@ -168,12 +177,15 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
                         className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-2`}
                         onChange={handleInputChange}
                         rows={4}
+                        value={encounterDescription || ''}
                     >
-                        {encounterDescription || ''}
+                        {descriptionText}
                     </textarea>
                 </>
             }
-            <button className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 my-2`} onClick={() => clickAddEncounterBefore(sequence)}>Add Encounter Before</button>
+            {!edit &&
+                <button className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 my-2`} onClick={(event) => clickAddEncounterBefore(event, sequence)}>Add Encounter Before</button>
+            }
         </section>
     );
 }

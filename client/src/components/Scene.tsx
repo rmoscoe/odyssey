@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -39,11 +40,12 @@ interface SceneProps {
     chapter: chapterObject;
     setChapter: (value: chapterObject) => void;
     addScene: (pos?: number) => void;
+    sceneCarousel: React.MutableRefObject<HTMLDivElement | null>;
 }
 
-export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDeleteClick, editScene, deleting, setDeleting, currentScene, setDeleteType, chapter, setChapter, addScene }: SceneProps) {
+export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDeleteClick, editScene, deleting, setDeleting, currentScene, setDeleteType, chapter, setChapter, addScene, sceneCarousel }: SceneProps) {
     const { theme } = useTheme();
-    const [edit, setEdit] = useState(editScene);
+    const [edit, setEdit] = useState(false);
     const [editEncounter, setEditEncounter] = useState(false);
     const [challengeText, setChallengeText] = useState('');
     const [settingText, setSettingText] = useState('');
@@ -82,7 +84,21 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deleting]);
 
-    const clickEditScene = () => {
+    useEffect(() => {
+        if (editScene && currentScene === scene.sequence) {
+            setEdit(true);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editScene, currentScene])
+
+    const clickEditScene = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        const containerElement = sceneCarousel.current;
+        console.log(containerElement);
+        containerElement?.classList.add("overflow-y-visible");
+        document.querySelector(".slider-frame")?.classList.add("!overflow-y-visible");
+        document.querySelector(".slider-list")?.classList.add("overflow-y-visible");
+        document.querySelector(".slide-current")?.classList.add("overflow-y-visible");
         setEdit(true);
         setChallengeText(scene.challenge || '');
         setSettingText(scene.setting || '');
@@ -91,14 +107,18 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         setClue(scene.clue ? scene.clue : '');
     }
 
-    const deleteScene = (idx: number) => {
+    const deleteScene = (event: React.MouseEvent, idx: number) => {
+        event.stopPropagation();
         setDeleteIdx(idx);
         setDeleteType('scene')
         handleDeleteClick();
     }
 
-    const addEncounterBefore = (idx: number) => {
+    const addEncounterBefore = (event: React.MouseEvent, idx = 0) => {
+        event.stopPropagation();
+        console.log("Adding encounter before...");
         const encounterSet = scene.encounters;
+        console.log("Encounter Set: ", JSON.stringify(encounterSet));
         const newEncounter = {
             id: undefined,
             type: '',
@@ -106,15 +126,24 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
             stats: null
         }
         const newEncounters = [...encounterSet.slice(0, idx), newEncounter, ...encounterSet.slice(idx)];
+        console.log("New Encounters: ", JSON.stringify(newEncounters));
         const newScene = {...scene};
+        console.log("New Scene: ", JSON.stringify(newScene));
         newScene.encounters = newEncounters;
         
         setScenes([...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)]);
+        console.log("Scenes: ", JSON.stringify(scenes));
         setChapter({ chapterTitle, chapterContent: scenes });
         setEditEncounter(true);
     }
 
-    const saveScene = () => {
+    const saveScene = (event: React.MouseEvent) => {
+        event.stopPropagation();
+        const containerElement = sceneCarousel.current;
+        containerElement?.classList.remove("overflow-y-visible");
+        document.querySelector(".slider-frame")?.classList.remove("!overflow-y-visible");
+        document.querySelector(".slider-list")?.classList.remove("overflow-y-visible");
+        document.querySelector(".slide-current")?.classList.remove("overflow-y-visible");
         const updatedScene = {
             sequence: scene.sequence,
             challenge: challengeText,
@@ -145,6 +174,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         const { target } = e;
         const inputId = target.id;
         const inputValue = target.tagName === 'INPUT' ? target.value : target.innerText;
+        // const inputValue = target.value;
 
         switch (inputId) {
             case 'challenge-field':
@@ -161,7 +191,6 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 break;
             default:
                 console.error('Cannot update form. Invalid field ID');
-                saveScene();
         }
     }
 
@@ -174,7 +203,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={clickEditScene}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPencil} />
                         </button>
-                        <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => deleteScene(sceneIndex)}>
+                        <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={(event) => deleteScene(event, sceneIndex)}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
                     </div>
@@ -201,8 +230,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                         onChange={handleInputChange}
                         rows={4}
+                        value={scene.challenge || ''}
                     >
-                        {scene.challenge}
+                        {challengeText}
                     </textarea>
                 }
                 <p className="mx-auto text-center font-bold mb-1">Setting:</p>
@@ -217,8 +247,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                         onChange={handleInputChange}
                         rows={4}
+                        value={scene.setting || ''}
                     >
-                        {scene.setting}
+                        {settingText}
                     </textarea>
                 }
                 {!edit &&
@@ -227,7 +258,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 {edit &&
                     <div className="relative">
                         <p className="mx-auto text-center font-bold mb-1">Encounters:</p>
-                        <button className={`absolute right-0 inset-y-0 border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => addEncounterBefore(scene.encounters !== null ? scene.encounters.length : 0)}>
+                        <button className={`absolute right-0 inset-y-0 border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={(event) => addEncounterBefore(event, scene.encounters !== null ? scene.encounters.length : 0)}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                         </button>
                     </div>
@@ -251,8 +282,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                                 className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                                 onChange={handleInputChange}
                                 rows={4}
+                                value={scene.plot_twist}
                             >
-                                {scene.setting}
+                                {plotTwist}
                             </textarea>
                         }
                     </>
@@ -270,7 +302,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                             className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                             onChange={handleInputChange}
                             rows={4}
+                            value={scene.plot_twist || ''}
                         >
+                            {plotTwist}
                         </textarea>
                     </>
                 }
@@ -288,8 +322,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                                 className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                                 onChange={handleInputChange}
                                 rows={4}
+                                value={scene.clue}
                             >
-                                {scene.clue}
+                                {clue}
                             </textarea>
                         }
                     </>
@@ -307,12 +342,16 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                             className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                             onChange={handleInputChange}
                             rows={4}
+                            value={scene.clue || ''}
                         >
+                            {clue}
                         </textarea>
                     </>
                 }
             </section>
-            <button className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 mb-2`} onClick={() => addScene(sceneIndex)}>Add Scene Before</button>
+            {!edit &&
+                <button className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 mb-2`} onClick={() => addScene(sceneIndex)}>Add Scene Before</button>
+            }
         </section>
     );
 }

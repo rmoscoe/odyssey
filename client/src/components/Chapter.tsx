@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPencil, faFloppyDisk, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -49,6 +49,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
     let { chapterTitle, chapterContent } = chapter;
 
     const [scenes, setScenes] = useState<SceneData[]>([]);
+    const sceneCarousel = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (typeof chapterContent !== 'string') {
@@ -57,7 +58,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
             setContent(chapterContent);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [chapterContent]);
 
 
 
@@ -105,6 +106,13 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
         setEditContent(true);
         if (typeof chapterContent === 'string') {
             setContent(chapterContent);
+        } else {
+            const containerElement = sceneCarousel.current;
+            console.log(containerElement);
+            containerElement?.classList.add("overflow-y-visible");
+            document.querySelector(".slider-frame")?.classList.add("!overflow-y-visible");
+            document.querySelector(".slider-list")?.classList.add("overflow-y-visible");
+            document.querySelector(".slide-current")?.classList.add("overflow-y-visible");
         }
     }
 
@@ -115,6 +123,13 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
             chapterTitle,
             chapterContent: content ?? scenes
         });
+        if (typeof chapterContent !== 'string') {
+            const containerElement = sceneCarousel.current;
+            containerElement?.classList.remove("overflow-y-visible");
+            document.querySelector(".slider-frame")?.classList.remove("!overflow-y-visible");
+            document.querySelector(".slider-list")?.classList.remove("overflow-y-visible");
+            document.querySelector(".slide-current")?.classList.remove("overflow-y-visible");
+        }
         setEditContent(false);
     }
 
@@ -131,19 +146,24 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
         }
 
         let updatedChapterContent: SceneData[];
-
-        if (chapterContent === null) {
+        console.log("Chapter Content: ", JSON.stringify(chapterContent));
+        if (!chapterContent) {
             updatedChapterContent = [];
         } else {
             updatedChapterContent = chapterContent.slice();
         }
 
+        console.log("Updated Chapter Content: ", JSON.stringify(updatedChapterContent));
+
         if (updatedChapterContent.length > 0) {
-            for (let i = updatedChapterContent.length; i >= pos; i--) {
-                updatedChapterContent[i] = updatedChapterContent[i - 1];
-                updatedChapterContent[i].sequence++;
+            for (let i = updatedChapterContent.length - 1; i >= pos; i--) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                updatedChapterContent[i + 1] = chapterContent!.slice(i, i + 1)[0];
+                updatedChapterContent[i + 1].sequence++;
             }
         }
+
+        console.log("Shifted Updated Chapter Content: ", JSON.stringify(updatedChapterContent));
 
         const newScene = {
             sequence: pos + 1,
@@ -156,11 +176,13 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
 
         updatedChapterContent[pos] = newScene;
 
-        setChapter({
-            chapterTitle,
-            chapterContent: updatedChapterContent,
-        });
+        console.log("Shifted Updated Chapter with New Scene: ", JSON.stringify(updatedChapterContent));
+        console.log("Chapter: ", JSON.stringify(chapter));
 
+        setScenes(updatedChapterContent);
+
+        console.log("Updated Chapter: ", JSON.stringify(chapter));
+        setCurrentScene(newScene.sequence);
         setEditScene(true);
     }
 
@@ -225,9 +247,9 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
                     </textarea>
                 }
                 {title === 'Plot' &&
-                    <Carousel adaptiveHeight={true} scrollMode={"remainder" as ScrollMode} cellSpacing={18} defaultControlsConfig={defaultControlsConfig} >
+                    <Carousel adaptiveHeight={true} scrollMode={"remainder" as ScrollMode} cellSpacing={18} defaultControlsConfig={defaultControlsConfig} ref={sceneCarousel}>
                         {scenes.map((scene, i) => (
-                            <Scene key={`scene-${i}`} scene={scene} scenes={scenes} sceneIndex={i} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} />
+                            <Scene key={`scene-${i}`} scene={scene} scenes={scenes} sceneIndex={i} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} sceneCarousel={sceneCarousel} />
                         ))}
                     </Carousel>
                 }
