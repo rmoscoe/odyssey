@@ -546,7 +546,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     }
                     chapterData[2].chapterContent.push(scene);
                 });
-                console.log(Rising_Action);
 
                 const assignChapters = (fn: React.Dispatch<SetStateAction<ChapterObject>>[]) => {
                     fn.forEach((func, idx) => {
@@ -562,7 +561,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                 setNotification("Oops! Something went wrong. Please try again.");
             }
 
-            setContentHeight(() => document.getElementById('content-container')?.offsetHeight);
+            setContentHeight(() => contentContainerRef.current?.offsetHeight);
             setNotification('');
             setLoading(false);
             setGame(() => '');
@@ -996,7 +995,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     <div className={`rounded-b-lg w-full h-3 ${theme}-gradient-end lg:w-1/2 lg:h-full lg:rounded-r-lg lg:rounded-bl-none`}></div>
                 </section>
 
-                <section className="block static w-full lg:w-[48%]">
+                <section className="block static w-full lg:w-[48%] pb-12">
                     {!adventure &&
                         <p className={`${theme}-text mt-3 text-center w-full`}>Adventure will display here once generated.</p>
                     }

@@ -4,7 +4,6 @@ import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPencil, faFloppyDisk, faPlus } from '@fortawesome/free-solid-svg-icons';
 import Scene from './Scene';
-// import Carousel, { ScrollMode } from 'nuka-carousel';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
@@ -180,13 +179,6 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
         setContent(inputValue);
     }
 
-    // const defaultControlsConfig = {
-    //     nextButtonClassName: `${theme}-next`,
-    //     pagingDotsClassName: `${theme}-dot`,
-    //     prevButtonClassName: `${theme}-prev`,
-    //     afterSlide: (idx: number) => { setCurrentScene(idx + 1); }
-    // }
-
     return (
         <section className={`m-2 bg-${theme}-contrast rounded-2xl p-2 w-full`}>
             <section className="flex justify-between w-full mb-2">
@@ -234,7 +226,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
                     </textarea>
                 }
                 {title === 'Plot' &&
-                    <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={25} emulateTouch={true} centerMode={true} centerSlidePercentage={100} showStatus={false}>
+                    <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={editScene ? 250 : 25} emulateTouch={!editScene} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false}>
                         {scenes.map((scene, i) => (
                             <Scene key={`scene-${i}`} scene={scene} scenes={scenes} sceneIndex={i} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} setEditScene={setEditScene} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} />
                         ))}

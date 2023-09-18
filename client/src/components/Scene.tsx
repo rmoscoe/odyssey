@@ -72,7 +72,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
 
         if (deleting === 'encounter') {
             const newEncounters = [...scene.encounters.slice(0, deleteIdx), ...scene.encounters.slice(deleteIdx + 1)];
-            const newScene = {...scene};
+            const newScene = { ...scene };
             newScene.encounters = newEncounters;
 
             setScenes([...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)]);
@@ -88,10 +88,33 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         if (editScene && currentScene === scene.sequence) {
             setEdit(true);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [editScene, currentScene])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editScene, currentScene]);
 
-    const clickEditScene = (event: React.MouseEvent) => {
+    useEffect(() => {
+        if (!edit) {
+            const updatedScene = {
+                sequence: scene.sequence,
+                challenge: challengeText,
+                setting: settingText,
+                encounters: encounters,
+                plot_twist: plotTwist,
+                clue: clue
+            }
+
+            const newScenes = [...scenes.slice(0, sceneIndex), updatedScene, ...scenes.slice(sceneIndex + 1)];
+
+            setChapter({ chapterTitle, chapterContent: newScenes });
+        }
+    }, [edit]);
+
+    // useEffect(() => {
+    //     if (!edit) {
+    //         setChapter({ chapterTitle, chapterContent: scenes });
+    //     }
+    // }, [scenes]);
+
+    function clickEditScene(event: React.MouseEvent) {
         event.stopPropagation();
         setEditScene(true);
         setEdit(true);
@@ -122,10 +145,10 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         }
         const newEncounters = [...encounterSet.slice(0, idx), newEncounter, ...encounterSet.slice(idx)];
         console.log("New Encounters: ", JSON.stringify(newEncounters));
-        const newScene = {...scene};
+        const newScene = { ...scene };
         console.log("New Scene: ", JSON.stringify(newScene));
         newScene.encounters = newEncounters;
-        
+
         setScenes([...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)]);
         console.log("Scenes: ", JSON.stringify(scenes));
         setChapter({ chapterTitle, chapterContent: scenes });
@@ -134,27 +157,30 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
 
     const saveScene = (event: React.MouseEvent) => {
         event.stopPropagation();
-        const updatedScene = {
-            sequence: scene.sequence,
-            challenge: challengeText,
-            setting: settingText,
-            encounters: encounters,
-            plot_twist: plotTwist,
-            clue: clue
-        }
-        
-        const newScenes = [...scenes.slice(0, sceneIndex), updatedScene, ...scenes.slice(sceneIndex + 1)];
+        // const updatedScene = {
+        //     sequence: scene.sequence,
+        //     challenge: challengeText,
+        //     setting: settingText,
+        //     encounters: encounters,
+        //     plot_twist: plotTwist,
+        //     clue: clue
+        // }
 
-        setScenes(newScenes);
-        setChapter({ chapterTitle, chapterContent: scenes });
+        // const newScenes = [...scenes.slice(0, sceneIndex), updatedScene, ...scenes.slice(sceneIndex + 1)];
 
-        setChallengeText('');
-        setSettingText('');
-        setEncounters([]);
-        setPlotTwist("");
-        setClue("");
+        // setScenes(newScenes);
+        // console.log("Scenes: ", scenes);
+        // setChapter({ chapterTitle, chapterContent: scenes });
+        // console.log("Chapter: ", chapter);
+
+        // setChallengeText('');
+        // setSettingText('');
+        // setEncounters([]);
+        // setPlotTwist("");
+        // setClue("");
         setAddPlotTwist(false);
         setAddClue(false);
+        setEditScene(false);
         setEdit(false);
     }
 
@@ -162,8 +188,11 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         e.stopPropagation();
 
         const { target } = e;
+        console.log("Input ID: ", target.id);
         const inputId = target.id;
-        const inputValue = target.tagName === 'INPUT' ? target.value : target.innerText;
+        // const inputValue = target.tagName === 'INPUT' ? target.value : target.innerText;
+        const inputValue = target.value;
+        console.log("Input Value: ", inputValue);
 
         switch (inputId) {
             case 'challenge-field':
@@ -220,12 +249,13 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 {edit &&
                     <textarea
                         autoComplete="off"
+                        key={"challenge-field"}
                         id="challenge-field"
                         name="challenge-field"
                         className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                         onChange={handleInputChange}
                         rows={4}
-                        value={scene.challenge ?? " "}
+                        value={challengeText}
                     >
                         {challengeText}
                     </textarea>
@@ -237,12 +267,13 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 {edit &&
                     <textarea
                         autoComplete="off"
+                        key={"setting-field"}
                         id="setting-field"
                         name="setting-field"
                         className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                         onChange={handleInputChange}
                         rows={4}
-                        value={scene.setting ?? " "}
+                        value={settingText}
                     >
                         {settingText}
                     </textarea>
@@ -260,7 +291,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 }
                 <div className="space-y-2 mb-3">
                     {scene.encounters?.map((encounter, j) => (
-                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} scenes={scenes} setScenes={setScenes} currentScene={currentScene}/>
+                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} scenes={scenes} setScenes={setScenes} currentScene={currentScene} />
                     ))}
                 </div>
                 {scene.plot_twist &&
@@ -272,12 +303,13 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         {edit &&
                             <textarea
                                 autoComplete="off"
+                                key={"plot-twist-field-1"}
                                 id="plot-twist-field-1"
                                 name="plot-twist-field-1"
                                 className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                                 onChange={handleInputChange}
                                 rows={4}
-                                value={scene.plot_twist ?? " "}
+                                value={plotTwist}
                             >
                                 {plotTwist}
                             </textarea>
@@ -292,12 +324,13 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         <p className="mx-auto text-center font-bold mb-1">Plot Twist:</p>
                         <textarea
                             autoComplete="off"
+                            key={"plot-twist-field-2"}
                             id="plot-twist-field-2"
                             name="plot-twist-field-2"
                             className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                             onChange={handleInputChange}
                             rows={4}
-                            value={scene.plot_twist ?? " "}
+                            value={plotTwist}
                         >
                             {plotTwist}
                         </textarea>
@@ -312,12 +345,13 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         {edit &&
                             <textarea
                                 autoComplete="off"
+                                key={"clue-field-1"}
                                 id="clue-field-1"
                                 name="clue-field-1"
                                 className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                                 onChange={handleInputChange}
                                 rows={4}
-                                value={scene.clue ?? " "}
+                                value={clue}
                             >
                                 {clue}
                             </textarea>
@@ -332,12 +366,13 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         <p className="mx-auto text-center font-bold mb-1">Clue:</p>
                         <textarea
                             autoComplete="off"
+                            key={"clue-field-2"}
                             id="clue-field-2"
                             name="clue-field-2"
                             className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                             onChange={handleInputChange}
                             rows={4}
-                            value={scene.clue ?? " "}
+                            value={clue}
                         >
                             {clue}
                         </textarea>

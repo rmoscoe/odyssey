@@ -172,6 +172,7 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
                     <label htmlFor="description-field" className={`${theme}-label`}>Description:</label>
                     <textarea
                         autoComplete="off"
+                        key={"description-field"}
                         id="description-field"
                         name="description-field"
                         className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-2`}
