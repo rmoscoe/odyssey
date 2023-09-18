@@ -1,10 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPencil, faFloppyDisk, faPlus } from '@fortawesome/free-solid-svg-icons';
 import Scene from './Scene';
-import Carousel, { ScrollMode } from 'nuka-carousel';
+// import Carousel, { ScrollMode } from 'nuka-carousel';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
 type Encounter = {
     id?: number | undefined;
@@ -49,7 +51,6 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
     let { chapterTitle, chapterContent } = chapter;
 
     const [scenes, setScenes] = useState<SceneData[]>([]);
-    const sceneCarousel = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (typeof chapterContent !== 'string') {
@@ -106,13 +107,6 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
         setEditContent(true);
         if (typeof chapterContent === 'string') {
             setContent(chapterContent);
-        } else {
-            const containerElement = sceneCarousel.current;
-            console.log(containerElement);
-            containerElement?.classList.add("overflow-y-visible");
-            document.querySelector(".slider-frame")?.classList.add("!overflow-y-visible");
-            document.querySelector(".slider-list")?.classList.add("overflow-y-visible");
-            document.querySelector(".slide-current")?.classList.add("overflow-y-visible");
         }
     }
 
@@ -123,13 +117,6 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
             chapterTitle,
             chapterContent: content ?? scenes
         });
-        if (typeof chapterContent !== 'string') {
-            const containerElement = sceneCarousel.current;
-            containerElement?.classList.remove("overflow-y-visible");
-            document.querySelector(".slider-frame")?.classList.remove("!overflow-y-visible");
-            document.querySelector(".slider-list")?.classList.remove("overflow-y-visible");
-            document.querySelector(".slide-current")?.classList.remove("overflow-y-visible");
-        }
         setEditContent(false);
     }
 
@@ -193,12 +180,12 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
         setContent(inputValue);
     }
 
-    const defaultControlsConfig = {
-        nextButtonClassName: `${theme}-next`,
-        pagingDotsClassName: `${theme}-dot`,
-        prevButtonClassName: `${theme}-prev`,
-        afterSlide: (idx: number) => { setCurrentScene(idx + 1); }
-    }
+    // const defaultControlsConfig = {
+    //     nextButtonClassName: `${theme}-next`,
+    //     pagingDotsClassName: `${theme}-dot`,
+    //     prevButtonClassName: `${theme}-prev`,
+    //     afterSlide: (idx: number) => { setCurrentScene(idx + 1); }
+    // }
 
     return (
         <section className={`m-2 bg-${theme}-contrast rounded-2xl p-2 w-full`}>
@@ -247,9 +234,9 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
                     </textarea>
                 }
                 {title === 'Plot' &&
-                    <Carousel adaptiveHeight={true} scrollMode={"remainder" as ScrollMode} cellSpacing={18} defaultControlsConfig={defaultControlsConfig} ref={sceneCarousel}>
+                    <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={25} emulateTouch={true} centerMode={true} centerSlidePercentage={100} showStatus={false}>
                         {scenes.map((scene, i) => (
-                            <Scene key={`scene-${i}`} scene={scene} scenes={scenes} sceneIndex={i} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} sceneCarousel={sceneCarousel} />
+                            <Scene key={`scene-${i}`} scene={scene} scenes={scenes} sceneIndex={i} setScenes={setScenes} handleDeleteClick={handleDeleteClick} editScene={editScene} setEditScene={setEditScene} deleting={deleting} setDeleting={setDeleting} currentScene={currentScene} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} addScene={addScene} />
                         ))}
                     </Carousel>
                 }
