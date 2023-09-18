@@ -33,6 +33,7 @@ interface SceneProps {
     setScenes: (value: SceneData[]) => void;
     handleDeleteClick: () => void;
     editScene: boolean;
+    setEditScene: (value: boolean) => void;
     deleting: string;
     setDeleting: (value: string) => void;
     currentScene: number;
@@ -40,18 +41,17 @@ interface SceneProps {
     chapter: chapterObject;
     setChapter: (value: chapterObject) => void;
     addScene: (pos?: number) => void;
-    sceneCarousel: React.MutableRefObject<HTMLDivElement | null>;
 }
 
-export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDeleteClick, editScene, deleting, setDeleting, currentScene, setDeleteType, chapter, setChapter, addScene, sceneCarousel }: SceneProps) {
+export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDeleteClick, editScene, setEditScene, deleting, setDeleting, currentScene, setDeleteType, chapter, setChapter, addScene }: SceneProps) {
     const { theme } = useTheme();
     const [edit, setEdit] = useState(false);
     const [editEncounter, setEditEncounter] = useState(false);
-    const [challengeText, setChallengeText] = useState('');
-    const [settingText, setSettingText] = useState('');
+    const [challengeText, setChallengeText] = useState(scene.challenge ?? " ");
+    const [settingText, setSettingText] = useState(scene.setting ?? " ");
     const [encounters, setEncounters] = useState<Encounter[]>([]);
-    const [plotTwist, setPlotTwist] = useState<string | null>(null);
-    const [clue, setClue] = useState<string | null>(null);
+    const [plotTwist, setPlotTwist] = useState<string>(scene.plot_twist ?? " ");
+    const [clue, setClue] = useState<string>(scene.clue ?? " ");
     const [addPlotTwist, setAddPlotTwist] = useState(false);
     const [addClue, setAddClue] = useState(false);
     const [deleteIdx, setDeleteIdx] = useState(0);
@@ -93,18 +93,13 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
 
     const clickEditScene = (event: React.MouseEvent) => {
         event.stopPropagation();
-        const containerElement = sceneCarousel.current;
-        console.log(containerElement);
-        containerElement?.classList.add("overflow-y-visible");
-        document.querySelector(".slider-frame")?.classList.add("!overflow-y-visible");
-        document.querySelector(".slider-list")?.classList.add("overflow-y-visible");
-        document.querySelector(".slide-current")?.classList.add("overflow-y-visible");
+        setEditScene(true);
         setEdit(true);
-        setChallengeText(scene.challenge || '');
-        setSettingText(scene.setting || '');
+        setChallengeText(scene.challenge ?? '');
+        setSettingText(scene.setting ?? '');
         setEncounters(scene.encounters);
-        setPlotTwist(scene.plot_twist ? scene.plot_twist : '');
-        setClue(scene.clue ? scene.clue : '');
+        setPlotTwist(scene.plot_twist ?? '');
+        setClue(scene.clue ?? '');
     }
 
     const deleteScene = (event: React.MouseEvent, idx: number) => {
@@ -139,11 +134,6 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
 
     const saveScene = (event: React.MouseEvent) => {
         event.stopPropagation();
-        const containerElement = sceneCarousel.current;
-        containerElement?.classList.remove("overflow-y-visible");
-        document.querySelector(".slider-frame")?.classList.remove("!overflow-y-visible");
-        document.querySelector(".slider-list")?.classList.remove("overflow-y-visible");
-        document.querySelector(".slide-current")?.classList.remove("overflow-y-visible");
         const updatedScene = {
             sequence: scene.sequence,
             challenge: challengeText,
@@ -161,20 +151,19 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         setChallengeText('');
         setSettingText('');
         setEncounters([]);
-        setPlotTwist(null);
-        setClue(null);
+        setPlotTwist("");
+        setClue("");
         setAddPlotTwist(false);
         setAddClue(false);
         setEdit(false);
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        e.preventDefault();
+        e.stopPropagation();
 
         const { target } = e;
         const inputId = target.id;
         const inputValue = target.tagName === 'INPUT' ? target.value : target.innerText;
-        // const inputValue = target.value;
 
         switch (inputId) {
             case 'challenge-field':
@@ -183,10 +172,16 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
             case 'setting-field':
                 setSettingText(inputValue);
                 break;
-            case 'plot-twist-field':
+            case 'plot-twist-field-1':
                 setPlotTwist(inputValue);
                 break;
-            case 'clue-field':
+            case 'plot-twist-field-2':
+                setPlotTwist(inputValue);
+                break;
+            case 'clue-field-1':
+                setClue(inputValue);
+                break;
+            case 'clue-field-2':
                 setClue(inputValue);
                 break;
             default:
@@ -195,7 +190,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
     }
 
     return (
-        <section className={`mx-4 px-6 py-2 bg-${theme}-scene rounded-2xl w-full`}>
+        <section className={`px-6 py-2 bg-${theme}-scene rounded-2xl w-full`}>
             <section className="flex justify-between w-full mb-2">
                 <h4 className={`font-${theme}-heading text-${theme}-accent text-lg`}>Scene {scene.sequence}</h4>
                 {!edit &&
@@ -230,7 +225,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                         onChange={handleInputChange}
                         rows={4}
-                        value={scene.challenge || ''}
+                        value={scene.challenge ?? " "}
                     >
                         {challengeText}
                     </textarea>
@@ -247,7 +242,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                         onChange={handleInputChange}
                         rows={4}
-                        value={scene.setting || ''}
+                        value={scene.setting ?? " "}
                     >
                         {settingText}
                     </textarea>
@@ -277,12 +272,12 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         {edit &&
                             <textarea
                                 autoComplete="off"
-                                id="plot-twist-field"
-                                name="plot-twist-field"
+                                id="plot-twist-field-1"
+                                name="plot-twist-field-1"
                                 className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                                 onChange={handleInputChange}
                                 rows={4}
-                                value={scene.plot_twist}
+                                value={scene.plot_twist ?? " "}
                             >
                                 {plotTwist}
                             </textarea>
@@ -297,12 +292,12 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         <p className="mx-auto text-center font-bold mb-1">Plot Twist:</p>
                         <textarea
                             autoComplete="off"
-                            id="plot-twist-field"
-                            name="plot-twist-field"
+                            id="plot-twist-field-2"
+                            name="plot-twist-field-2"
                             className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                             onChange={handleInputChange}
                             rows={4}
-                            value={scene.plot_twist || ''}
+                            value={scene.plot_twist ?? " "}
                         >
                             {plotTwist}
                         </textarea>
@@ -317,12 +312,12 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         {edit &&
                             <textarea
                                 autoComplete="off"
-                                id="clue-field"
-                                name="clue-field"
+                                id="clue-field-1"
+                                name="clue-field-1"
                                 className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                                 onChange={handleInputChange}
                                 rows={4}
-                                value={scene.clue}
+                                value={scene.clue ?? " "}
                             >
                                 {clue}
                             </textarea>
@@ -337,12 +332,12 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         <p className="mx-auto text-center font-bold mb-1">Clue:</p>
                         <textarea
                             autoComplete="off"
-                            id="clue-field"
-                            name="clue-field"
+                            id="clue-field-2"
+                            name="clue-field-2"
                             className={`bg-${theme}-field border-${theme}-neutral border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-3`}
                             onChange={handleInputChange}
                             rows={4}
-                            value={scene.clue || ''}
+                            value={scene.clue ?? " "}
                         >
                             {clue}
                         </textarea>

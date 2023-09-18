@@ -821,6 +821,19 @@ input.bg-fantasy-field:-internal-autofill-selected {
   background-image: linear-gradient(to top, #31333B, #FF54A4 45%, #FF54A4);
 }
 
+.carousel .control-prev.control-arrow:before {
+  border-right: 18px solid #fff !important;
+}
+
+.carousel .control-next.control-arrow:before {
+  border-left: 18px solid #fff !important;
+}
+
+.carousel .control-arrow:before, .carousel.carousel-slider .control-arrow:before {
+  border-top: 14px solid transparent !important;
+  border-bottom: 14px solid transparent !important;
+}
+
 input::-webkit-inner-spin-button, input::-webkit-outer-spin-button, input::-moz-number-spin-up, input::-moz-number-spin-down {
   -webkit-appearance: none;
   margin: 0;
