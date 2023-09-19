@@ -24,7 +24,6 @@ export default function SaveConfirm({ adventureId, setAdventureSaved }: SaveProp
     }, [reloadRequired]);
 
     const closeModal = () => {
-        modalRef.current?.classList.remove('is-active');
         setAdventureSaved(false);
     }
 
@@ -44,7 +43,7 @@ export default function SaveConfirm({ adventureId, setAdventureSaved }: SaveProp
     }
 
     return (
-        <div className="modal" ref={modalRef}>
+        <div className="modal is-active" ref={modalRef}>
             <div className="modal-background" onClick={closeModal}></div>
             <div className={`modal-card w-11/12 lg:my-0 lg:mx-auto lg:w-[640px] rounded-[6px] bg-${theme}-primary`}>
                 <header className={`modal-card-head`}>
@@ -62,7 +61,7 @@ export default function SaveConfirm({ adventureId, setAdventureSaved }: SaveProp
                     </div>
                 </section>
                 <footer className={`modal-card-foot bg-${theme}-primary`}>
-                    <div className="block mt-5 w-full lg:hidden">
+                    <div className="block mt-5 w-full">
                         <button className={`button border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text mb-3 py-1.5 px-6 w-full`} onClick={viewAdventureDetails}>View Adventure Details</button>
                         <button className={`button border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text mb-3 py-1.5 px-6 w-full`} onClick={viewAdventures}>View All Adventures</button>
                         <button className={`button border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text mb-1 py-1.5 px-6 w-full`} onClick={generateAnotherAdventure}>Generate Another Adventure</button>

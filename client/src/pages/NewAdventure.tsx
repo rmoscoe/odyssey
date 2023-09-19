@@ -649,7 +649,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     setNotification(`Saving Scene ${idx + 1}`);
                     const { sequence, challenge, setting, plot_twist, clue } = scene as Scene;
                     const scenePayload = {
-                        adventure_id: adventureId,
+                        adventure_id: response.data.id,
                         sequence,
                         challenge,
                         setting,
