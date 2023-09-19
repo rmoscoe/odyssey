@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
 import DeleteConfirm from '../components/DeleteConfirm';
+import SaveConfirm from '../components/SaveConfirm';
 
 interface PageProps {
     handlePageChange: (page: string) => void;
@@ -288,7 +289,8 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const formRef = useRef<HTMLFormElement>(null);
     const [contentHeight, setContentHeight] = useState(document.getElementById('content-container')?.offsetHeight);
     const [inputHeight, setInputHeight] = useState(document.querySelector('input')?.offsetHeight);
-    // const [adventureSaved, setAdventureSaved] = useState(false);
+    const [adventureSaved, setAdventureSaved] = useState(false);
+    const [adventureId, setAdventureId] = useState(0);
 
     const contentContainerRef = useRef<HTMLElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -587,7 +589,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     }
 
     const handleDeleteClick = () => {
-        document.querySelector('.modal')?.classList.add('is-active');
+        document.querySelector('#delete-modal')?.classList.add('is-active');
     }
 
     const saveAdventure = async () => {
@@ -627,6 +629,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             if (response.status === 401) {
                 navigate('/login');
             } else if (response.data) {
+                setAdventureId(response.data.id);
                 type Scene = {
                     sequence: number,
                     challenge: string,
@@ -640,7 +643,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                     plot_twist: string | null,
                     clue: string | null
                 }
-                const adventureId = response.data.id;
                 const scenesArr = Array.isArray(risingActionChapter.chapterContent) ? risingActionChapter.chapterContent : [];
 
                 scenesArr?.forEach(async (scene, idx) => {
@@ -690,8 +692,9 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             } else {
                 setNotification('Oops! Something went wrong. Please try again.');
             }
+            setAdventure(false);
             setLoading(false);
-            // setAdventureSaved(true);
+            setAdventureSaved(true);
         } catch (err) {
             console.error(err);
             setNotification("Oops! Something went wrong. Please try again.");
@@ -1031,6 +1034,9 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             </section>
 
             <DeleteConfirm deleteType={deleteType} setDeleting={setDeleting} />
+            {adventureSaved &&
+                <SaveConfirm adventureId={adventureId} setAdventureSaved={setAdventureSaved}/>
+            }
         </main>
     );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import axios from 'axios';
@@ -16,6 +16,8 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
     const { theme } = useTheme();
     const navigate = useNavigate();
     const [reloadRequired, setReloadRequired] = useState(false);
+
+    const deleteModalRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (reloadRequired) {
@@ -53,7 +55,7 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
     }
 
     const closeModal = () => {
-        document.querySelector('.modal')?.classList.remove('is-active');
+        deleteModalRef.current?.classList.remove('is-active');
     }
 
     const handleDeleteConfirm = async () => {
@@ -88,7 +90,7 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
     }
 
     return (
-        <div className="modal">
+        <div id="delete-modal" className="modal">
             <div className="modal-background" onClick={closeModal}></div>
             <div className={`modal-card w-11/12 lg:my-0 lg:mx-auto lg:w-[640px] rounded-[6px] bg-${theme}-primary`}>
                 <header className={`modal-card-head`}>
