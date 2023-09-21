@@ -46,15 +46,16 @@ interface SceneProps {
 export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDeleteClick, editScene, setEditScene, deleting, setDeleting, currentScene, setDeleteType, chapter, setChapter, addScene }: SceneProps) {
     const { theme } = useTheme();
     const [edit, setEdit] = useState(false);
-    const [editEncounter, setEditEncounter] = useState(false);
+    const [editEncounter, setEditEncounter] = useState<boolean[]>(new Array(scene.encounters?.length || 0).fill(false));
     const [challengeText, setChallengeText] = useState(scene.challenge ?? " ");
     const [settingText, setSettingText] = useState(scene.setting ?? " ");
-    const [encounters, setEncounters] = useState<Encounter[]>([]);
+    const [encounters, setEncounters] = useState<Encounter[]>(scene.encounters || []);
     const [plotTwist, setPlotTwist] = useState<string>(scene.plot_twist ?? " ");
     const [clue, setClue] = useState<string>(scene.clue ?? " ");
     const [addPlotTwist, setAddPlotTwist] = useState(false);
     const [addClue, setAddClue] = useState(false);
     const [deleteIdx, setDeleteIdx] = useState(0);
+    const [encounterEditMode, setEncounterEditMode] = useState(false);
 
     const { chapterTitle } = chapter;
 
@@ -88,6 +89,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         if (editScene && currentScene === scene.sequence) {
             setEdit(true);
         }
+        if (editScene && currentScene !== scene.sequence) {
+            setEdit(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editScene, currentScene]);
 
@@ -108,11 +112,10 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         }
     }, [edit]);
 
-    // useEffect(() => {
-    //     if (!edit) {
-    //         setChapter({ chapterTitle, chapterContent: scenes });
-    //     }
-    // }, [scenes]);
+    useEffect(() => {
+        console.log("Rerendering. Encounters: ", scene.encounters);
+        return;
+    }, [scenes, encounterEditMode, encounters]);
 
     function clickEditScene(event: React.MouseEvent) {
         event.stopPropagation();
@@ -132,52 +135,62 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         handleDeleteClick();
     }
 
+    const setEditSingleEncounter = (idx: number, value: boolean) => {
+        const editValues = [...editEncounter];
+        editValues[idx] = value;
+        setEditEncounter(editValues);
+        for (let i = 0; i < editValues.length; i++) {
+            if (editValues[i]) {
+                setEncounterEditMode(true);
+                console.log("Setting EncounterEditMode to True...");
+                return;
+            }
+            setEncounterEditMode(false);
+            console.log("Setting EncounterEditMode to False...");
+        }
+    }
+
     const addEncounterBefore = (event: React.MouseEvent, idx = 0) => {
         event.stopPropagation();
-        console.log("Adding encounter before...");
-        const encounterSet = scene.encounters;
-        console.log("Encounter Set: ", JSON.stringify(encounterSet));
         const newEncounter = {
             id: undefined,
             type: '',
             description: '',
             stats: null
         }
-        const newEncounters = [...encounterSet.slice(0, idx), newEncounter, ...encounterSet.slice(idx)];
-        console.log("New Encounters: ", JSON.stringify(newEncounters));
-        const newScene = { ...scene };
-        console.log("New Scene: ", JSON.stringify(newScene));
+
+        let newEncounters: Encounter[];
+        if (!scene.encounters || scene.encounters.length === 0) {
+            newEncounters = [newEncounter];
+        } else {
+            newEncounters = [...scene.encounters.slice(0, idx), newEncounter, ...scene.encounters.slice(idx)];
+        }
+        // if (newEncounters.length > 0) {
+        //     for (let i = newEncounters.length - 1; i > idx; i--) {
+        //         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        //         newEncounters[i + 1] = scene.encounters!.slice(i, i+1)[0];
+        //     }
+        // }
+        
+
+        // newEncounters[idx] = newEncounter;
+
+        // const updatedChapterContent = scenes.slice();
+
+        const newScene = JSON.parse(JSON.stringify(scene));
         newScene.encounters = newEncounters;
 
-        setScenes([...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)]);
-        console.log("Scenes: ", JSON.stringify(scenes));
-        setChapter({ chapterTitle, chapterContent: scenes });
-        setEditEncounter(true);
+        // updatedChapterContent[idx] = newScene;
+
+        // setScenes(updatedChapterContent);
+        // setChapter({ chapterTitle, chapterContent: updatedChapterContent });
+        const newScenes = [...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)];
+        setScenes(newScenes);
+        setEditSingleEncounter(idx, true);
     }
 
     const saveScene = (event: React.MouseEvent) => {
         event.stopPropagation();
-        // const updatedScene = {
-        //     sequence: scene.sequence,
-        //     challenge: challengeText,
-        //     setting: settingText,
-        //     encounters: encounters,
-        //     plot_twist: plotTwist,
-        //     clue: clue
-        // }
-
-        // const newScenes = [...scenes.slice(0, sceneIndex), updatedScene, ...scenes.slice(sceneIndex + 1)];
-
-        // setScenes(newScenes);
-        // console.log("Scenes: ", scenes);
-        // setChapter({ chapterTitle, chapterContent: scenes });
-        // console.log("Chapter: ", chapter);
-
-        // setChallengeText('');
-        // setSettingText('');
-        // setEncounters([]);
-        // setPlotTwist("");
-        // setClue("");
         setAddPlotTwist(false);
         setAddClue(false);
         setEditScene(false);
@@ -190,7 +203,6 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         const { target } = e;
         console.log("Input ID: ", target.id);
         const inputId = target.id;
-        // const inputValue = target.tagName === 'INPUT' ? target.value : target.innerText;
         const inputValue = target.value;
         console.log("Input Value: ", inputValue);
 
@@ -219,7 +231,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
     }
 
     return (
-        <section className={`px-6 py-2 bg-${theme}-scene rounded-2xl w-full`}>
+        <section className={`px-10 py-2 bg-${theme}-scene rounded-2xl w-full`}>
             <section className="flex justify-between w-full mb-2">
                 <h4 className={`font-${theme}-heading text-${theme}-accent text-lg`}>Scene {scene.sequence}</h4>
                 {!edit &&
@@ -284,14 +296,14 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 {edit &&
                     <div className="relative">
                         <p className="mx-auto text-center font-bold mb-1">Encounters:</p>
-                        <button className={`absolute right-0 inset-y-0 border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={(event) => addEncounterBefore(event, scene.encounters !== null ? scene.encounters.length : 0)}>
+                        <button className={`absolute right-0 inset-y-0 border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={(event) => addEncounterBefore(event, scene.encounters.length > 0 ? scene.encounters.length : 0)}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                         </button>
                     </div>
                 }
                 <div className="space-y-2 mb-3">
                     {scene.encounters?.map((encounter, j) => (
-                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType} chapter={chapter} setChapter={setChapter} scenes={scenes} setScenes={setScenes} currentScene={currentScene} />
+                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter[j]} setEditEncounter={setEditSingleEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType} scenes={scenes} setScenes={setScenes} currentScene={currentScene} chapter={chapter} setChapter={setChapter} />
                     ))}
                 </div>
                 {scene.plot_twist &&

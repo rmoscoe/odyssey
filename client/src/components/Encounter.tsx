@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPencil, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
@@ -18,16 +19,17 @@ type SceneData = {
     plot_twist: string | null;
     clue: string | null;
 }
-
-type chapterObject = {
+type Chapter = {
     chapterTitle: string;
     chapterContent: string | SceneData[] | null;
 }
+
 
 interface EncounterProps {
     encounter: Encounter;
     handleDeleteClick: () => void;
     editEncounter: boolean;
+    setEditEncounter: (idx: number, value: boolean) => void;
     deleting: string;
     setDeleting: (value: string) => void;
     sequence: number;
@@ -35,26 +37,57 @@ interface EncounterProps {
     setDeleteIdx: (value: number) => void;
     addEncounterBefore: (event: React.MouseEvent, idx: number) => void;
     setDeleteType: (value: string) => void;
-    chapter: chapterObject;
-    setChapter: (value: chapterObject) => void;
     scenes: SceneData[];
     setScenes: (value: SceneData[]) => void;
     currentScene: number;
+    chapter: Chapter;
+    setChapter: (value: Chapter) => void;
 }
 
-export default function Encounter({ encounter, handleDeleteClick, editEncounter, sequence, editScene, setDeleteIdx, addEncounterBefore, setDeleteType, chapter, setChapter, scenes, setScenes, currentScene }: EncounterProps) {
+export default function Encounter({ encounter, handleDeleteClick, editEncounter, setEditEncounter, sequence, editScene, setDeleteIdx, addEncounterBefore, setDeleteType, scenes, currentScene, chapter, setChapter }: EncounterProps) {
     const { theme } = useTheme();
     const [encounterType, setEncounterType] = useState(encounter.type);
     const [encounterDescription, setEncounterDescription] = useState(encounter.description);
     const [edit, setEdit] = useState(editEncounter);
     const [typeText, setTypeText] = useState('');
     const [descriptionText, setDescriptionText] = useState('');
+    const [edited, setEdited] = useState(false);
 
     const eSeq = sequence;
+
+    useEffect(() => {
+        if (!edit && edited) {
+            setEncounterType(typeText);
+            setEncounterDescription(descriptionText);
+
+            const updatedEncounter = {
+                type: typeText,
+                description: descriptionText
+            }
+
+            const {sequence, challenge, setting, encounters, plot_twist, clue} = scenes[currentScene - 1];
+            const updatedEncounterSet = [...encounters.slice()];
+            updatedEncounterSet[eSeq] = updatedEncounter;
+            const updatedScene = {
+                sequence,
+                challenge,
+                setting,
+                encounters: updatedEncounterSet,
+                plot_twist,
+                clue
+            }
+            const updatedScenes = [...scenes.slice(0, currentScene - 1), updatedScene, ...scenes.slice(currentScene - 1)];
+            setEdited(false);
+
+            // setScenes(updatedScenes);
+            setChapter({ chapterTitle: chapter.chapterTitle, chapterContent: updatedScenes });
+        }
+    }, [edit, edited]);
 
     const clickEditEncounter = (event: React.MouseEvent) => {
         event.stopPropagation();
         setEdit(true);
+        setEditEncounter(eSeq, true);
         setTypeText(encounterType || '');
         setDescriptionText(encounterDescription || '');
     }
@@ -70,42 +103,46 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
         event.stopPropagation();
         addEncounterBefore(event, idx);
         setEdit(true);
+        setEditEncounter(eSeq, true);
     }
 
     const saveEncounter = (event: React.MouseEvent) => {
         event.stopPropagation();
-        console.log("Saving encounter...")
-        setEncounterType(typeText);
-        setEncounterDescription(descriptionText);
+        // console.log("Saving encounter...")
+        // setEncounterType(typeText);
+        // setEncounterDescription(descriptionText);
 
-        const updatedEncounter = {
-            type: encounterType,
-            description: encounterDescription
-        }
+        // const updatedEncounter = {
+        //     type: encounterType,
+        //     description: encounterDescription
+        // }
 
-        console.log("Updated Encounter: ", updatedEncounter);
+        // console.log("Updated Encounter: ", updatedEncounter);
 
-        const {sequence, challenge, setting, encounters, plot_twist, clue} = scenes[currentScene - 1];
-        const updatedEncounterSet = [...encounters.slice(0, eSeq), updatedEncounter, ...encounters.slice(eSeq)];
-        console.log("Updated Encounter Set: ", JSON.stringify(updatedEncounterSet));
-        const updatedScene = {
-            sequence,
-            challenge,
-            setting,
-            encounters: updatedEncounterSet,
-            plot_twist,
-            clue
-        }
-        console.log("Updated Scene: ", JSON.stringify(updatedScene));
-        const updatedScenes = [...scenes.slice(0, currentScene - 1), updatedScene, ...scenes.slice(currentScene - 1)];
-        console.log("Updated Scenes: ", JSON.stringify(updatedScenes));
+        // const {sequence, challenge, setting, encounters, plot_twist, clue} = scenes[currentScene - 1];
+        // const updatedEncounterSet = [...encounters.slice(0, eSeq), updatedEncounter, ...encounters.slice(eSeq)];
+        // console.log("Updated Encounter Set: ", JSON.stringify(updatedEncounterSet));
+        // const updatedScene = {
+        //     sequence,
+        //     challenge,
+        //     setting,
+        //     encounters: updatedEncounterSet,
+        //     plot_twist,
+        //     clue
+        // }
+        // console.log("Updated Scene: ", JSON.stringify(updatedScene));
+        // const updatedScenes = [...scenes.slice(0, currentScene - 1), updatedScene, ...scenes.slice(currentScene - 1)];
+        // console.log("Updated Scenes: ", JSON.stringify(updatedScenes));
 
-        setScenes(updatedScenes);
-        setChapter({ chapterTitle: chapter.chapterTitle, chapterContent: scenes });
+        // setScenes(updatedScenes);
+        // setChapter({ chapterTitle: chapter.chapterTitle, chapterContent: scenes });
 
-        setTypeText('');
-        setDescriptionText('');
+        // setTypeText('');
+        // setDescriptionText('');
+        setEditEncounter(eSeq, false);
         setEdit(false);
+        setEdited(true);
+        console.log(scenes[currentScene - 1]);
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -113,7 +150,7 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
 
         const { target } = e;
         const inputId = target.id;
-        const inputValue = target.tagName === 'INPUT' ? target.value : target.innerText;
+        const inputValue = target.value;
 
         switch (inputId) {
             case 'type-field':
@@ -178,13 +215,13 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
                         className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mb-2`}
                         onChange={handleInputChange}
                         rows={4}
-                        value={encounterDescription || ''}
+                        value={descriptionText}
                     >
                         {descriptionText}
                     </textarea>
                 </>
             }
-            {!edit &&
+            {!edit && editScene &&
                 <button className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1.5 px-6 my-2`} onClick={(event) => clickAddEncounterBefore(event, sequence)}>Add Encounter Before</button>
             }
         </section>

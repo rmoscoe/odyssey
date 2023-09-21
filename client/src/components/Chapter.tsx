@@ -127,19 +127,15 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
 
     const addScene = (pos = 0) => {
         if (typeof chapterContent === 'string') {
-            console.error("Invalid. Scenes can only be added to Plot component");
             return;
         }
 
         let updatedChapterContent: SceneData[];
-        console.log("Chapter Content: ", JSON.stringify(chapterContent));
         if (!chapterContent) {
             updatedChapterContent = [];
         } else {
             updatedChapterContent = chapterContent.slice();
         }
-
-        console.log("Updated Chapter Content: ", JSON.stringify(updatedChapterContent));
 
         if (updatedChapterContent.length > 0) {
             for (let i = updatedChapterContent.length - 1; i >= pos; i--) {
@@ -148,8 +144,6 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
                 updatedChapterContent[i + 1].sequence++;
             }
         }
-
-        console.log("Shifted Updated Chapter Content: ", JSON.stringify(updatedChapterContent));
 
         const newScene = {
             sequence: pos + 1,
@@ -162,12 +156,8 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
 
         updatedChapterContent[pos] = newScene;
 
-        console.log("Shifted Updated Chapter with New Scene: ", JSON.stringify(updatedChapterContent));
-        console.log("Chapter: ", JSON.stringify(chapter));
-
         setScenes(updatedChapterContent);
 
-        console.log("Updated Chapter: ", JSON.stringify(chapter));
         setCurrentScene(newScene.sequence);
         setEditScene(true);
     }
