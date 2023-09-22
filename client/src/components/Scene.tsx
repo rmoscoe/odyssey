@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPencil, faFloppyDisk, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -59,6 +59,8 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
 
     const { chapterTitle } = chapter;
 
+    const sceneRef = useRef<HTMLElement | null>(null);
+
     useEffect(() => {
         if (deleting === 'scene') {
             const newScenes = [...scenes.slice(0, deleteIdx), ...scenes.slice(deleteIdx + 1)];
@@ -88,6 +90,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
     useEffect(() => {
         if (editScene && currentScene === scene.sequence) {
             setEdit(true);
+            resizeCarousel();
         }
         if (editScene && currentScene !== scene.sequence) {
             setEdit(false);
@@ -113,9 +116,14 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
     }, [edit]);
 
     useEffect(() => {
-        console.log("Rerendering. Encounters: ", scene.encounters);
-        return;
+        resizeCarousel();
     }, [scenes, encounterEditMode, encounters]);
+
+    const resizeCarousel = () => {
+        const carousel = document.querySelector(".slider-wrapper");
+        const sceneHeight = sceneRef.current?.offsetHeight;
+        carousel?.setAttribute("style", `height: ${sceneHeight}px;`);
+    }
 
     function clickEditScene(event: React.MouseEvent) {
         event.stopPropagation();
@@ -142,11 +150,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         for (let i = 0; i < editValues.length; i++) {
             if (editValues[i]) {
                 setEncounterEditMode(true);
-                console.log("Setting EncounterEditMode to True...");
                 return;
             }
             setEncounterEditMode(false);
-            console.log("Setting EncounterEditMode to False...");
         }
     }
 
@@ -231,7 +237,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
     }
 
     return (
-        <section className={`px-10 py-2 bg-${theme}-scene rounded-2xl w-full`}>
+        <section ref={sceneRef} className={`px-10 py-2 bg-${theme}-scene rounded-2xl w-full`}>
             <section className="flex justify-between w-full mb-2">
                 <h4 className={`font-${theme}-heading text-${theme}-accent text-lg`}>Scene {scene.sequence}</h4>
                 {!edit &&

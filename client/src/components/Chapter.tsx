@@ -44,7 +44,6 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
     const [editContent, setEditContent] = useState(false);
     const [content, setContent] = useState('');
     const [editScene, setEditScene] = useState(false);
-
     const [currentScene, setCurrentScene] = useState(1);
 
     let { chapterTitle, chapterContent } = chapter;

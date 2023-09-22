@@ -142,7 +142,6 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
         setEditEncounter(eSeq, false);
         setEdit(false);
         setEdited(true);
-        console.log(scenes[currentScene - 1]);
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
