@@ -1,5 +1,6 @@
 import google.generativeai as palm
 import os
+import json
 
 def generate_adventure(game, players, scenes, encounters, plot_twists, clues, homebrew_description=None, campaign_setting=None, level=None, experience=None, context=None):
     api_key = os.environ.get('API_KEY')
@@ -63,10 +64,20 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
     if context is not None:
         prompt += "\n" + context
 
-    response = palm.generate_text(
-        **defaults,
-        prompt=prompt
-    )
-    
-    return response.result
+
+    redo = True
+
+    try:
+        while redo:
+            response = palm.generate_text(
+                **defaults,
+                prompt=prompt
+            )
+            adventure = json.loads(response.result.strip()[7:-3])
+            if len(adventure["Exposition"]) < 500:
+                redo = False
+                return response.result
+    except Exception as e:
+        print(e)
+        raise e
 

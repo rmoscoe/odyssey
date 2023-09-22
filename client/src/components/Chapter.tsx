@@ -211,6 +211,7 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
                         className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mt-2`}
                         onChange={handleInputChange}
                         rows={4}
+                        maxLength={499}
                     >
                         {typeof chapterContent === 'string' ? content : 'Cannot display scenes here.'}
                     </textarea>

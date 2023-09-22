@@ -435,6 +435,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const generateNewAdventure = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setLoading(true);
+        setAdventure(false);
 
         const form: HTMLElement | null = document.getElementById('adventure-form');
         if (form instanceof HTMLFormElement) {
@@ -498,8 +499,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         });
 
         try {
-            console.log("Final Game Title: ", finalGameTitle);
-            console.log("Adventure Params: ", adventureParams);
             const response = await axios.post('/api/generate-adventure/', adventureParams, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
             if (response.status === 401) {
                 navigate('/login');
@@ -602,6 +601,11 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         if (adventureTitle === '') {
             setNotification("Please give your adventure a title.");
             document.getElementById('adventure-title-input')?.classList.add("invalid-entry");
+            setLoading(false);
+            return;
+        }
+        if (expositionChapter.chapterContent && expositionChapter.chapterContent.length > 499) {
+            setNotification("Background exceeds character limit.");
             setLoading(false);
             return;
         }
