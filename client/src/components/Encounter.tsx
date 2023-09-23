@@ -65,8 +65,8 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
                 description: descriptionText
             }
 
-            const {sequence, challenge, setting, encounters, plot_twist, clue} = scenes[currentScene - 1];
-            const updatedEncounterSet = [...encounters.slice()];
+            const { sequence, challenge, setting, encounters, plot_twist, clue } = JSON.parse(JSON.stringify(scenes[currentScene - 1]));
+            const updatedEncounterSet = JSON.parse(JSON.stringify(encounters));
             updatedEncounterSet[eSeq] = updatedEncounter;
             const updatedScene = {
                 sequence,
@@ -76,11 +76,13 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
                 plot_twist,
                 clue
             }
-            const updatedScenes = [...scenes.slice(0, currentScene - 1), updatedScene, ...scenes.slice(currentScene - 1)];
+            const newScenes: SceneData[] = scenes.map((s) => {
+                return s.sequence === updatedScene.sequence ? updatedScene : s
+            });
             setEdited(false);
 
             // setScenes(updatedScenes);
-            setChapter({ chapterTitle: chapter.chapterTitle, chapterContent: updatedScenes });
+            setChapter({ chapterTitle: chapter.chapterTitle, chapterContent: newScenes });
         }
     }, [edit, edited]);
 

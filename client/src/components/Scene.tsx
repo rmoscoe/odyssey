@@ -165,11 +165,12 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
             stats: null
         }
 
+        const newScene: SceneData = JSON.parse(JSON.stringify(scene));
         let newEncounters: Encounter[];
-        if (!scene.encounters || scene.encounters.length === 0) {
+        if (!newScene.encounters || newScene.encounters.length === 0) {
             newEncounters = [newEncounter];
         } else {
-            newEncounters = [...scene.encounters.slice(0, idx), newEncounter, ...scene.encounters.slice(idx)];
+            newEncounters = [...newScene.encounters.slice(0, idx), newEncounter, ...newScene.encounters.slice(idx)];
         }
         // if (newEncounters.length > 0) {
         //     for (let i = newEncounters.length - 1; i > idx; i--) {
@@ -183,14 +184,19 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
 
         // const updatedChapterContent = scenes.slice();
 
-        const newScene = JSON.parse(JSON.stringify(scene));
+
         newScene.encounters = newEncounters;
 
         // updatedChapterContent[idx] = newScene;
 
         // setScenes(updatedChapterContent);
         // setChapter({ chapterTitle, chapterContent: updatedChapterContent });
-        const newScenes = [...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)];
+        // const newScenes: SceneData[] = [...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)];
+        scenes.forEach((sc, i) => console.log(`${i}: ${sc.sequence}`));
+        const newScenes: SceneData[] = scenes.map((s) => {
+            return s.sequence === newScene.sequence ? newScene : s
+        });
+        setChapter({ chapterTitle, chapterContent: newScenes });
         setScenes(newScenes);
         setEditSingleEncounter(idx, true);
     }
@@ -309,7 +315,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 }
                 <div className="space-y-2 mb-3">
                     {scene.encounters?.map((encounter, j) => (
-                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter[j]} setEditEncounter={setEditSingleEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType} scenes={scenes} setScenes={setScenes} currentScene={currentScene} chapter={chapter} setChapter={setChapter} />
+                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter[j]} setEditEncounter={setEditSingleEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${currentScene}-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType} scenes={scenes} setScenes={setScenes} currentScene={currentScene} chapter={chapter} setChapter={setChapter} />
                     ))}
                 </div>
                 {scene.plot_twist &&
