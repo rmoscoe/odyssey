@@ -34,7 +34,7 @@ interface EncounterProps {
     setDeleting: (value: string) => void;
     sequence: number;
     editScene: boolean;
-    setDeleteIdx: (value: number) => void;
+    setEncounterIdx: (value: number) => void;
     addEncounterBefore: (event: React.MouseEvent, idx: number) => void;
     setDeleteType: (value: string) => void;
     scenes: SceneData[];
@@ -42,9 +42,11 @@ interface EncounterProps {
     currentScene: number;
     chapter: Chapter;
     setChapter: (value: Chapter) => void;
+    setSceneIdx: (value: number) => void;
+    scene: SceneData;
 }
 
-export default function Encounter({ encounter, handleDeleteClick, editEncounter, setEditEncounter, sequence, editScene, setDeleteIdx, addEncounterBefore, setDeleteType, scenes, currentScene, chapter, setChapter }: EncounterProps) {
+export default function Encounter({ encounter, handleDeleteClick, editEncounter, setEditEncounter, sequence, editScene, setEncounterIdx, addEncounterBefore, setDeleteType, scenes, currentScene, chapter, setChapter, setSceneIdx, scene }: EncounterProps) {
     const { theme } = useTheme();
     const [encounterType, setEncounterType] = useState(encounter.type);
     const [encounterDescription, setEncounterDescription] = useState(encounter.description);
@@ -94,9 +96,10 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
         setDescriptionText(encounterDescription || '');
     }
 
-    const deleteEncounter = (event: React.MouseEvent, idx: number) => {
+    const deleteEncounter = (event: React.MouseEvent, sceneIdx: number, encounterIdx: number) => {
         event?.stopPropagation()
-        setDeleteIdx(idx);
+        setSceneIdx(sceneIdx);
+        setEncounterIdx(encounterIdx);
         setDeleteType('encounter');
         handleDeleteClick();
     }
@@ -189,7 +192,7 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
                         <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={clickEditEncounter}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPencil} />
                         </button>
-                        <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={(event) => deleteEncounter(event, sequence)}>
+                        <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={(event) => deleteEncounter(event, scene.sequence - 1, sequence)}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
                     </div>

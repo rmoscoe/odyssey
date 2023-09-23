@@ -1,4 +1,3 @@
-import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import axios from 'axios';
@@ -10,21 +9,13 @@ type DeleteProps = {
     deleteType: string;
     deleteId?: number;
     setDeleting?: (value: string) => void;
+    setDeleteConfirm: (value: boolean) => void;
+    setReloadRequired?: (value: boolean) => void;
 }
 
-export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: DeleteProps) {
+export default function DeleteConfirm({ deleteType, deleteId, setDeleting, setDeleteConfirm, setReloadRequired }: DeleteProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
-    const [reloadRequired, setReloadRequired] = useState(false);
-
-    const deleteModalRef = useRef<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-        if (reloadRequired) {
-            window.location.reload();
-            setReloadRequired(false);
-        }
-    }, [reloadRequired]);
 
     let deleteContent: string;
 
@@ -55,7 +46,7 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
     }
 
     const closeModal = () => {
-        deleteModalRef.current?.classList.remove('is-active');
+        setDeleteConfirm(false);
     }
 
     const handleDeleteConfirm = async () => {
@@ -66,7 +57,7 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
                 if (response.status === 401) {
                     navigate('/login');
                 }
-                if (response.status === 204) {
+                if (response.status === 204 && setReloadRequired) {
                     setReloadRequired(true);
                 }
             } catch (err) {
@@ -86,11 +77,16 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting }: Del
 
         if (deleteType === 'encounter') {
             setDeleting ? setDeleting('encounter') : console.error("Cannot delete encounter because setDeleting() is not available");
+            closeModal();
+        }
+
+        if (deleteContent === 'unknown content') {
+            closeModal();
         }
     }
 
     return (
-        <div id="delete-modal" className="modal">
+        <div id="delete-modal" className="modal is-active">
             <div className="modal-background" onClick={closeModal}></div>
             <div className={`modal-card w-11/12 lg:my-0 lg:mx-auto lg:w-[640px] rounded-[6px] bg-${theme}-primary`}>
                 <header className={`modal-card-head`}>

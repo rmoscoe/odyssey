@@ -97,13 +97,9 @@ class UserViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         if 'password' in request.data:
             try:
-                print(request.user)
                 user = User.objects.get(username=request.user.username)
-                print(user)
                 user.set_password(request.data['password'])
-                print("Password set")
                 user.save()
-                print ("User saved")
             except User.DoesNotExist:
                 return Response({'error': 'Unable to reset password'}, status=500)
         else:
@@ -112,13 +108,10 @@ class UserViewSet(viewsets.ModelViewSet):
         if 'email' in request.data:
             try:
                 user = self.get_object()
-                print(user)
                 new_email = {
                     'email': request.data['email'], 'username': request.data['email']}
-                print(new_email)
                 serializer = self.get_serializer(
                     user, data=new_email, partial=True)
-                print(serializer)
                 serializer.is_valid(raise_exception=True)
                 self.perform_update(serializer)
             except Exception as e:
@@ -160,7 +153,6 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def logout(self, request):
         try:
-            print("user_id: %d\tviews.py 133" % request.data['user_id'])
             Odyssey_Token.objects.filter(
                 user_id=request.data['user_id']).delete()
             logout(request)
@@ -270,7 +262,6 @@ class GenerateAdventureView(APIView):
     def post(self, request):
         try:
             data = request.data
-            print("Data: ", data)
             campaign_setting = data.get("campaign_setting")
             level = data.get("level")
             experience = data.get("experience")
@@ -299,13 +290,10 @@ class CustomPasswordResetView(APIView):
             # Generate reset token
             token_generator = TimestampSigner()
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            print(uid)
             token = token_generator.sign(uid)
-            print(token)
 
             # Send email using your custom email template
             reset_url = f"{request.scheme}://{request.get_host()}/password/reset/confirm/{uid}/{token}/"
-            print(reset_url)
 
             context = {
                 'protocol': request.scheme,
@@ -342,28 +330,20 @@ class CustomPasswordResetConfirmView(APIView):
     permission_classes = [AllowAny]  # Allow unauthenticated access
 
     def post(self, request):
-        print("Resetting password")
         User = get_user_model()
 
         # Get the uidb64 and token from the request data
         uidb64 = request.data.get('uidb64')
-        print(uidb64)
         token = request.data.get('token')
-        print(f"{token}\tviews 339")
 
         try:
             # uid = force_str(urlsafe_base64_decode(uidb64))
             uid = urlsafe_base64_decode(uidb64)
-            print(uid)
             user = User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
-            print("No user")
-
-        print(user)
 
         token_generator = TimestampSigner()
-        print(f"{token_generator}\tviews 354")
 
         try:
             uid = token_generator.unsign(token, max_age=3600)
@@ -372,9 +352,7 @@ class CustomPasswordResetConfirmView(APIView):
 
         # If the user and token are valid, update the user's password
         password = request.data.get('password')
-        print(password)
         user.set_password(password)
-        print("Password successfully updated, attempting to save")
         user.save()
 
         return JsonResponse({'message': 'Password reset confirmation successful'}, status=200)

@@ -17,7 +17,6 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 def login_required_ajax(view_func):
     def wrapped_view(*args, **kwargs):
         request = args[1]
-        print(request)
         if request.user.is_authenticated:
             return view_func(*args, **kwargs)
         else:
@@ -34,11 +33,9 @@ class LoginRequiredMixinAjax(LoginRequiredMixin):
 def rotate_session_keys():
     # Get all active sessions
     sessions = Session.objects.all()
-    print(sessions)
 
     # Rotate session keys and update session hashes
     for session in sessions:
-        print(session)
         session.cycle_key()
         session.save()
 
@@ -47,10 +44,6 @@ def rotate_session_keys():
         if user_id:
             user = get_user_model().objects.get(pk=user_id)
             update_session_auth_hash(force_bytes(settings.SECRET_KEY), user)
-
-    # Print a success message
-    print('Session keys rotated successfully.')
-
 
 def generate_secret_key(length=50):
     characters = string.ascii_letters + string.digits + string.punctuation
@@ -78,9 +71,6 @@ def update_secret_key():
 
     # Rotate session keys and update session hashes
     rotate_session_keys()
-
-    # Print a success message
-    print('Secret key updated successfully.')
 
 # class CustomPasswordResetTokenGenerator(PasswordResetTokenGenerator):
 #     def _make_hash_value(self, user, timestamp):

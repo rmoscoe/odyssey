@@ -41,9 +41,13 @@ interface SceneProps {
     chapter: chapterObject;
     setChapter: (value: chapterObject) => void;
     addScene: (pos?: number) => void;
+    sceneIdx: number;
+    setSceneIdx: (value: number) => void;
+    encounterIdx: number;
+    setEncounterIdx: (value: number) => void;
 }
 
-export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDeleteClick, editScene, setEditScene, deleting, setDeleting, currentScene, setDeleteType, chapter, setChapter, addScene }: SceneProps) {
+export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDeleteClick, editScene, setEditScene, deleting, setDeleting, currentScene, setDeleteType, chapter, setChapter, addScene, sceneIdx, setSceneIdx, encounterIdx, setEncounterIdx }: SceneProps) {
     const { theme } = useTheme();
     const [edit, setEdit] = useState(false);
     const [editEncounter, setEditEncounter] = useState<boolean[]>(new Array(scene.encounters?.length || 0).fill(false));
@@ -63,23 +67,31 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
 
     useEffect(() => {
         if (deleting === 'scene') {
-            const newScenes = [...scenes.slice(0, deleteIdx), ...scenes.slice(deleteIdx + 1)];
+            const newScenes = scenes.filter((_s, i) => {
+                return i !== deleteIdx;
+            });
             for (let i = deleteIdx; i < newScenes.length; i++) {
-                newScenes[i].sequence--;
+                newScenes[i].sequence = i + 1;
             }
             setScenes(newScenes.slice());
-            setChapter({ chapterTitle, chapterContent: scenes });
+            setChapter({ chapterTitle, chapterContent: newScenes.slice() });
             setDeleting('');
             setDeleteType('');
         }
 
         if (deleting === 'encounter') {
-            const newEncounters = [...scene.encounters.slice(0, deleteIdx), ...scene.encounters.slice(deleteIdx + 1)];
-            const newScene = { ...scene };
-            newScene.encounters = newEncounters;
-
-            setScenes([...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)]);
-            setChapter({ chapterTitle, chapterContent: scenes });
+            const updatedScenes = scenes.map((s, i) => {
+                if (i === sceneIdx) {
+                    const updatedEncounters = s.encounters.filter((_e, i) => i !== encounterIdx);
+                    return {
+                        ...s,
+                        encounters: updatedEncounters,
+                    };
+                }
+                return s;
+            });
+            setScenes(updatedScenes.slice());
+            setChapter({ chapterTitle, chapterContent: updatedScenes.slice() });
             setDeleting('');
             setDeleteType('');
         }
@@ -104,13 +116,15 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 sequence: scene.sequence,
                 challenge: challengeText,
                 setting: settingText,
-                encounters: encounters,
+                encounters: scene.encounters,
                 plot_twist: plotTwist,
                 clue: clue
             }
 
-            const newScenes = [...scenes.slice(0, sceneIndex), updatedScene, ...scenes.slice(sceneIndex + 1)];
-
+            // const newScenes = [...scenes.slice(0, sceneIndex), updatedScene, ...scenes.slice(sceneIndex + 1)];
+            const newScenes: SceneData[] = scenes.map((s) => {
+                return s.sequence === updatedScene.sequence ? updatedScene : s
+            });
             setChapter({ chapterTitle, chapterContent: newScenes });
         }
     }, [edit]);
@@ -178,7 +192,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         //         newEncounters[i + 1] = scene.encounters!.slice(i, i+1)[0];
         //     }
         // }
-        
+
 
         // newEncounters[idx] = newEncounter;
 
@@ -192,7 +206,6 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         // setScenes(updatedChapterContent);
         // setChapter({ chapterTitle, chapterContent: updatedChapterContent });
         // const newScenes: SceneData[] = [...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)];
-        scenes.forEach((sc, i) => console.log(`${i}: ${sc.sequence}`));
         const newScenes: SceneData[] = scenes.map((s) => {
             return s.sequence === newScene.sequence ? newScene : s
         });
@@ -213,10 +226,8 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         e.stopPropagation();
 
         const { target } = e;
-        console.log("Input ID: ", target.id);
         const inputId = target.id;
         const inputValue = target.value;
-        console.log("Input Value: ", inputValue);
 
         switch (inputId) {
             case 'challenge-field':
@@ -266,9 +277,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
             </section>
 
             <section className={`w-full p-2 mb-3 font-${theme}-text text-${theme}-scene-text text-base`}>
-                <p className="mx-auto text-center font-bold mb-1">Goal:</p>
+                <p className={`mx-auto text-center font-bold mb-1 text-${theme}-accent`}>Goal:</p>
                 {!edit &&
-                    <p className="mb-3">{scene.challenge}</p>
+                    <p className={`mb-3 text-${theme}-toggle-border`}>{scene.challenge}</p>
                 }
                 {edit &&
                     <textarea
@@ -284,9 +295,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                         {challengeText}
                     </textarea>
                 }
-                <p className="mx-auto text-center font-bold mb-1">Setting:</p>
+                <p className={`mx-auto text-center font-bold mb-1 text-${theme}-accent`}>Setting:</p>
                 {!edit &&
-                    <p className="mb-3">{scene.setting}</p>
+                    <p className={`mb-3 text-${theme}-toggle-border`}>{scene.setting}</p>
                 }
                 {edit &&
                     <textarea
@@ -303,26 +314,28 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                     </textarea>
                 }
                 {!edit &&
-                    <p className="mx-auto text-center font-bold mb-1">Encounters:</p>
+                    <p className={`mx-auto text-center font-bold mb-1 text-${theme}-accent`}>Encounters:</p>
                 }
                 {edit &&
-                    <div className="relative">
-                        <p className="mx-auto text-center font-bold mb-1">Encounters:</p>
-                        <button className={`absolute right-0 inset-y-0 border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={(event) => addEncounterBefore(event, scene.encounters.length > 0 ? scene.encounters.length : 0)}>
-                            <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
-                        </button>
+                    <div className="relative h-14">
+                        <p className={`mx-auto text-center font-bold mb-1 text-${theme}-accent`}>Encounters:</p>
+                        <div className="flex absolute right-0 inset-y-0 h-11">
+                            <button className={`border-${theme}-button-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={(event) => addEncounterBefore(event, scene.encounters.length > 0 ? scene.encounters.length : 0)}>
+                                <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
+                            </button>
+                        </div>
                     </div>
                 }
                 <div className="space-y-2 mb-3">
                     {scene.encounters?.map((encounter, j) => (
-                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter[j]} setEditEncounter={setEditSingleEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${currentScene}-${j}`} sequence={j} editScene={edit} setDeleteIdx={setDeleteIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType} scenes={scenes} setScenes={setScenes} currentScene={currentScene} chapter={chapter} setChapter={setChapter} />
+                        <Encounter encounter={encounter} handleDeleteClick={handleDeleteClick} editEncounter={editEncounter[j]} setEditEncounter={setEditSingleEncounter} deleting={deleting} setDeleting={setDeleting} key={`encounter-${currentScene}-${j}`} sequence={j} editScene={edit} setEncounterIdx={setEncounterIdx} addEncounterBefore={addEncounterBefore} setDeleteType={setDeleteType} scenes={scenes} setScenes={setScenes} currentScene={currentScene} chapter={chapter} setChapter={setChapter} setSceneIdx={setSceneIdx} scene={scene} />
                     ))}
                 </div>
                 {scene.plot_twist &&
                     <>
-                        <p className="mx-auto text-center font-bold mb-1">Plot Twist:</p>
+                        <p className={`mx-auto text-center font-bold mb-1 text-${theme}-accent`}>Plot Twist:</p>
                         {!edit &&
-                            <p className="mb-3">{scene.plot_twist}</p>
+                            <p className={`mb-3 text-${theme}-toggle-border`}>{scene.plot_twist}</p>
                         }
                         {edit &&
                             <textarea
@@ -345,7 +358,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 }
                 {!scene.plot_twist && edit && addPlotTwist &&
                     <>
-                        <p className="mx-auto text-center font-bold mb-1">Plot Twist:</p>
+                        <p className={`mx-auto text-center font-bold mb-1 text-${theme}-accent`}>Plot Twist:</p>
                         <textarea
                             autoComplete="off"
                             key={"plot-twist-field-2"}
@@ -362,9 +375,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 }
                 {scene.clue &&
                     <>
-                        <p className="mx-auto text-center font-bold mb-1">Clue:</p>
+                        <p className={`mx-auto text-center font-bold mb-1 text-${theme}-accent`}>Clue:</p>
                         {!edit &&
-                            <p className="mb-3">{scene.clue}</p>
+                            <p className={`mb-3 text-${theme}-toggle-border`}>{scene.clue}</p>
                         }
                         {edit &&
                             <textarea
@@ -387,7 +400,7 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 }
                 {!scene.clue && edit && addClue &&
                     <>
-                        <p className="mx-auto text-center font-bold mb-1">Clue:</p>
+                        <p className={`mx-auto text-center font-bold mb-1 text-${theme}-accent`}>Clue:</p>
                         <textarea
                             autoComplete="off"
                             key={"clue-field-2"}

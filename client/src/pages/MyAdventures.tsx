@@ -8,6 +8,8 @@ import axios, { AxiosError } from 'axios';
 
 interface AdventureDetailsProps {
     handlePageChange: (page: string) => void;
+    deleteConfirm: boolean;
+    setDeleteConfirm: (value: boolean) => void;
 }
 
 type adventure = {
@@ -41,11 +43,12 @@ type adventure = {
     status: string;
 };
 
-export default function MyAdventures({ handlePageChange }: AdventureDetailsProps) {
+export default function MyAdventures({ handlePageChange, deleteConfirm, setDeleteConfirm }: AdventureDetailsProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
     const [adventures, setAdventures] = useState<adventure[]>([]);
     const [deleteTarget, setDeleteTarget] = useState(0);
+    const [reloadRequired, setReloadRequired] = useState(false);
 
     handlePageChange('My Adventures');
 
@@ -81,11 +84,18 @@ export default function MyAdventures({ handlePageChange }: AdventureDetailsProps
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        if (reloadRequired) {
+            window.location.reload();
+            setReloadRequired(false);
+        }
+    }, [reloadRequired]);
+
     const newAdventureHandler = () => navigate('/adventures/new');
 
     const handleDeleteClick = (id = 0) => {
         setDeleteTarget(id);
-        document.querySelector('.modal')?.classList.add('is-active');
+        setDeleteConfirm(true);
     }
 
     return (
@@ -107,12 +117,14 @@ export default function MyAdventures({ handlePageChange }: AdventureDetailsProps
             }
 
             <section className="mt-4 flex flex-wrap justify-around content-around">
-                {adventures.map((adventure, i) => (
-                    <Adventure adventure={adventure} handleDeleteClick={handleDeleteClick} key={`adventure-${i}`} />
+                {adventures.map((adventure) => (
+                    <Adventure adventure={adventure} handleDeleteClick={handleDeleteClick} key={adventure.id} />
                 ))}
             </section>
 
-            <DeleteConfirm deleteType="adventures" deleteId={deleteTarget} />
+            {deleteConfirm &&
+                <DeleteConfirm deleteType="adventures" deleteId={deleteTarget} setDeleteConfirm={setDeleteConfirm} setReloadRequired={setReloadRequired}/>
+            }
         </main>
     );
 }

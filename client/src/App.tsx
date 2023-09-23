@@ -19,6 +19,7 @@ import PasswordResetConfirm from './pages/PasswordResetConfirm';
 function App() {
   const [currentPage, setCurrentPage] = useState('Home');
   const { theme } = useTheme();
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   useEffect(() => {
     document.documentElement.className = `bg-${theme}-secondary`;
@@ -52,7 +53,7 @@ function App() {
         />
         <Route
           path="/adventures"
-          element={<MyAdventures handlePageChange={handlePageChange}/>}
+          element={<MyAdventures handlePageChange={handlePageChange} deleteConfirm={deleteConfirm} setDeleteConfirm={setDeleteConfirm} />}
         />
         <Route
           path="/account/settings"
@@ -60,7 +61,7 @@ function App() {
         />
         <Route
           path="/adventures/new"
-          element={<NewAdventure handlePageChange={handlePageChange}/>}
+          element={<NewAdventure handlePageChange={handlePageChange} deleteConfirm={deleteConfirm} setDeleteConfirm={setDeleteConfirm} />}
         />
         <Route
           path="/adventures/:adventureId"

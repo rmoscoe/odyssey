@@ -16,6 +16,8 @@ import SaveConfirm from '../components/SaveConfirm';
 
 interface PageProps {
     handlePageChange: (page: string) => void;
+    deleteConfirm: boolean;
+    setDeleteConfirm: (value: boolean) => void;
 }
 
 type Encounter = {
@@ -242,7 +244,7 @@ const games = {
     }
 }
 
-export default function NewAdventure({ handlePageChange }: PageProps) {
+export default function NewAdventure({ handlePageChange, deleteConfirm, setDeleteConfirm }: PageProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
     const [game, setGame] = useState('');
@@ -291,6 +293,8 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     const [inputHeight, setInputHeight] = useState(document.querySelector('input')?.offsetHeight);
     const [adventureSaved, setAdventureSaved] = useState(false);
     const [adventureId, setAdventureId] = useState(0);
+    const [sceneIdx, setSceneIdx] = useState(-1);
+    const [encounterIdx, setEncounterIdx] = useState(-1);
 
     const contentContainerRef = useRef<HTMLElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -588,15 +592,13 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
     }
 
     const handleDeleteClick = () => {
-        document.querySelector('#delete-modal')?.classList.add('is-active');
+        setDeleteConfirm(true);
     }
 
     const saveAdventure = async () => {
-        console.log("Saving...");
         setLoading(true);
 
         // Validate
-        console.log("Validating input");
         setNotification("Validating");
         if (adventureTitle === '') {
             setNotification("Please give your adventure a title.");
@@ -611,7 +613,6 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
         }
 
         // assemble Adventure
-        console.log("Assembling Adventure");
         setNotification("Saving adventure");
         const adventurePayload = {
             title: adventureTitle,
@@ -623,12 +624,9 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
             climax: climaxChapter.chapterContent,
             denoument: denoumentChapter.chapterContent
         }
-        console.log("adventurePayload: ", adventurePayload);
 
         try {
-            console.log("Posting Adventure");
             const response = await axios.post('/api/adventures/', adventurePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
-            console.log("Adventure Response: ", response);
 
             if (response.status === 401) {
                 navigate('/login');
@@ -661,10 +659,7 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                         clue
                     }
 
-                    console.log("Scenes Payload: ", scenePayload);
-
                     const sceneResponse = await axios.post('/api/scenes/', scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
-                    console.log(`Scene ${idx + 1} Response: ${sceneResponse}`)
 
                     if (sceneResponse.status === 401) {
                         navigate('/login');
@@ -680,10 +675,8 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                 type,
                                 description
                             }
-                            console.log("Encounter Payload: ", encounterPayload);
 
                             const encounterResponse = await axios.post('/api/encounters/', encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
-                            console.log("Encounter Response: ", encounterResponse);
 
                             if (encounterResponse.status !== 201) {
                                 setNotification('Oops! Something went wrong. Please try again.');
@@ -1030,14 +1023,15 @@ export default function NewAdventure({ handlePageChange }: PageProps) {
                                 </button>
                             </div>
                             {chapterSet?.map((chapter, i) => (
-                                <Chapter chapter={chapter} key={`chapter-${i}`} setChapter={setChapterSet[i]} handleDeleteClick={handleDeleteClick} deleting={deleting} setDeleting={setDeleting} chapterToDelete={chapterToDelete} setChapterToDelete={setChapterToDelete} setDeleteType={setDeleteType} />
+                                <Chapter chapter={chapter} key={`chapter-${i}`} setChapter={setChapterSet[i]} handleDeleteClick={handleDeleteClick} deleting={deleting} setDeleting={setDeleting} chapterToDelete={chapterToDelete} setChapterToDelete={setChapterToDelete} setDeleteType={setDeleteType} sceneIdx={sceneIdx} setSceneIdx={setSceneIdx} encounterIdx={encounterIdx} setEncounterIdx={setEncounterIdx}/>
                             ))}
                         </section>
                     }
                 </section>
             </section>
-
-            <DeleteConfirm deleteType={deleteType} setDeleting={setDeleting} />
+            {deleteConfirm &&
+                <DeleteConfirm deleteType={deleteType} setDeleting={setDeleting} setDeleteConfirm={setDeleteConfirm} />
+            }
             {adventureSaved &&
                 <SaveConfirm adventureId={adventureId} setAdventureSaved={setAdventureSaved}/>
             }
