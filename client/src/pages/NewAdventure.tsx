@@ -1002,6 +1002,9 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
 
                     {adventure && chapterSet &&
                         <section className="flex flex-wrap content-end">
+                            {notification === "Background exceeds character limit." &&
+                                <p className={`${theme}-text my-3 text-center`}>{notification}</p> 
+                            }
                             <div className="flex items-end basis-full mb-3 space-y-2">
                                 <div className="mr-2 w-full">
                                     <label htmlFor="adventure-title-input" className={`${theme}-label block`}>Enter a Title*</label>
