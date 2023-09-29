@@ -699,7 +699,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
         }
     }
 
-    const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving scene ${i + 1}`), 'Saving encounters'];
+    const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving Scene ${i + 1}`), 'Saving encounters'];
 
     const chapterSet = [expositionChapter, incitementChapter, risingActionChapter, climaxChapter, denoumentChapter];
     const setChapterSet = [setExpositionChapter, setIncitementChapter, setRisingActionChapter, setClimaxChapter, setDenoumentChapter];

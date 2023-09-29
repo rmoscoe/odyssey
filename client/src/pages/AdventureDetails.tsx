@@ -68,20 +68,20 @@ type isoAdventure = {
 };
 
 type isoScenes = [{
-    id: number;
+    id?: number;
     sequence: number;
     challenge: string | null;
     setting: string | null;
     encounter_set: [{
-        id: number;
+        id?: number;
         encounter_type: string | null;
         description: string | null;
-        stats: string | null;
-        progress: string;
+        stats?: string | null;
+        progress?: string;
     } | null];
     plot_twist: string | null;
     clue: string | null;
-    progress: string;
+    progress?: string;
 } | null];
 
 export default function AdventureDetails({ handlePageChange, deleteConfirm, setDeleteConfirm }: AdventureDetailsProps) {
@@ -109,6 +109,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [climaxText, setClimaxText] = useState(climax);
     const [denoumentRef, setDenoumentRef] = useState<React.MutableRefObject<HTMLDivElement | null>>(useRef(null));
     const [denoumentText, setDenoumentText] = useState(denoument);
+    const [reloadRequired, setReloadRequired] = useState(false);
 
     const titleInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -222,68 +223,54 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         // assemble Adventure
         setNotification("Saving adventure");
         const adventurePayload = {
-            title: adventureTitle,
-            user_id: Auth.getToken().fields.user,
-            game: finalGameTitle,
-            campaign_setting: finalCampaignSetting,
-            exposition: expositionChapter.chapterContent,
-            incitement: incitementChapter.chapterContent,
-            climax: climaxChapter.chapterContent,
-            denoument: denoumentChapter.chapterContent
+            title: titleText,
+            exposition: expositionText,
+            incitement: incitementText,
+            climax: climaxText,
+            denoument: denoumentText
         }
 
         try {
-            const response = await axios.post('/api/adventures/', adventurePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            // save Adventure
+            const response = await axios.patch(`/api/adventures/${adventureId}/`, adventurePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
 
             if (response.status === 401) {
                 navigate('/login');
             } else if (response.data) {
-                setAdventureId(response.data.id);
-                type Scene = {
-                    sequence: number,
-                    challenge: string,
-                    setting: string,
-                    encounters: {
-                        id?: number,
-                        type: string,
-                        description: string,
-                        stats?: string
-                    }[],
-                    plot_twist: string | null,
-                    clue: string | null
-                }
-                const scenesArr = Array.isArray(risingActionChapter.chapterContent) ? risingActionChapter.chapterContent : [];
+                setAdventure(response.data);
+
+                // save Scenes
+                const scenesArr = Array.isArray(scenes) ? scenes : [];
 
                 scenesArr?.forEach(async (scene, idx) => {
                     setNotification(`Saving Scene ${idx + 1}`);
-                    const { sequence, challenge, setting, plot_twist, clue } = scene as Scene;
                     const scenePayload = {
-                        adventure_id: response.data.id,
-                        sequence,
-                        challenge,
-                        setting,
-                        plot_twist,
-                        clue
+                        adventure_id: adventureId,
+                        sequence: scene?.sequence,
+                        challenge: scene?.challenge,
+                        setting: scene?.setting,
+                        plot_twist: scene?.plot_twist,
+                        clue: scene?.clue
                     }
 
-                    const sceneResponse = await axios.post('/api/scenes/', scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+                    const sceneResponse = scene?.id ? await axios.patch(`/api/scenes/${scene.id}/`, scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } }) : await axios.post(`/api/scenes/`, scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
 
                     if (sceneResponse.status === 401) {
                         navigate('/login');
                     } else if (sceneResponse.data) {
+                        // save Encounters
                         const sceneId = sceneResponse.data.id;
-                        const { encounters } = scene as Scene;
+                        setNotification('Saving encounters');
+                        const encounters = scene?.encounter_set;
 
                         encounters?.forEach(async encounter => {
-                            setNotification('Saving encounters');
-                            const { type, description } = encounter;
                             const encounterPayload = {
                                 scene_id: sceneId,
-                                type,
-                                description
+                                encounter_type: encounter?.encounter_type,
+                                description: encounter?.description
                             }
 
-                            const encounterResponse = await axios.post('/api/encounters/', encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+                            const encounterResponse = encounter?.id ? await axios.patch(`/api/encounters/${encounter.id}/`, encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } }) : await axios.post(`/api/encounters/`, encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
 
                             if (encounterResponse.status !== 201) {
                                 setNotification('Oops! Something went wrong. Please try again.');
@@ -296,9 +283,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
             } else {
                 setNotification('Oops! Something went wrong. Please try again.');
             }
-            setAdventure(false);
             setLoading(false);
-            setAdventureSaved(true);
         } catch (err) {
             console.error(err);
             setNotification("Oops! Something went wrong. Please try again.");
@@ -306,7 +291,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         }
     }
 
-    const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving scene ${i + 1}`), 'Saving encounters'];
+    const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving Scene ${i + 1}`), 'Saving encounters'];
 
     return (
         <main className="mt-[5.5rem] mb-6 w-full h-overlay p-2 max-w-[100vw]">
@@ -331,7 +316,29 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                         </div>
                     }
                 </div>
-                <h2 className={`font-${theme}-heading text-${theme}-heading text-center text-3xl mx-auto`}>{adventure?.title}</h2>
+                {!edit &&
+                    <h2 className={`font-${theme}-heading text-${theme}-heading text-center text-3xl mx-auto`}>{adventure?.title}</h2>
+                }
+                {edit &&
+                    <div className="flex items-end basis-full mb-3 space-y-2">
+                        <div className="mr-2 w-full">
+                            <label htmlFor="adventure-title-input" className={`${theme}-label block`}>Enter a Title*</label>
+                            <input
+                                type="text"
+                                id="adventure-title-input"
+                                name="adventure-title-input"
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-heading text-3xl font-${theme}-heading px-1 py-2 block w-full text-center`}
+                                autoComplete="off"
+                                onChange={handleInputChange}
+                                onBlur={fieldLoseFocus}
+                                value={titleText}
+                                disabled={loading}
+                                required
+                                ref={titleInputRef}
+                            />
+                        </div>
+                    </div>
+                }
             </section>
 
             {loading &&
@@ -351,7 +358,9 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
             </section>
 
             <section className="w-full px-2 space-y-3 lg:w-4/5">
-                <CSRFToken />
+                {edit &&
+                    <CSRFToken />
+                }
                 <Stage key="exposition" content={exposition} edit={edit} setRef={setExpositionRef} />
                 <Stage key="incitement" content={incitement} edit={edit} setRef={setIncitementRef} />
                 <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false}>
