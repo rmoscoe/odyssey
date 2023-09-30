@@ -214,8 +214,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         }
         if (expositionText.length > 499) {
             setNotification("Background exceeds character limit.");
-            // TypeScript error on "current", below, should go away once the <Stage> component is written.
-            expositionRef ?? expositionRef?.current.classList.add("invalid-entry");
+            expositionRef && expositionRef.current?.classList.add("invalid-entry");
             setLoading(false);
             return;
         }
@@ -409,15 +408,15 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 {edit &&
                     <CSRFToken />
                 }
-                <Stage key="exposition" title="Background" content={exposition} edit={edit} setRef={setExpositionRef} inputText={expositionText} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
-                <Stage key="incitement" title="Beginning" content={incitement} edit={edit} setRef={setIncitementRef} inputText={incitementText} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
+                <Stage key="exposition" title="Background" content={exposition} edit={edit} setRef={setExpositionRef} inputText={expositionText} loading={loading} />
+                <Stage key="incitement" title="Beginning" content={incitement} edit={edit} setRef={setIncitementRef} inputText={incitementText} loading={loading} />
                 <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false}>
                     {scenes?.map((scene, i) => (
                         <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} sceneIndex={i} edit={edit} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
                     ))}
                 </Carousel>
-                <Stage key="climax" title="Climax" content={climax} edit={edit} setRef={setClimaxRef} inputText={climaxText} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
-                <Stage key="denoument" title="Epilogue" content={denoument} edit={edit} setRef={setDenoumentRef} inputText={denoumentText} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
+                <Stage key="climax" title="Climax" content={climax} edit={edit} setRef={setClimaxRef} inputText={climaxText} loading={loading} />
+                <Stage key="denoument" title="Epilogue" content={denoument} edit={edit} setRef={setDenoumentRef} inputText={denoumentText} loading={loading} />
             </section>
 
             {deleteConfirm &&
