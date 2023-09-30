@@ -101,13 +101,13 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, denoument, progress, status } = location.state || {};
 
     const [titleText, setTitleText] = useState(title);
-    const [expositionRef, setExpositionRef] = useState<React.MutableRefObject<HTMLDivElement | null>>(useRef(null));
+    const [expositionRef, setExpositionRef] = useState<React.MutableRefObject<HTMLTextAreaElement | null>>(useRef(null));
     const [expositionText, setExpositionText] = useState(exposition);
-    const [incitementRef, setIncitementRef] = useState<React.MutableRefObject<HTMLDivElement | null>>(useRef(null));
+    const [incitementRef, setIncitementRef] = useState<React.MutableRefObject<HTMLTextAreaElement | null>>(useRef(null));
     const [incitementText, setIncitementText] = useState(incitement);
-    const [climaxRef, setClimaxRef] = useState<React.MutableRefObject<HTMLDivElement | null>>(useRef(null));
+    const [climaxRef, setClimaxRef] = useState<React.MutableRefObject<HTMLTextAreaElement | null>>(useRef(null));
     const [climaxText, setClimaxText] = useState(climax);
-    const [denoumentRef, setDenoumentRef] = useState<React.MutableRefObject<HTMLDivElement | null>>(useRef(null));
+    const [denoumentRef, setDenoumentRef] = useState<React.MutableRefObject<HTMLTextAreaElement | null>>(useRef(null));
     const [denoumentText, setDenoumentText] = useState(denoument);
     const [reloadRequired, setReloadRequired] = useState(false);
 
@@ -291,10 +291,56 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         }
     }
 
+    const handleInputChange = (field: React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>) => {
+        const { current } = field;
+        const inputValue: string | number | undefined = current?.value;
+
+        current?.classList.remove("invalid-entry");
+        setNotification('');
+
+        switch (field) {
+            case titleInputRef:
+                setTitleText(inputValue);
+                break;
+            case expositionRef:
+                setExpositionText(inputValue);
+                break;
+            case incitementRef:
+                setIncitementText(inputValue);
+                break;
+            case climaxRef:
+                setClimaxText(inputValue);
+                break;
+            case denoumentRef:
+                setDenoumentText(inputValue);
+                break;
+            default:
+                console.error(`Error: Input field ${current?.tagName} ID ${current?.id || ""} with Value ${current?.value || ""} not recognized.`);
+        }
+    }
+
+    const fieldLoseFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { target } = e;
+        const inputValue: string | number | undefined = target.value;
+
+        if (target.required && inputValue === ('' || null || undefined)) {
+            target.classList.add("invalid-entry");
+            setNotification(`${target.dataset.name} is a required field.`);
+        }
+
+        if (inputValue.length >= target.maxLength) {
+            target.classList.add("invalid-entry");
+            setNotification(`${target.dataset.name} allows a maximum of ${target.maxLength} characters.`);
+        }
+    }
+
     const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving Scene ${i + 1}`), 'Saving encounters'];
 
     return (
         <main className="mt-[5.5rem] mb-6 w-full h-overlay p-2 max-w-[100vw]">
+            {notification && !savingNotifications.includes(notification) &&
+                <p className={`${theme}-text my-3 text-center`}>{notification}</p>
+            }
             <section className="w-full mb-3 lg:relative">
                 <div className="absolute flex justify-between inset-x-0 top-0">
                     <button className={`aspect-square font-${theme}-text text-${theme}-neutral text-xl`} onClick={() => navigate('/adventures')}>&lt;</button>
@@ -329,12 +375,14 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                                 name="adventure-title-input"
                                 className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-heading text-3xl font-${theme}-heading px-1 py-2 block w-full text-center`}
                                 autoComplete="off"
-                                onChange={handleInputChange}
+                                onChange={() => handleInputChange(titleInputRef)}
                                 onBlur={fieldLoseFocus}
                                 value={titleText}
                                 disabled={loading}
                                 required
                                 ref={titleInputRef}
+                                maxLength={80}
+                                data-name="Title"
                             />
                         </div>
                     </div>
@@ -361,15 +409,15 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 {edit &&
                     <CSRFToken />
                 }
-                <Stage key="exposition" content={exposition} edit={edit} setRef={setExpositionRef} />
-                <Stage key="incitement" content={incitement} edit={edit} setRef={setIncitementRef} />
+                <Stage key="exposition" content={exposition} edit={edit} setRef={setExpositionRef} inputText={expositionText} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
+                <Stage key="incitement" content={incitement} edit={edit} setRef={setIncitementRef} inputText={incitementText} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
                 <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false}>
                     {scenes?.map((scene, i) => (
-                        <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} sceneIndex={i} edit={edit} />
+                        <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} sceneIndex={i} edit={edit} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
                     ))}
                 </Carousel>
-                <Stage key="climax" content={climax} edit={edit} setRef={setClimaxRef} />
-                <Stage key="denoument" content={denoument} edit={edit} setRef={setDenoumentRef} />
+                <Stage key="climax" content={climax} edit={edit} setRef={setClimaxRef} inputText={climaxText} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
+                <Stage key="denoument" content={denoument} edit={edit} setRef={setDenoumentRef} inputText={denoumentText} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
             </section>
 
             {deleteConfirm &&
