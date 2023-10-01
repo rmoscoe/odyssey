@@ -102,7 +102,8 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [loading, setLoading] = useState(false);
     const [notification, setNotification] = useState("");
 
-    const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, climax_progress, denoument, progress, status } = location.state || {};
+    const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, denoument, status } = location.state || {};
+    let { progress, climax_progress } = location.state || {};
 
     const [titleText, setTitleText] = useState(title);
     const [expositionRef, setExpositionRef] = useState<React.MutableRefObject<HTMLTextAreaElement | null>>(useRef(null));
@@ -358,12 +359,92 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         }
     }
 
-    const startClimax = () => {
-        // Set climax_progress to 50% and update the adventure progress accordingly
+    const updateAdventureProgress = async () => {
+        let adventureProgress = 0;
+        let progressDivisor = 0;
+
+        try {
+            const response = await axios.get(`/api/adventures/${adventureId}/`);
+            if (response.status === 401) {
+                navigate('/login');
+            } else if (response.data) {
+                for (let i = 0; i < response.data.scene_set.length; i++) {
+                    const scene: isoScene = response.data.scene_set[i];
+                    progressDivisor += 100;
+                    switch (scene.progress) {
+                        case "In Progress":
+                            adventureProgress += 50;
+                            break;
+                        case "Complete":
+                            adventureProgress += 100;
+                            break;
+                        default:
+                            break;
+                    }
+                    for (let j = 0; j < scene.encounter_set.length; j++) {
+                        const encounter = scene.encounter_set[j];
+                        progressDivisor += 100;
+                        switch (encounter?.progress) {
+                            case "In Progress":
+                                adventureProgress += 50;
+                                break;
+                            case "Complete":
+                                adventureProgress += 100;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                if (response.data.climax && response.data.climax !== "") {
+                    progressDivisor += 100;
+                    adventureProgress += response.data.climax_progress;
+                }
+                const progressPercent = adventureProgress / progressDivisor * 100;
+                const updateResponse = await axios.patch(`/api/adventures/${adventureId}/`, { progress: progressPercent }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+                progress = updateResponse.data.progress;
+            }
+            else {
+                setNotification("Oops! Something went wrong. Please try again.");
+            }
+        } catch (err) {
+            console.error(err);
+            setNotification("Unable to update progress. Please try again.");
+        }
     }
 
-    const completeClimax = () => {
-        // Set climax_progress to 100% and update the adventure progress accordingly
+    const startClimax = async () => {
+        try {
+            const response = await axios.patch(`/api/adventures/${adventureId}/`, { climax_progress: 50 }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            if (response.status === 401) {
+                navigate('login');
+            } else if (response.data) {
+                climax_progress = response.data.climax_progress;
+                updateAdventureProgress();
+            } else {
+                setNotification("Oops! Something went wrong. Please try again.");
+            }
+        } catch (err) {
+            console.error(err);
+            setNotification("Unable to start Climax stage of this adventure. Please try again.");
+        }
+    }
+
+    const completeClimax = async () => {
+        try {
+            const response = await axios.patch(`/api/adventures/${adventureId}/`, { climax_progress: 100 }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            if (response.status === 401) {
+                navigate('login');
+            } else if (response.data) {
+                climax_progress = response.data.climax_progress;
+                updateAdventureProgress();
+            } else {
+                setNotification("Oops! Something went wrong. Please try again.");
+            }
+        } catch (err) {
+            console.error(err);
+            setNotification("Unable to complete Climax stage of this adventure. Please try again.");
+        }
     }
 
     const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving Scene ${i + 1}`), 'Saving encounters'];
