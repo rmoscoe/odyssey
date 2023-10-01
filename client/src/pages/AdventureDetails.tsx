@@ -47,6 +47,7 @@ type adventure = {
         progress: string;
     } | null];
     climax: string | null;
+    climax_progress: number;
     denoument: string | null;
     progress: number;
     status: string;
@@ -62,12 +63,13 @@ type isoAdventure = {
     exposition: string | null;
     incitement: string | null;
     climax: string | null;
+    climax_progress: number;
     denoument: string | null;
     progress: number;
     status: string;
 };
 
-type isoScenes = [{
+type isoScene = {
     id?: number;
     sequence: number;
     challenge: string | null;
@@ -82,7 +84,9 @@ type isoScenes = [{
     plot_twist: string | null;
     clue: string | null;
     progress?: string;
-} | null];
+};
+
+type isoScenes = Array<isoScene | null>;
 
 export default function AdventureDetails({ handlePageChange, deleteConfirm, setDeleteConfirm }: AdventureDetailsProps) {
     const { theme } = useTheme();
@@ -98,7 +102,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [loading, setLoading] = useState(false);
     const [notification, setNotification] = useState("");
 
-    const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, denoument, progress, status } = location.state || {};
+    const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, climax_progress, denoument, progress, status } = location.state || {};
 
     const [titleText, setTitleText] = useState(title);
     const [expositionRef, setExpositionRef] = useState<React.MutableRefObject<HTMLTextAreaElement | null>>(useRef(null));
@@ -110,6 +114,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [denoumentRef, setDenoumentRef] = useState<React.MutableRefObject<HTMLTextAreaElement | null>>(useRef(null));
     const [denoumentText, setDenoumentText] = useState(denoument);
     const [reloadRequired, setReloadRequired] = useState(false);
+    const [scenes_complete, setScenesComplete] = useState(false);
 
     const titleInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -145,6 +150,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                         exposition: data.exposition,
                         incitement: data.incitement,
                         climax: data.climax,
+                        climax_progress: data.climax_progress,
                         denoument: data.denoument,
                         progress: data.progress,
                         status: data.status,
@@ -157,6 +163,15 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                     setIncitementText(isoAdventure.incitement);
                     setClimaxText(isoAdventure.climax);
                     setDenoumentText(isoAdventure.denoument);
+                    for (let i = 0; i < isoScenes.length; i++) {
+                        const scene = isoScenes[i]
+                        if (scene?.progress !== "Complete") {
+                            return;
+                        } else {
+                            continue;
+                        }
+                    }
+                    setScenesComplete(true);
                 } else {
                     setAdventure(undefined);
                     setScenes(undefined);
@@ -182,11 +197,21 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 exposition,
                 incitement,
                 climax,
+                climax_progress,
                 denoument,
                 progress,
                 status
             });
             setScenes(scene_set);
+            let allScenesComplete = true;
+            for (let i = 0; i < scene_set.length; i++) {
+                if (scene_set[i].progress === "Complete") {
+                    continue;
+                } else {
+                    allScenesComplete = false;
+                }
+            }
+            setScenesComplete(allScenesComplete);
         } else {
             getAdventure();
         }
@@ -333,6 +358,14 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         }
     }
 
+    const startClimax = () => {
+        // Set climax_progress to 50% and update the adventure progress accordingly
+    }
+
+    const completeClimax = () => {
+        // Set climax_progress to 100% and update the adventure progress accordingly
+    }
+
     const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving Scene ${i + 1}`), 'Saving encounters'];
 
     return (
@@ -415,7 +448,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                         <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} sceneIndex={i} edit={edit} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
                     ))}
                 </Carousel>
-                <Stage key="climax" title="Climax" content={climax} edit={edit} setRef={setClimaxRef} inputText={climaxText} loading={loading} />
+                <Stage key="climax" title="Climax" content={climax} edit={edit} setRef={setClimaxRef} inputText={climaxText} loading={loading} climax_progress={climax_progress} scenes_complete={scenes_complete} startClimax={startClimax} completeClimax={completeClimax} />
                 <Stage key="denoument" title="Epilogue" content={denoument} edit={edit} setRef={setDenoumentRef} inputText={denoumentText} loading={loading} />
             </section>
 

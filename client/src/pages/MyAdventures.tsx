@@ -38,6 +38,7 @@ type adventure = {
         progress: string;
     } | null];
     climax: string | null;
+    climax_progress: number;
     denoument: string | null;
     progress: number;
     status: string;
