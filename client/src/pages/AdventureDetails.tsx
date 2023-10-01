@@ -2,10 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Auth from '../utils/auth';
-import Adventure from '../components/Adventure';
 import axios, { AxiosError } from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt, faPencil, faFloppyDisk, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt, faPencil, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import DeleteConfirm from '../components/DeleteConfirm';
@@ -126,6 +125,12 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (reloadRequired) {
+            console.log("Reload required");
+        }
+    }, [reloadRequired]);
 
     handlePageChange('Adventure Details');
 
@@ -413,6 +418,70 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         }
     }
 
+    const startScene = async (sceneId: number) => {
+        try {
+            const response = await axios.patch(`/api/scenes/${sceneId}/`, { progress: "In Progress" }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            if (response.status === 401) {
+                navigate('login');
+            } else if (response.data) {
+                updateAdventureProgress();
+            } else {
+                setNotification("Oops! Something went wrong. Please try again.");
+            }
+        } catch (err) {
+            console.error(err);
+            setNotification("Unable to start scene. Please try again.");
+        }
+    }
+
+    const completeScene = async (sceneId: number) => {
+        try {
+            const response = await axios.patch(`/api/scenes/${sceneId}/`, { progress: "Complete" }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            if (response.status === 401) {
+                navigate('login');
+            } else if (response.data) {
+                updateAdventureProgress();
+            } else {
+                setNotification("Oops! Something went wrong. Please try again.");
+            }
+        } catch (err) {
+            console.error(err);
+            setNotification("Unable to complete scene. Please try again.");
+        }
+    }
+
+    const startEncounter = async (encounterId: number) => {
+        try {
+            const response = await axios.patch(`/api/encounters/${encounterId}/`, { progress: "In Progress" }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            if (response.status === 401) {
+                navigate('login');
+            } else if (response.data) {
+                updateAdventureProgress();
+            } else {
+                setNotification("Oops! Something went wrong. Please try again.");
+            }
+        } catch (err) {
+            console.error(err);
+            setNotification("Unable to start encounter. Please try again.");
+        }
+    }
+
+    const completeEncounter = async (encounterId: number) => {
+        try {
+            const response = await axios.patch(`/api/encounters/${encounterId}/`, { progress: "Complete" }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            if (response.status === 401) {
+                navigate('login');
+            } else if (response.data) {
+                updateAdventureProgress();
+            } else {
+                setNotification("Oops! Something went wrong. Please try again.");
+            }
+        } catch (err) {
+            console.error(err);
+            setNotification("Unable to complete encounter. Please try again.");
+        }
+    }
+
     const startClimax = async () => {
         try {
             const response = await axios.patch(`/api/adventures/${adventureId}/`, { climax_progress: 50 }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
@@ -526,7 +595,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 <Stage key="incitement" title="Beginning" content={incitement} edit={edit} setRef={setIncitementRef} inputText={incitementText} loading={loading} />
                 <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false}>
                     {scenes?.map((scene, i) => (
-                        <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} sceneIndex={i} edit={edit} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} />
+                        <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} sceneIndex={i} edit={edit} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} />
                     ))}
                 </Carousel>
                 <Stage key="climax" title="Climax" content={climax} edit={edit} setRef={setClimaxRef} inputText={climaxText} loading={loading} climax_progress={climax_progress} scenes_complete={scenes_complete} startClimax={startClimax} completeClimax={completeClimax} />
