@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Dispatch, SetStateAction } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -24,9 +24,12 @@ type isoScene = {
     progress?: string;
 };
 
+type isoScenes = Array<isoScene | null>;
+
 interface SceneDetailsProps {
     scene: isoScene | null,
-    scenes: Array<isoScene | null>,
+    scenes: isoScenes,
+    setScenes: Dispatch<SetStateAction<isoScenes | undefined>>
     sceneIndex: number,
     edit: boolean,
     setDeleteType: (value: string) => void;
@@ -39,11 +42,11 @@ interface SceneDetailsProps {
     loading: boolean;
 }
 
-export default function SceneDetails({ scene, scenes, sceneIndex, edit, setDeleteType, setDeleteId, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading }: SceneDetailsProps) {
+export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, setDeleteType, setDeleteId, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading }: SceneDetailsProps) {
     const { theme } = useTheme();
 
     const { id, sequence, challenge, setting, encounter_set, plot_twist, clue } = scene || {};
-    let { progress } = scene;
+    let { progress } = scene || {};
 
     const [challengeText, setChallengeText] = useState(challenge);
     const [settingText, setSettingText] = useState(setting);
@@ -52,6 +55,39 @@ export default function SceneDetails({ scene, scenes, sceneIndex, edit, setDelet
 
     const cols = window.innerWidth < 1024 ? 30 : 47;
 
+    const addSceneBefore = () => {
+        let updatedScenes: isoScenes;
+        if (!scenes || scenes.length === 0) {
+            updatedScenes = [];
+        } else {
+            updatedScenes = scenes.slice();
+        }
+
+        if (updatedScenes.length > 0) {
+            for (let i = updatedScenes.length - 1; i >= sceneIndex; i--) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                updatedScenes[i + 1] = scenes!.slice(i, i + 1)[0];
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                updatedScenes[i + 1]!.sequence++;
+            }
+        }
+
+        const newScene: isoScene = {
+            sequence: sceneIndex,
+            challenge: '',
+            setting: '',
+            encounter_set: [{
+                encounter_type: "",
+                description: ""
+            }],
+            plot_twist: null,
+            clue: null
+        }
+
+        updatedScenes[sceneIndex] = newScene;
+
+        setScenes(updatedScenes);
+    }
 
     return (
         <section className={`m-2 bg-${theme}-stage-background rounded-2xl py-2 px-10 w-full`}>
@@ -206,10 +242,10 @@ export default function SceneDetails({ scene, scenes, sceneIndex, edit, setDelet
             {progress !== "Complete" && (sceneIndex === 0 || scenes[sceneIndex - 1]?.progress === "Complete") &&
                 <section className="flex justify-end w-full mt-2">
                     {progress === "Not Started" &&
-                        <button onClick={() => {startScene(id || 0)}} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Start</button>
+                        <button onClick={() => { startScene(id || 0) }} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Start</button>
                     }
                     {progress === "In Progress" &&
-                        <button onClick={() => {completeScene(id || 0)}} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Complete</button>
+                        <button onClick={() => { completeScene(id || 0) }} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Complete</button>
                     }
                 </section>
             }
