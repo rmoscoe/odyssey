@@ -51,7 +51,7 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting, setDe
     }
 
     const handleDeleteConfirm = async () => {
-        if (deleteType === 'adventures') {
+        if (deleteType === 'adventures' || deleteType === 'scenes' || deleteType === 'encounters') {
             try {
                 closeModal();
                 const response = await axios.delete(`/api/${deleteType}/${deleteId}/`, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });

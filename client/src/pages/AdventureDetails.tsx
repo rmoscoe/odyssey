@@ -115,6 +115,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [denoumentText, setDenoumentText] = useState(denoument);
     const [reloadRequired, setReloadRequired] = useState(false);
     const [scenes_complete, setScenesComplete] = useState(false);
+    const [activeScene, setActiveScene] = useState(0);
 
     const titleInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -516,6 +517,8 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         }
     }
 
+    const handleSlideChange = (idx: number) => setActiveScene(idx);
+
     const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving Scene ${i + 1}`), 'Saving encounters'];
 
     return (
@@ -593,9 +596,9 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 }
                 <Stage key="exposition" title="Background" content={exposition} edit={edit} setRef={setExpositionRef} inputText={expositionText} loading={loading} />
                 <Stage key="incitement" title="Beginning" content={incitement} edit={edit} setRef={setIncitementRef} inputText={incitementText} loading={loading} />
-                <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false}>
+                <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} onChange={handleSlideChange} selectedItem={activeScene} >
                     {scenes?.map((scene, i) => (
-                        <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} setScenes={setScenes} sceneIndex={i} edit={edit} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} />
+                        <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} setScenes={setScenes} sceneIndex={i} edit={edit} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} setActiveScene={setActiveScene} setDeleteConfirm={setDeleteConfirm} />
                     ))}
                 </Carousel>
                 <Stage key="climax" title="Climax" content={climax} edit={edit} setRef={setClimaxRef} inputText={climaxText} loading={loading} climax_progress={climax_progress} scenes_complete={scenes_complete} startClimax={startClimax} completeClimax={completeClimax} />
