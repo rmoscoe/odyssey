@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef, Dispatch, SetStateAction } from 'react';
 import { useTheme } from '../utils/ThemeContext';
@@ -32,8 +33,6 @@ interface SceneDetailsProps {
     setScenes: Dispatch<SetStateAction<isoScenes | undefined>>
     sceneIndex: number,
     edit: boolean,
-    setDeleteType: (value: string) => void;
-    setDeleteId: (value: number) => void;
     handleDeleteClick: (dType: string, dId: number) => void;
     startScene: (sceneId: number) => void;
     completeScene: (sceneId: number) => void;
@@ -41,10 +40,9 @@ interface SceneDetailsProps {
     completeEncounter: (encounterId: number) => void;
     loading: boolean;
     setActiveScene: (value: number) => void;
-    setDeleteConfirm: (value: boolean) => void;
 }
 
-export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, setDeleteType, setDeleteId, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene, setDeleteConfirm }: SceneDetailsProps) {
+export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene }: SceneDetailsProps) {
     const { theme } = useTheme();
 
     const { id, sequence, challenge, setting, encounter_set, plot_twist, clue, progress } = scene || {};
@@ -133,12 +131,6 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
         setActiveScene(newIndex)
     }
 
-    const deleteScene = () => {
-        setDeleteId(id || 0);
-        setDeleteType("scenes");
-        setDeleteConfirm(true);
-    }
-
     const handleInputChange = (field: React.MutableRefObject<HTMLTextAreaElement | null>) => {
         const { current } = field;
         const inputValue: string | undefined = current?.value;
@@ -165,16 +157,16 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
         <section className={`relative m-2 bg-${theme}-stage-background rounded-2xl py-2 px-10 w-full`}>
             {edit && window.innerWidth < 1024 &&
                 <section className="flex justify-between w-full px-2 mb-2 z-20">
-                    <button onClick={addSceneBefore} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
+                    <button onClick={addSceneBefore} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
                         <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                         &nbsp; Before
                     </button>
-                    <button onClick={addSceneAfter} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
+                    <button onClick={addSceneAfter} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
                         <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                         &nbsp; After
                     </button>
                     {progress === "Not Started" &&
-                        <button onClick={deleteScene} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 aspect-square`}>
+                        <button onClick={() => handleDeleteClick("scenes", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 aspect-square`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
                     }
@@ -188,16 +180,16 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                 </div>
                 {edit && window.innerWidth >= 1024 &&
                     <section className="flex justify-between space-x-2 z-20">
-                        <button onClick={addSceneBefore} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
+                        <button onClick={addSceneBefore} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                             &nbsp; Before
                         </button>
-                        <button onClick={addSceneAfter} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
+                        <button onClick={addSceneAfter} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                             &nbsp; After
                         </button>
                         {progress === "Not Started" &&
-                            <button onClick={deleteScene} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 aspect-square`}>
+                            <button onClick={() => handleDeleteClick("scenes", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 aspect-square`}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                             </button>
                         }
@@ -205,7 +197,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                 }
             </section>
 
-            <section className="flex flex-wrap justify-between content-around lg:mt-2 w-full">
+            <section className="flex flex-wrap justify-between content-around w-full lg:mt-2">
                 <section className={`bg-${theme}-secondary rounded-l p-2 w-full lg:w-5/12`}>
                     {!edit &&
                         <p className={`${theme}-text`}>{scene?.challenge && scene.challenge !== "" ? `Goal: ${scene.challenge}` : ""}</p>
@@ -214,7 +206,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                         <>
                             <label htmlFor="challenge-textarea" className={`${theme}-label block`}>Goal:</label>
                             <textarea
-                                id="challenge-textarea"
+                                id={`challenge-textarea-${id}`}
                                 name="challenge-textarea"
                                 rows={5}
                                 className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
@@ -239,8 +231,8 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                         <>
                             <label htmlFor="setting-textarea" className={`${theme}-label block`}>Setting:</label>
                             <textarea
-                                id="setting-textarea"
-                                name="setting-textarea"
+                                id={`setting-textarea-${id}`}
+                                name={`setting-textarea-${id}`}
                                 rows={5}
                                 className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
                                 cols={cols}
@@ -261,7 +253,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             <section className="w-5/6 mx-auto mt-2">
                 <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false}>
                     {encounter_set?.map((encounter, i) => (
-                        <EncounterDetails key={encounter?.id || i} encounter={encounter} encounters={encounter_set} encounterIndex={i} edit={edit} setDeleteType={setDeleteType} setDeleteId={setDeleteId} handleDeleteClick={handleDeleteClick} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} />
+                        <EncounterDetails key={encounter?.id || i} encounter={encounter!} encounters={encounter_set} encounterIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} />
                     ))}
                 </Carousel>
             </section>
@@ -275,8 +267,8 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                         <>
                             <label htmlFor="plot-twist-textarea" className={`${theme}-label block`}>Plot Twist:</label>
                             <textarea
-                                id="plot-twist-textarea"
-                                name="plot-twist-textarea"
+                                id={`plot-twist-textarea-${id}`}
+                                name={`plot-twist-textarea-${id}`}
                                 rows={5}
                                 className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
                                 cols={cols}
@@ -300,8 +292,8 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                         <>
                             <label htmlFor="clue-textarea" className={`${theme}-label block`}>Clue:</label>
                             <textarea
-                                id="clue-textarea"
-                                name="clue-textarea"
+                                id={`clue-textarea-${id}`}
+                                name={`clue-textarea-${id}`}
                                 rows={5}
                                 className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
                                 cols={cols}
@@ -322,10 +314,10 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             {progress !== "Complete" && (sceneIndex === 0 || scenes[sceneIndex - 1]?.progress === "Complete") &&
                 <section className="flex justify-end w-full mt-2">
                     {progress === "Not Started" &&
-                        <button onClick={() => { startScene(id || 0) }} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Start</button>
+                        <button onClick={() => { startScene(id || 0) }} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Start</button>
                     }
                     {progress === "In Progress" &&
-                        <button onClick={() => { completeScene(id || 0) }} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Complete</button>
+                        <button onClick={() => { completeScene(id || 0) }} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Complete</button>
                     }
                 </section>
             }
