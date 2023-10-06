@@ -52,11 +52,26 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
     const [settingText, setSettingText] = useState(setting);
     const [plotTwistText, setPlotTwistText] = useState(plot_twist);
     const [clueText, setClueText] = useState(clue);
+    const [statefulScene, setStatefulScene] = useState(scene);
+    const [activeEncounter, setActiveEncounter] = useState(0);
+
 
     const challengeRef = useRef(null);
     const settingRef = useRef(null);
     const plotTwistRef = useRef(null);
     const clueRef = useRef(null);
+
+    useEffect(() => {
+        let updatedScenes: isoScenes;
+        if (!scenes || scenes.length === 0) {
+            updatedScenes = [];
+        } else {
+            updatedScenes = scenes.slice();
+        }
+
+        updatedScenes[sceneIndex] = statefulScene;
+        setScenes(updatedScenes);
+    }, [statefulScene]);
 
     const cols = window.innerWidth < 1024 ? 30 : 47;
 
@@ -152,6 +167,9 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                 console.error(`Error: Input field ${current?.tagName} ID ${current?.id || ""} with Value ${current?.value || ""} not recognized.`);
         }
     }
+
+    const handleSlideChange = (idx: number) => setActiveEncounter(idx);
+
 
     return (
         <section className={`relative m-2 bg-${theme}-stage-background rounded-2xl py-2 px-10 w-full`}>
@@ -251,9 +269,9 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             </section>
 
             <section className="w-5/6 mx-auto mt-2">
-                <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false}>
+                <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} selectedItem={activeEncounter} onChange={handleSlideChange} >
                     {encounter_set?.map((encounter, i) => (
-                        <EncounterDetails key={encounter?.id || i} encounter={encounter!} encounters={encounter_set} encounterIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} />
+                        <EncounterDetails key={encounter?.id || i} encounter={encounter!} encounters={encounter_set} encounterIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} scene={scene!} setStatefulScene={setStatefulScene} setActiveEncounter={setActiveEncounter} />
                     ))}
                 </Carousel>
             </section>
