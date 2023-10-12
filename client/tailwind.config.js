@@ -29,7 +29,7 @@ export default {
         'fantasy-progress-fill': '#FFFEBD',
         'fantasy-scene': '#930C10',
         'fantasy-scene-text': '#F7CE65',
-        'fantasy-stage-background': '#455055',
+        'fantasy-stage-background': '#F7CE65',
         'sci-fi-primary': '#1352FF',
         'sci-fi-accent': '#FF54A4',
         'sci-fi-heading': '#D9D9D9',
@@ -51,7 +51,7 @@ export default {
         'sci-fi-progress-fill': '#1352FF',
         'sci-fi-scene': '#455055',
         'sci-fi-scene-text': '#D9D9D9',
-        'sci-fi-stage-background': '#F7CE65',
+        'sci-fi-stage-background': '#455055',
       },
       fontFamily: {
         'fantasy-title': ['Yatra One', 'Macondo Swash Caps', 'cursive', 'Arial', 'sans-serif'],

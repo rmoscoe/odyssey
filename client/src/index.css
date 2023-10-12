@@ -500,6 +500,14 @@ button {
   background-color: #455055;
 }
 
+.bg-fantasy-stage-background {
+  background-color: #F7CE65;
+}
+
+.bg-sci-fi-stage-background {
+  background-color: #455055;
+}
+
 .invalid-entry {
   border-color: rgb(244 63 94);
 }
@@ -821,9 +829,9 @@ input.bg-fantasy-field:-internal-autofill-selected {
   background-image: linear-gradient(to top, #31333B, #FF54A4 45%, #FF54A4);
 }
 
-.slider-wrapper {
+/*.slider-wrapper {
   overflow-y: visible !important;
-}
+}*/
 
 .carousel .control-prev.control-arrow:before {
   border-right: 18px solid #fff !important;

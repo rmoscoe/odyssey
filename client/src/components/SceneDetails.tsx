@@ -40,6 +40,7 @@ interface SceneDetailsProps {
     completeEncounter: (encounterId: number) => void;
     loading: boolean;
     setActiveScene: (value: number) => void;
+    // adventureDetails: React.MutableRefObject<HTMLElement | null>
 }
 
 export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene }: SceneDetailsProps) {
@@ -55,7 +56,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
     const [statefulScene, setStatefulScene] = useState(scene);
     const [activeEncounter, setActiveEncounter] = useState(0);
 
-
+    const sceneDetailsRef = useRef<HTMLElement | null>(null);
     const challengeRef = useRef(null);
     const settingRef = useRef(null);
     const plotTwistRef = useRef(null);
@@ -72,6 +73,16 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
         updatedScenes[sceneIndex] = statefulScene;
         setScenes(updatedScenes);
     }, [statefulScene]);
+
+    // useEffect(() => {
+    //     resizeCarousel();
+    // }, [statefulScene, scenes, edit, encounter_set, activeEncounter, sceneDetailsRef.current?.offsetHeight]);
+
+    // const resizeCarousel = () => {
+    //     const carousel = adventureDetails.current?.querySelector(".slider-wrapper");
+    //     const sceneHeight = sceneDetailsRef.current?.offsetHeight;
+    //     carousel?.setAttribute("style", `height: ${sceneHeight}px!important;`);
+    // }
 
     const cols = window.innerWidth < 1024 ? 30 : 47;
 
@@ -172,7 +183,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
 
 
     return (
-        <section className={`relative m-2 bg-${theme}-stage-background rounded-2xl py-2 px-10 w-full`}>
+        <section ref={sceneDetailsRef} className={`bg-${theme}-stage-background rounded-2xl pt-2 pb-8 px-10 w-full`}>
             {edit && window.innerWidth < 1024 &&
                 <section className="flex justify-between w-full px-2 mb-2 z-20">
                     <button onClick={addSceneBefore} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
@@ -215,10 +226,10 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                 }
             </section>
 
-            <section className="flex flex-wrap justify-between content-around w-full lg:mt-2">
-                <section className={`bg-${theme}-secondary rounded-l p-2 w-full lg:w-5/12`}>
+            <section className="flex flex-wrap justify-between content-around w-full">
+                <section className={`bg-${theme}-secondary rounded-lg p-2 w-full mt-2 lg:w-[45%]`}>
                     {!edit &&
-                        <p className={`${theme}-text`}>{scene?.challenge && scene.challenge !== "" ? `Goal: ${scene.challenge}` : ""}</p>
+                        <p className={`${theme}-text text-left`}>{scene?.challenge && scene.challenge !== "" ? `Goal: ${scene.challenge}` : ""}</p>
                     }
                     {edit &&
                         <>
@@ -241,9 +252,9 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                         </>
                     }
                 </section>
-                <section className={`bg-${theme}-secondary rounded-l p-2 w-full lg:w-5/12`}>
+                <section className={`bg-${theme}-secondary rounded-lg p-2 w-full mt-2 lg:w-[45%]`}>
                     {!edit &&
-                        <p className={`${theme}-text`}>{scene?.setting && scene.setting !== "" ? `Setting: ${scene.setting}` : ""}</p>
+                        <p className={`${theme}-text text-left`}>{scene?.setting && scene.setting !== "" ? `Setting: ${scene.setting}` : ""}</p>
                     }
                     {edit &&
                         <>
@@ -268,7 +279,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                 </section>
             </section>
 
-            <section className="w-5/6 mx-auto mt-2">
+            <section className="mt-2">
                 <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} selectedItem={activeEncounter} onChange={handleSlideChange} >
                     {encounter_set?.map((encounter, i) => (
                         <EncounterDetails key={encounter?.id || i} encounter={encounter!} encounters={encounter_set} encounterIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} scene={scene!} setStatefulScene={setStatefulScene} setActiveEncounter={setActiveEncounter} />
@@ -276,10 +287,10 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                 </Carousel>
             </section>
 
-            <section className="flex flex-wrap justify-between content-around lg:mt-2 w-full">
-                <section className={`bg-${theme}-secondary rounded-l p-2 w-full lg:w-5/12`}>
+            <section className="flex flex-wrap justify-between content-around w-full">
+                <section className={`bg-${theme}-secondary rounded-lg p-2 w-full mt-2 lg:w-[45%]`}>
                     {!edit &&
-                        <p className={`${theme}-text`}>{scene?.plot_twist && scene.plot_twist !== "" ? `Plot Twist: ${scene.challenge}` : ""}</p>
+                        <p className={`${theme}-text text-left`}>{scene?.plot_twist && scene.plot_twist !== "" ? `Plot Twist: ${scene.challenge}` : ""}</p>
                     }
                     {edit &&
                         <>
@@ -302,9 +313,9 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                         </>
                     }
                 </section>
-                <section className={`bg-${theme}-secondary rounded-l p-2 w-full lg:w-5/12`}>
+                <section className={`bg-${theme}-secondary rounded-lg p-2 w-full mt-2 lg:w-[45%]`}>
                     {!edit &&
-                        <p className={`${theme}-text`}>{scene?.clue && scene.clue !== "" ? `Clue: ${scene.clue}` : ""}</p>
+                        <p className={`${theme}-text text-left`}>{scene?.clue && scene.clue !== "" ? `Clue: ${scene.clue}` : ""}</p>
                     }
                     {edit &&
                         <>

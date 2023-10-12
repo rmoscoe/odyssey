@@ -117,6 +117,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [scenes_complete, setScenesComplete] = useState(false);
     const [activeScene, setActiveScene] = useState(0);
 
+    const adventureDetailsRef = useRef<HTMLElement | null>(null);
     const titleInputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
@@ -522,15 +523,15 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving Scene ${i + 1}`), 'Saving encounters'];
 
     return (
-        <main className="mt-[5.5rem] mb-6 w-full h-overlay p-2 max-w-[100vw]">
+        <main ref={adventureDetailsRef} className="mt-[5.5rem] mb-6 w-full h-overlay p-2 max-w-[100vw]">
             {notification && !savingNotifications.includes(notification) &&
                 <p className={`${theme}-text my-3 text-center`}>{notification}</p>
             }
             <section className="w-full mb-3 lg:relative">
-                <div className="absolute flex justify-between inset-x-0 top-0">
-                    <button className={`aspect-square font-${theme}-text text-${theme}-neutral text-xl`} onClick={() => navigate('/adventures')}>&lt;</button>
+                <div className="absolute flex basis-[6.5rem] justify-between inset-x-0 top-0">
+                    <button className={`aspect-square font-${theme}-text text-${theme}-neutral text-3xl`} onClick={() => navigate('/adventures')}>&lt;</button>
                     {!edit &&
-                        <div className="space-x-3">
+                        <div className="flex justify-end space-x-3">
                             <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => setEdit(true)}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPencil} />
                             </button>
@@ -540,7 +541,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                         </div>
                     }
                     {edit &&
-                        <div className="space-x-3">
+                        <div className="flex basis-[3.25rem] justify-end space-x-3">
                             <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={saveAdventure}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faFloppyDisk} />
                             </button>
@@ -583,14 +584,14 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 </section>
             }
 
-            <section className="w-full mb-3 px-2 lg:px-10">
+            <section className="w-full mb-6 px-2 lg:px-10">
                 <h3 className={`font-${theme}-heading text-${theme}-heading text-center text-2xl mx-auto mb-3`}>{adventure?.campaign_setting}, {adventure?.game[0] === "A" || adventure?.game[0] === "E" || adventure?.game[0] === "I" || adventure?.game[0] === "O" || adventure?.game[0] === "U" || adventure?.game[0] === "Y" ? "an" : "a"} {adventure?.game} campaign setting</h3>
                 <div className={`h-3 mt-1.5 mx-auto w-64 border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full`}>
                     <div className={`h-full bg-${theme}-progress-fill rounded-full`} style={{ width: `${adventure?.progress}%` }}></div>
                 </div>
             </section>
 
-            <section className="w-full px-2 space-y-3 lg:w-4/5">
+            <section className="w-full px-2 space-y-3 lg:w-4/5 mx-auto">
                 {edit &&
                     <CSRFToken />
                 }

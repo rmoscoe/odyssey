@@ -43,9 +43,10 @@ interface EncounterDetailsProps {
     scene: isoScene,
     setStatefulScene: (scene: isoScene) => void,
     setActiveEncounter: (idx: number) => void,
+    // sceneDetails: React.MutableRefObject<HTMLElement | null>
 }
 
-export default function EncounterDetails({ encounter, encounters, encounterIndex, edit, handleDeleteClick, startEncounter, completeEncounter, loading, scene, setStatefulScene, setActiveEncounter }: EncounterDetailsProps) {
+export default function EncounterDetails({ encounter, encounters, encounterIndex, edit, handleDeleteClick, startEncounter, completeEncounter, loading, scene, setStatefulScene, setActiveEncounter, }: EncounterDetailsProps) {
     const { theme } = useTheme();
 
     const { id, encounter_type, description, progress } = encounter;
@@ -53,10 +54,21 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
     const [typeText, setTypeText] = useState<string | undefined>(encounter_type || "");
     const [descriptionText, setDescriptionText] = useState<string | undefined>(description || "");
 
+    const encounterDetailsRef = useRef<HTMLElement | null>(null);
     const typeRef = useRef<HTMLInputElement | null>(null);
     const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
     const cols = window.innerWidth < 1024 ? 24 : 75;
+
+    // useEffect(() => {
+    //     resizeCarousel();
+    // }, [encounter, encounters, edit, encounterDetailsRef.current?.offsetHeight]);
+
+    // const resizeCarousel = () => {
+    //     const carousel = sceneDetails.current?.querySelector(".slider-wrapper");
+    //     const encounterHeight = encounterDetailsRef.current?.offsetHeight;
+    //     carousel?.setAttribute("style", `height: ${encounterHeight}px!important;`);
+    // }
 
     const addEncounterBefore = () => {
         const newEncounter: isoEncounter = {
@@ -129,7 +141,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
     }
 
     return (
-        <section className={`relative m-2 bg-${theme}-contrast rounded-2xl py-2 px-10 w-full`}>
+        <section ref={encounterDetailsRef} className={`bg-${theme}-contrast rounded-2xl pt-2 pb-8 px-10 w-full`}>
             {edit && window.innerWidth < 1024 &&
                 <section className="flex justify-between w-full px-2 mb-2 z-20">
                     <button onClick={addEncounterBefore} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
@@ -150,7 +162,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
 
             <section className={`flex flex-wrap justify-between w-full px-2 mb-2 md:flex-nowrap`}>
                 {!edit &&
-                    <h4 className={`font-${theme}-heading text-${theme}-form-heading text-[1.18rem]`}>{encounter_type}</h4>
+                    <h4 className={`font-${theme}-heading text-${theme}-form-heading text-[1.18rem] text-left`}>{encounter_type}</h4>
                 }
                 {edit &&
                     <>
@@ -192,7 +204,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
 
             <section className="w-full px-2 lg:mt-2">
                 {!edit &&
-                    <p className={`${theme}-text`}>{description}</p>
+                    <p className={`${theme}-text text-left`}>{description}</p>
                 }
                 {edit &&
                     <>

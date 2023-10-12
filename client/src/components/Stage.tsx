@@ -31,7 +31,7 @@ export default function Stage({ title, content, edit, setRef, inputText, loading
 
     return (
         <section className={`m-2 bg-${theme}-stage-background rounded-2xl p-2 w-full`}>
-            <section className="flex justify-between w-full px-2 mb-2">
+            <section className="flex justify-between w-full mb-2">
                 <h3 className={`font-${theme}-heading text-${theme}-form-heading text-xl`}>{title}</h3>
                 {title === "Climax" &&
                     <div className={`h-3 mt-1.5 w-full border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full lg:hidden`}>
@@ -61,7 +61,7 @@ export default function Stage({ title, content, edit, setRef, inputText, loading
                 </textarea>
             }
 
-            {title === "Climax" && climax_progress && climax_progress < 100 && scenes_complete &&
+            {title === "Climax" && climax_progress !== undefined && climax_progress < 100 && scenes_complete &&
                 <section className="flex justify-end w-full mt-2">
                     {climax_progress === 0 &&
                         <button onClick={startClimax} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Start</button>
