@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { ReactComponent as Sword } from '../assets/sword.svg';
 import { ReactComponent as Planet } from '../assets/planet.svg';
+import Toggle from './Toggle';
 
 interface HamburgerProps {
     toggleActive: () => void;
@@ -13,7 +14,7 @@ interface HamburgerProps {
 }
 
 export default function Hamburger({ toggleActive, hamburgerActive, handleLogout }: HamburgerProps) {
-    const { theme, toggleTheme } = useTheme();
+    const { theme } = useTheme();
 
     const mobileLogout = (event: React.MouseEvent<HTMLAnchorElement | HTMLDivElement>) => {
         toggleActive();
@@ -37,7 +38,8 @@ export default function Hamburger({ toggleActive, hamburgerActive, handleLogout 
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 100 100">
                             <Sword color={theme === 'fantasy' ? '#F7CE65' : '#FF54A4'} />
                         </svg>
-                        <label className={`relative inline-block w-16 h-7 p-2`}>
+                        <Toggle />
+                        {/* <label className={`relative inline-block w-16 h-7 p-2`}>
                             <div className={`absolute appearance-none mx-2 cursor-pointer top-0 right-0 bottom-0 left-0 bg-${theme}-toggle-void border-${theme}-toggle-border border-4 rounded-[34px] duration-300 peer focus:outline-none`}></div>
                             <input
                                 type="checkbox"
@@ -48,7 +50,7 @@ export default function Hamburger({ toggleActive, hamburgerActive, handleLogout 
                                 onChange={toggleTheme}
                             />
                             <span className={`absolute left-3 top-1 h-5 w-5 rounded-full transition-transform duration-300 transform peer-checked/toggle:translate-x-5 bg-${theme}-toggle-switch cursor-pointer`}></span>
-                        </label>
+                        </label> */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 100 100">
                             <Planet color={theme === 'fantasy' ? '#F7CE65' : '#FF54A4'} />
                         </svg>

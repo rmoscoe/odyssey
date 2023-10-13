@@ -839,6 +839,17 @@ input.bg-fantasy-field:-internal-autofill-selected {
   overflow-y: visible !important;
 }*/
 
+.switch {
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 .carousel .control-prev.control-arrow:before {
   border-right: 18px solid #fff !important;
 }
@@ -860,6 +871,15 @@ input::-webkit-inner-spin-button, input::-webkit-outer-spin-button, input::-moz-
 
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+input:checked ~ .switch {
+  --tw-translate-x: 100%;
+  transform: var(--tw-transform);
+  --tw-bg-opacity: 1;
+  background-color: rgb(48 86 211 / var(--tw-bg-opacity));
+  background: #3056D3;
+  transform: translateX(100%);
 }
 
 @layer base {
