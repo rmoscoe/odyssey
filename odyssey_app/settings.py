@@ -42,7 +42,8 @@ SECRET_KEY_FALLBACKS = json.loads(os.environ.get('SECRET_KEY_FALLBACKS', '[]'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['odyssey-d4b3f26536d0.herokuapp.com', '127.0.0.1:8000', 'localhost']
+ALLOWED_HOSTS = ['odyssey-d4b3f26536d0.herokuapp.com',
+                 '127.0.0.1:8000', 'localhost']
 
 
 # Application definition
@@ -105,9 +106,9 @@ if 'JAWSDB_URL' in os.environ:
 
     jawsdb_url = os.environ['JAWSDB_URL']
     match = re.match(
-    r'mysql:\/\/(?P<user>[^:]+):(?P<password>[^@]+)@(?P<host>[^:/]+):(?P<port>\d+)/(?P<database>.+)',
-    jawsdb_url,
-)
+        r'mysql:\/\/(?P<user>[^:]+):(?P<password>[^@]+)@(?P<host>[^:/]+):(?P<port>\d+)/(?P<database>.+)',
+        jawsdb_url,
+    )
 
     if match:
         DATABASES = {
@@ -117,7 +118,10 @@ if 'JAWSDB_URL' in os.environ:
                 'USER': match.group('user'),
                 'PASSWORD': match.group('password'),
                 'HOST': match.group('host'),
-                'PORT': match.group('port')
+                'PORT': match.group('port'),
+                'OPTIONS': {
+                    'charset': 'utf8mb4',
+                },
             }
         }
 else:
@@ -168,7 +172,6 @@ SESSION_COOKIE_NAME = 'odyssey_session_id'
 # SESSION_COOKIE_DOMAIN = 'odyssey-db3a471a3d45.herokuapp.com/'
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -217,8 +220,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' #'mail_panel.backend.MailToolbarBackend'
-EMAIL_HOST = 'smtp-mail.outlook.com' #'smtp.office365.com' #smtp-mail.outlook.com
+# 'mail_panel.backend.MailToolbarBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# 'smtp.office365.com' #smtp-mail.outlook.com
+EMAIL_HOST = 'smtp-mail.outlook.com'
 EMAIL_PORT = '587'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
