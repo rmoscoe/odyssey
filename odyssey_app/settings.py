@@ -104,6 +104,7 @@ WSGI_APPLICATION = 'odyssey_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
+        # 'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('SCHEMA'),
         'USER': os.environ.get(
             'DB_USER'
@@ -114,7 +115,7 @@ DATABASES = {
         'HOST': os.environ.get('DB_URL'),
         'PORT': '3306',
         'OPTIONS': {
-            'sql_mode': 'traditional',
+            'sql_mode': 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'
         }
     }
 }
