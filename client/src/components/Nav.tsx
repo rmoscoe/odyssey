@@ -48,22 +48,9 @@ const Nav = ({ currentPage, handleLogout }: NavProps) => {
             }
             <section className="self-end text-m flex items-center justify-self-start lg:ml-10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 100 100">
-                    <Sword color={theme === 'fantasy' ? '#F7CE65' : '#FF54A4'} />
+                    <Sword color={theme==='fantasy' ? '#F7CE65' : '#FF54A4'}/>
                 </svg>
                 <label className={`relative inline-block w-16 h-7 p-2`}>
-                    <input
-                        type="checkbox"
-                        id="theme-toggle"
-                        checked={theme === 'sci-fi'}
-                        className="hidden"
-                        onChange={toggleTheme}
-                    />
-                    <div className="relative w-16 h-7 bg-gray-300 rounded-full">
-                        <div className={`absolute left-0 top-0 w-7 h-7 bg-${theme}-toggle-void border-${theme}-toggle-border border-4 rounded-[34px] duration-300`} />
-                        <div className={`absolute left-0 top-0 w-7 h-7 bg-${theme}-toggle-switch rounded-full transition-transform duration-300 transform ${theme === 'sci-fi' ? 'translate-x-5' : ''}`} />
-                    </div>
-                </label>
-                {/* <label className={`relative inline-block w-16 h-7 p-2`}>
                     <input 
                         type="checkbox" 
                         id="theme-toggle" 
@@ -72,9 +59,9 @@ const Nav = ({ currentPage, handleLogout }: NavProps) => {
                         onChange={toggleTheme} 
                     />
                     <span className={`absolute left-3 top-1 h-5 w-5 rounded-full transition-transform duration-300 transform peer-checked:translate-x-5 bg-${theme}-toggle-switch cursor-pointer`}></span>
-                </label> */}
+                </label>
                 <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 100 100">
-                    <Planet color={theme === 'fantasy' ? '#F7CE65' : '#FF54A4'} />
+                    <Planet color={theme==='fantasy' ? '#F7CE65' : '#FF54A4'}/>
                 </svg>
             </section>
         </nav>

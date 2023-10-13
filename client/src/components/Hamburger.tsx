@@ -42,24 +42,11 @@ export default function Hamburger({ toggleActive, hamburgerActive, handleLogout 
                                 type="checkbox"
                                 id="theme-toggle"
                                 checked={theme === 'sci-fi'}
-                                className="hidden"
-                                onChange={toggleTheme}
-                            />
-                            <div className="relative w-16 h-7 bg-gray-300 rounded-full">
-                                <div className={`absolute left-0 top-0 w-7 h-7 bg-${theme}-toggle-void border-${theme}-toggle-border border-4 rounded-[34px] duration-300`} />
-                                <div className={`absolute left-0 top-0 w-7 h-7 bg-${theme}-toggle-switch rounded-full transition-transform duration-300 transform ${theme === 'sci-fi' ? 'translate-x-5' : ''}`} />
-                            </div>
-                        </label>
-                        {/* <label className={`relative inline-block w-16 h-7 p-2`}>
-                            <input
-                                type="checkbox"
-                                id="theme-toggle"
-                                checked={theme === 'sci-fi'}
                                 className={`absolute appearance-none mx-2 cursor-pointer top-0 right-0 bottom-0 left-0 bg-${theme}-toggle-void border-${theme}-toggle-border border-4 rounded-[34px] duration-300 peer focus:outline-none`}
                                 onChange={toggleTheme}
                             />
                             <span className={`absolute left-3 top-1 h-5 w-5 rounded-full transition-transform duration-300 transform peer-checked:translate-x-5 bg-${theme}-toggle-switch cursor-pointer`}></span>
-                        </label> */}
+                        </label>
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 100 100">
                             <Planet color={theme === 'fantasy' ? '#F7CE65' : '#FF54A4'} />
                         </svg>
