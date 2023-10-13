@@ -53,6 +53,7 @@ const Nav = ({ currentPage, handleLogout }: NavProps) => {
                 <label className={`relative inline-block w-16 h-7 p-2`}>
                     <input 
                         type="checkbox" 
+                        role="switch"
                         id="theme-toggle" 
                         checked={theme === 'sci-fi'} 
                         className={`absolute appearance-none mx-2 cursor-pointer top-0 right-0 bottom-0 left-0 bg-${theme}-toggle-void border-${theme}-toggle-border border-4 rounded-[34px] duration-300 peer focus:outline-none`} 
