@@ -105,9 +105,9 @@ if 'JAWSDB_URL' in os.environ:
 
     jawsdb_url = os.environ['JAWSDB_URL']
     match = re.match(
-        r'mysql:\/\/(?P<user>[^:]+):(?P<password>[^@]+)@(?P<host>[^/]+)/(?P<database>.+)',
-        jawsdb_url,
-    )
+    r'mysql:\/\/(?P<user>[^:]+):(?P<password>[^@]+)@(?P<host>[^:/]+):(?P<port>\d+)/(?P<database>.+)',
+    jawsdb_url,
+)
 
     if match:
         DATABASES = {
@@ -117,7 +117,7 @@ if 'JAWSDB_URL' in os.environ:
                 'USER': match.group('user'),
                 'PASSWORD': match.group('password'),
                 'HOST': match.group('host'),
-                'PORT': os.environ.get('DB_PORT')
+                'PORT': match.group('port')
             }
         }
 else:
