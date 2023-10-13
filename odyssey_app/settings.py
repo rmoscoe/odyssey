@@ -112,7 +112,7 @@ if 'JAWSDB_URL' in os.environ:
     if match:
         DATABASES = {
             'default': {
-                'ENGINE': 'django.db.backends.mysql',
+                'ENGINE': 'mysql.connector.django',
                 'NAME': match.group('database'),
                 'USER': match.group('user'),
                 'PASSWORD': match.group('password'),
