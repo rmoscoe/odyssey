@@ -43,7 +43,7 @@ SECRET_KEY_FALLBACKS = json.loads(os.environ.get('SECRET_KEY_FALLBACKS', '[]'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['odyssey-db3a471a3d45.herokuapp.com', '127.0.0.1:8000', 'localhost']
+ALLOWED_HOSTS = ['odyssey-d4b3f26536d0.herokuapp.com', '127.0.0.1:8000', 'localhost']
 
 
 # Application definition
