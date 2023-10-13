@@ -64,10 +64,10 @@ export default function Stage({ title, content, edit, setRef, inputText, loading
             {title === "Climax" && climax_progress !== undefined && climax_progress < 100 && scenes_complete &&
                 <section className="flex justify-end w-full mt-2">
                     {climax_progress === 0 &&
-                        <button onClick={startClimax} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Start</button>
+                        <button onClick={startClimax} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>Start</button>
                     }
                     {climax_progress > 0 &&
-                        <button onClick={completeClimax} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Complete</button>
+                        <button onClick={completeClimax} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>Complete</button>
                     }
                 </section>
             }

@@ -227,6 +227,15 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        const dots = document.querySelectorAll('.dot');
+        const oldTheme = theme === "fantasy" ? "sci-fi" : "fantasy";
+        dots.forEach(dot => {
+            dot.classList.add(`${theme}-dot`);
+            dot.classList.remove(`${oldTheme}-dot`);
+        });
+    }, [theme, scenes, activeScene]);
+
     const handleDeleteClick = (dType: string, dId: number) => {
         setDeleteType(dType);
         setDeleteId(dId);
@@ -523,10 +532,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving Scene ${i + 1}`), 'Saving encounters'];
 
     return (
-        <main ref={adventureDetailsRef} className="mt-[5.5rem] mb-6 w-full h-overlay p-2 max-w-[100vw]">
-            {notification && !savingNotifications.includes(notification) &&
-                <p className={`${theme}-text my-3 text-center`}>{notification}</p>
-            }
+        <main ref={adventureDetailsRef} className="mt-[5.5rem] mb-12 w-full h-overlay p-2 max-w-[100vw] overflow-scroll">
             <section className="w-full mb-3 lg:relative">
                 <div className="absolute flex basis-[6.5rem] justify-between inset-x-0 top-0">
                     <button className={`aspect-square font-${theme}-text text-${theme}-neutral text-3xl`} onClick={() => navigate('/adventures')}>&lt;</button>
@@ -585,11 +591,15 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
             }
 
             <section className="w-full mb-6 px-2 lg:px-10">
-                <h3 className={`font-${theme}-heading text-${theme}-heading text-center text-2xl mx-auto mb-3`}>{adventure?.campaign_setting}, {adventure?.game[0] === "A" || adventure?.game[0] === "E" || adventure?.game[0] === "I" || adventure?.game[0] === "O" || adventure?.game[0] === "U" || adventure?.game[0] === "Y" ? "an" : "a"} {adventure?.game} campaign setting</h3>
+                {campaign_setting ? <h3 className={`font-${theme}-heading text-${theme}-heading text-center text-2xl mx-auto mb-3`}>{campaign_setting}, {game[0] === "A" || game[0] === "E" || game[0] === "I" || game[0] === "O" || game[0] === "U" || game[0] === "Y" ? "an" : "a"} {game} campaign setting</h3> : <h3 className={`font-${theme}-heading text-${theme}-heading text-center text-2xl mx-auto mb-3`}>{game}</h3>}
                 <div className={`h-3 mt-1.5 mx-auto w-64 border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full`}>
                     <div className={`h-full bg-${theme}-progress-fill rounded-full`} style={{ width: `${adventure?.progress}%` }}></div>
                 </div>
             </section>
+
+            {notification && !savingNotifications.includes(notification) &&
+                <p className={`${theme}-text my-6 text-center`}>{notification}</p>
+            }
 
             <section className="w-full px-2 space-y-3 lg:w-4/5 mx-auto">
                 {edit &&

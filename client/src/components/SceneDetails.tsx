@@ -74,6 +74,15 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
         setScenes(updatedScenes);
     }, [statefulScene]);
 
+    useEffect(() => {
+        const dots = sceneDetailsRef.current?.querySelectorAll('.dot');
+        const oldTheme = theme === "fantasy" ? "sci-fi" : "fantasy";
+        dots?.forEach(dot => {
+            dot.classList.add(`${theme}-dot`);
+            dot.classList.remove(`${oldTheme}-dot`);
+        });
+    }, [activeEncounter]);
+
     // useEffect(() => {
     //     resizeCarousel();
     // }, [statefulScene, scenes, edit, encounter_set, activeEncounter, sceneDetailsRef.current?.offsetHeight]);
@@ -186,16 +195,16 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
         <section ref={sceneDetailsRef} className={`bg-${theme}-stage-background rounded-2xl pt-2 pb-8 px-10 w-full`}>
             {edit && window.innerWidth < 1024 &&
                 <section className="flex justify-between w-full px-2 mb-2 z-20">
-                    <button onClick={addSceneBefore} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
+                    <button onClick={addSceneBefore} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
                         <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                         &nbsp; Before
                     </button>
-                    <button onClick={addSceneAfter} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
+                    <button onClick={addSceneAfter} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
                         <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                         &nbsp; After
                     </button>
                     {progress === "Not Started" &&
-                        <button onClick={() => handleDeleteClick("scenes", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 aspect-square`}>
+                        <button onClick={() => handleDeleteClick("scenes", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
                     }
@@ -209,16 +218,16 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                 </div>
                 {edit && window.innerWidth >= 1024 &&
                     <section className="flex justify-between space-x-2 z-20">
-                        <button onClick={addSceneBefore} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
+                        <button onClick={addSceneBefore} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                             &nbsp; Before
                         </button>
-                        <button onClick={addSceneAfter} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>
+                        <button onClick={addSceneAfter} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                             &nbsp; After
                         </button>
                         {progress === "Not Started" &&
-                            <button onClick={() => handleDeleteClick("scenes", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 aspect-square`}>
+                            <button onClick={() => handleDeleteClick("scenes", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                             </button>
                         }
@@ -343,10 +352,10 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             {progress !== "Complete" && (sceneIndex === 0 || scenes[sceneIndex - 1]?.progress === "Complete") &&
                 <section className="flex justify-end w-full mt-2">
                     {progress === "Not Started" &&
-                        <button onClick={() => { startScene(id || 0) }} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Start</button>
+                        <button onClick={() => { startScene(id || 0) }} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>Start</button>
                     }
                     {progress === "In Progress" &&
-                        <button onClick={() => { completeScene(id || 0) }} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1`}>Complete</button>
+                        <button onClick={() => { completeScene(id || 0) }} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>Complete</button>
                     }
                 </section>
             }

@@ -364,6 +364,15 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
         }
     }, [game, gameTitle]);
 
+    useEffect(() => {
+        const dots = document.querySelectorAll('.dot');
+        const oldTheme = theme === "fantasy" ? "sci-fi" : "fantasy";
+        dots.forEach(dot => {
+            dot.classList.add(`${theme}-dot`);
+            dot.classList.remove(`${oldTheme}-dot`);
+        });
+    }, [theme, adventure, sceneIdx, encounterIdx]);
+
     handlePageChange('New Adventure');
 
     const cols = window.innerWidth < 1024 ? 30 : 47;
