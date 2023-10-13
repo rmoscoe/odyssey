@@ -30,6 +30,7 @@ type AdventureProps = {
             progress: string;
         } | null];
         climax: string | null;
+        climax_progress: number;
         denoument: string | null;
         progress: number;
         status: string;
@@ -40,10 +41,10 @@ type AdventureProps = {
 export default function Adventure({ adventure, handleDeleteClick }: AdventureProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
-    const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, denoument, progress, status } = adventure;
+    const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, climax_progress, denoument, progress, status } = adventure;
 
     const handleTileClick = () => {
-        navigate('/adventures/:adventureId', { state: { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, denoument, progress, status } });
+        navigate('/adventures/:adventureId', { state: { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, climax_progress, denoument, progress, status } });
     }
 
     const handleDelete = async (e: React.MouseEvent) => {
@@ -61,7 +62,13 @@ export default function Adventure({ adventure, handleDeleteClick }: AdventurePro
     }
 
     if (currentScene?.progress === 'Complete') {
-        adventureText = climax ? climax : 'This adventure has no content.';
+        if (climax && climax !== "" && climax_progress !== 100) {
+            adventureText = climax;
+        } else if (scene_set.length > 0 && climax && climax !== "") {
+            adventureText = denoument ?? "This adventure is complete."
+        } else {
+            adventureText = 'This adventure has no content.';
+        }
     } else {
         let currentEncounter = currentScene?.encounter_set[0];
         const maxI = currentScene ? (currentScene.encounter_set.length) : 0;

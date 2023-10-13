@@ -364,6 +364,15 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
         }
     }, [game, gameTitle]);
 
+    useEffect(() => {
+        const dots = document.querySelectorAll('.dot');
+        const oldTheme = theme === "fantasy" ? "sci-fi" : "fantasy";
+        dots.forEach(dot => {
+            dot.classList.add(`${theme}-dot`);
+            dot.classList.remove(`${oldTheme}-dot`);
+        });
+    }, [theme, adventure, sceneIdx, encounterIdx]);
+
     handlePageChange('New Adventure');
 
     const cols = window.innerWidth < 1024 ? 30 : 47;
@@ -699,7 +708,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
         }
     }
 
-    const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving scene ${i + 1}`), 'Saving encounters'];
+    const savingNotifications = ['Validating', 'Saving adventure', ...Array.from({ length: 7 }, (_, i) => `Saving Scene ${i + 1}`), 'Saving encounters'];
 
     const chapterSet = [expositionChapter, incitementChapter, risingActionChapter, climaxChapter, denoumentChapter];
     const setChapterSet = [setExpositionChapter, setIncitementChapter, setRisingActionChapter, setClimaxChapter, setDenoumentChapter];
@@ -1002,6 +1011,9 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
 
                     {adventure && chapterSet &&
                         <section className="flex flex-wrap content-end">
+                            {notification === "Background exceeds character limit." &&
+                                <p className={`${theme}-text my-3 text-center`}>{notification}</p> 
+                            }
                             <div className="flex items-end basis-full mb-3 space-y-2">
                                 <div className="mr-2 w-full">
                                     <label htmlFor="adventure-title-input" className={`${theme}-label block`}>Enter a Title*</label>

@@ -65,7 +65,7 @@ function App() {
         />
         <Route
           path="/adventures/:adventureId"
-          element={<AdventureDetails />}
+          element={<AdventureDetails handlePageChange={handlePageChange} deleteConfirm={deleteConfirm} setDeleteConfirm={setDeleteConfirm}/>}
         />
         <Route
           path="*"

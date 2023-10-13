@@ -500,6 +500,14 @@ button {
   background-color: #455055;
 }
 
+.bg-fantasy-stage-background {
+  background-color: #F7CE65;
+}
+
+.bg-sci-fi-stage-background {
+  background-color: #455055;
+}
+
 .invalid-entry {
   border-color: rgb(244 63 94);
 }
@@ -763,22 +771,28 @@ input.bg-fantasy-field:-internal-autofill-selected {
   margin-left:5px;
 }
 
-.fantasy-dot li {
-  fill: #290000;
-  stroke: #FFFEBD;
+.dot {
+  opacity: 1!important;
+  height: 10px!important;
+  width: 10px!important;
 }
 
-.fantasy-dot li.active {
-  fill: #930C10;
+.fantasy-dot {
+  background: #290000!important;
+  border: 1px solid #FFFEBD!important;
 }
 
-.sci-fi-dot li {
-  fill: #1352FF;
-  stroke: #D9D9D9;
+.fantasy-dot.selected {
+  background: #930C10!important;
 }
 
-.sci-fi-dot li.active {
-  fill: #F7CE65;
+.sci-fi-dot {
+  background: #1352FF!important;
+  border: 1px solid #D9D9D9!important;
+}
+
+.sci-fi-dot.selected {
+  background: #ff54a4!important;
 }
 
 .fantasy-increase-button {
@@ -821,9 +835,9 @@ input.bg-fantasy-field:-internal-autofill-selected {
   background-image: linear-gradient(to top, #31333B, #FF54A4 45%, #FF54A4);
 }
 
-.slider-wrapper {
+/*.slider-wrapper {
   overflow-y: visible !important;
-}
+}*/
 
 .carousel .control-prev.control-arrow:before {
   border-right: 18px solid #fff !important;

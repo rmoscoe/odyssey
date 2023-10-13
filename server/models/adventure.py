@@ -16,6 +16,7 @@ class Adventure(models.Model):
     exposition = models.CharField(max_length = 500, blank=True, null=True, validators=[safe_text_validator])
     incitement = models.TextField(blank=True, null=True, validators=[safe_text_validator])
     climax = models.TextField(blank=True, null=True, validators=[safe_text_validator])
+    climax_progress = models.FloatField(default=0)
     denoument = models.TextField(blank=True, null=True, validators=[safe_text_validator])
     progress = models.FloatField(default=0)
     status = models.CharField(max_length = 10, choices = statuses, default='active')
