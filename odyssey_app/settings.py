@@ -14,8 +14,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import json
-# Comment so I can push to heroku
-
+import re
 
 load_dotenv()
 
@@ -101,25 +100,57 @@ WSGI_APPLICATION = 'odyssey_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+if 'JAWSDB_URL' in os.environ:
+    import re
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'mysql.connector.django',
-        # 'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('SCHEMA'),
-        'USER': os.environ.get(
-            'DB_USER'
-        ),
-        'PASSWORD': os.environ.get(
-            'DB_PASSWORD'
-        ),
-        'HOST': os.environ.get('DB_URL'),
-        'PORT': '3306',
-        # 'OPTIONS': {
-        #     'sql_mode': 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'
-        # }
+    jawsdb_url = os.environ['JAWSDB_URL']
+    match = re.match(
+        r'mysql:\/\/(?P<user>[^:]+):(?P<password>[^@]+)@(?P<host>[^/]+)/(?P<database>.+)',
+        jawsdb_url,
+    )
+
+    if match:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME': match.group('database'),
+                'USER': match.group('user'),
+                'PASSWORD': match.group('password'),
+                'HOST': match.group('host'),
+                'PORT': os.environ.get('DB_PORT')
+            }
+        }
+else:
+    # Use custom settings for development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'mysql.connector.django',
+            'NAME': os.environ.get('SCHEMA'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_URL'),
+            'PORT': os.environ.get('DB_PORT')
+        }
     }
-}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mysql.connector.django',
+#         # 'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.environ.get('SCHEMA'),
+#         'USER': os.environ.get(
+#             'DB_USER'
+#         ),
+#         'PASSWORD': os.environ.get(
+#             'DB_PASSWORD'
+#         ),
+#         'HOST': os.environ.get('DB_URL'),
+#         'PORT': '3306',
+#         # 'OPTIONS': {
+#         #     'sql_mode': 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'
+#         # }
+#     }
+# }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 86400
