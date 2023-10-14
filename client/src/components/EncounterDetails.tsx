@@ -141,7 +141,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
     }
 
     return (
-        <section ref={encounterDetailsRef} className={`bg-${theme}-contrast rounded-2xl pt-2 pb-8 px-10 w-full`}>
+        <section ref={encounterDetailsRef} className={`bg-${theme}-encounter rounded-2xl pt-2 pb-8 px-10 w-full`}>
             {edit && window.innerWidth < 1024 &&
                 <section className="flex justify-between w-full px-2 mb-2 z-20">
                     <button onClick={addEncounterBefore} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
@@ -162,7 +162,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
 
             <section className={`flex flex-wrap justify-between w-full px-2 mb-2 md:flex-nowrap`}>
                 {!edit &&
-                    <h4 className={`font-${theme}-heading text-${theme}-form-heading text-[1.18rem] text-left`}>{encounter_type}</h4>
+                    <h4 className={`font-${theme}-heading text-${theme}-accent text-[1.18rem] text-left`}>{encounter_type}</h4>
                 }
                 {edit &&
                     <>
@@ -180,21 +180,21 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
                         />
                     </>
                 }
-                <div className={`h-3 mt-1.5 w-full border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full z-20 lg:hidden`}>
-                    <div className={`h-full bg-${theme}-progress-fill rounded-full`} style={{ width: `${progress}%` }}></div>
+                <div className={`h-3 mt-1.5 w-full border-${theme}-scene-text border-2 bg-${theme}-progress-void rounded-full z-20 lg:w-64`}>
+                    <div className={`h-full bg-${theme}-primary rounded-full`} style={{ width: `${progress}%` }}></div>
                 </div>
                 {edit && window.innerWidth >= 1024 &&
                     <section className="flex justify-between space-x-2 z-20">
-                        <button onClick={addEncounterBefore} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
+                        <button onClick={addEncounterBefore} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                             &nbsp; Before
                         </button>
-                        <button onClick={addEncounterAfter} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
+                        <button onClick={addEncounterAfter} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                             &nbsp; After
                         </button>
                         {progress === "Not Started" &&
-                            <button onClick={() => handleDeleteClick("encounters", id || 0)} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
+                            <button onClick={() => handleDeleteClick("encounters", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                             </button>
                         }
@@ -204,7 +204,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
 
             <section className="w-full px-2 lg:mt-2">
                 {!edit &&
-                    <p className={`${theme}-text text-left`}>{description}</p>
+                    <p className={`text-${theme}-scene-text text-left`}>{description}</p>
                 }
                 {edit &&
                     <>
@@ -231,10 +231,10 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
             {progress !== "Complete" && (encounterIndex === 0 || encounters[encounterIndex - 1]?.progress === "Complete") &&
                 <section className="flex justify-end w-full mt-2">
                     {progress === "Not Started" &&
-                        <button onClick={() => { startEncounter(id || 0) }} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>Start</button>
+                        <button onClick={() => { startEncounter(id || 0) }} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>Start</button>
                     }
                     {progress === "In Progress" &&
-                        <button onClick={() => { completeEncounter(id || 0) }} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>Complete</button>
+                        <button onClick={() => { completeEncounter(id || 0) }} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>Complete</button>
                     }
                 </section>
             }

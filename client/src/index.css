@@ -385,7 +385,7 @@ button {
 }
 
 .bg-sci-fi-toggle-switch {
-  background-color: #FF54A4;
+  background-color: #FF54A4!important;
 }
 
 .border-sci-fi-toggle-switch {
@@ -542,6 +542,30 @@ button {
 
 .font-sci-fi-label {
   font-family: 'Verdana', 'Arial', 'sans-serif';
+}
+
+.bg-fantasy-encounter {
+  background-color: #930c10;
+}
+
+.bg-sci-fi-encounter {
+  background-color: #b952e1;
+}
+
+.border-fantasy-scene-text {
+  border: solid #f7ce65;
+}
+
+.border-sci-fi-scene-text {
+  border: solid #d9d9d9;
+}
+
+.text-fantasy-scene-text {
+  color: #f7ce65;
+}
+
+.text-sci-fi-scene-text {
+  color: #d9d9d9;
 }
 
 .h-overlay {

@@ -534,7 +534,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     return (
         <main ref={adventureDetailsRef} className="mt-[5.5rem] mb-12 w-full h-overlay p-2 max-w-[100vw] overflow-scroll">
             <section className="w-full mb-3 lg:relative">
-                <div className="absolute flex basis-[6.5rem] justify-between inset-x-0 top-0">
+                <div className="absolute flex basis-[6.5rem] justify-between inset-x-0 top-0 lg:absolute">
                     <button className={`aspect-square font-${theme}-text text-${theme}-neutral text-3xl`} onClick={() => navigate('/adventures')}>&lt;</button>
                     {!edit &&
                         <div className="flex justify-end space-x-3">

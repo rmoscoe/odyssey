@@ -681,7 +681,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
                             const { type, description } = encounter;
                             const encounterPayload = {
                                 scene_id: sceneId,
-                                type,
+                                encounter_type: type,
                                 description
                             }
 
