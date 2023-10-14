@@ -40,7 +40,7 @@ SECRET_KEY = os.environ.get(
 SECRET_KEY_FALLBACKS = json.loads(os.environ.get('SECRET_KEY_FALLBACKS', '[]'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['odyssey-d4b3f26536d0.herokuapp.com',
                  '127.0.0.1:8000', 'localhost']
