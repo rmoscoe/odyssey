@@ -55,6 +55,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
     const [clueText, setClueText] = useState(clue);
     const [statefulScene, setStatefulScene] = useState(scene);
     const [activeEncounter, setActiveEncounter] = useState(0);
+    const [progressPct, setProgressPct] = useState(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
 
     const sceneDetailsRef = useRef<HTMLElement | null>(null);
     const challengeRef = useRef(null);
@@ -82,6 +83,10 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             dot.classList.remove(`${oldTheme}-dot`);
         });
     }, [activeEncounter]);
+
+    useEffect(() => {
+        setProgressPct(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
+    }, [progress]);
 
     // useEffect(() => {
     //     resizeCarousel();
@@ -113,7 +118,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
         }
 
         const newScene: isoScene = {
-            sequence: sceneIndex,
+            sequence: sceneIndex + 1,
             challenge: '',
             setting: '',
             encounter_set: [{
@@ -137,17 +142,8 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             updatedScenes = scenes.slice();
         }
 
-        if (updatedScenes.length > 0) {
-            for (let i = updatedScenes.length - 1; i > sceneIndex; i--) {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                updatedScenes[i + 1] = scenes!.slice(i, i + 1)[0];
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                updatedScenes[i + 1]!.sequence++;
-            }
-        }
-
         const newScene: isoScene = {
-            sequence: sceneIndex,
+            sequence: sequence ? sequence + 1 : 1,
             challenge: '',
             setting: '',
             encounter_set: [{
@@ -156,6 +152,15 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             }],
             plot_twist: null,
             clue: null
+        }
+
+        if (updatedScenes.length > 0) {
+            for (let i = updatedScenes.length - 1; i > sceneIndex; i--) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                updatedScenes[i + 1] = scenes!.slice(i, i + 1)[0];
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                updatedScenes[i + 1]!.sequence++;
+            }
         }
 
         const newIndex = sceneIndex + 1;
@@ -203,7 +208,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                         <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                         &nbsp; After
                     </button>
-                    {progress === "Not Started" &&
+                    {progress !== "In Progress" && progress !== "Complete" &&
                         <button onClick={() => handleDeleteClick("scenes", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
@@ -212,9 +217,9 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             }
 
             <section className="flex flex-wrap justify-between w-full px-2 mb-2 md:flex-nowrap">
-                <h3 className={`font-${theme}-heading text-${theme}-form-heading text-xl`}>Scene &nbsp; {sequence}</h3>
+                <h3 className={`font-${theme}-heading text-${theme}-form-heading text-xl`}>Scene {sequence}</h3>
                 <div className={`h-3 mt-1.5 w-full border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full z-20 lg:w-64`}>
-                    <div className={`h-full bg-${theme}-progress-fill rounded-full`} style={{ width: `${progress}%` }}></div>
+                    <div className={`h-full bg-${theme}-progress-fill rounded-full`} style={{ width: `${progressPct}%` }}></div>
                 </div>
                 {edit && window.innerWidth >= 1024 &&
                     <section className="flex justify-between space-x-2 z-20">
@@ -226,7 +231,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                             &nbsp; After
                         </button>
-                        {progress === "Not Started" &&
+                        {progress !== "In Progress" && progress !== "Complete" &&
                             <button onClick={() => handleDeleteClick("scenes", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                             </button>

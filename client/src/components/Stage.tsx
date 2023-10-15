@@ -23,6 +23,8 @@ interface StageProps {
 export default function Stage({ title, content, edit, setRef, inputText, loading, climax_progress, scenes_complete, startClimax, completeClimax }: StageProps) {
     const { theme } = useTheme();
 
+    // const [inputText, setInputText] = useState(content);
+
     const stageInputRef = useRef<HTMLTextAreaElement | null>(null);
 
     useEffect(() => {
@@ -52,7 +54,7 @@ export default function Stage({ title, content, edit, setRef, inputText, loading
                     // onChange={handleInputChange}
                     rows={4}
                     {...title === "Background" && { maxLength: 499 }}
-                    value={inputText}
+                    // value={inputText}
                     disabled={loading}
                     ref={stageInputRef}
                     data-name="Title"

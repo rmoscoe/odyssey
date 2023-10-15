@@ -334,7 +334,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
 
     const handleInputChange = (field: React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>) => {
         const { current } = field;
-        const inputValue: string | number | undefined = current?.value;
+        const inputValue: string | number | undefined = current?.tagName === "INPUT" ? current?.value : current?.innerText;
 
         current?.classList.remove("invalid-entry");
         setNotification('');

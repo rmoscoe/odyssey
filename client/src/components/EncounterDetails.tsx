@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -53,12 +53,17 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
 
     const [typeText, setTypeText] = useState<string | undefined>(encounter_type || "");
     const [descriptionText, setDescriptionText] = useState<string | undefined>(description || "");
+    const [progressPct, setProgressPct] = useState(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
 
     const encounterDetailsRef = useRef<HTMLElement | null>(null);
     const typeRef = useRef<HTMLInputElement | null>(null);
     const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
     const cols = window.innerWidth < 1024 ? 24 : 75;
+
+    useEffect(() => {
+        setProgressPct(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
+    }, [progress]);
 
     // useEffect(() => {
     //     resizeCarousel();
@@ -152,7 +157,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
                         <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                         &nbsp; After
                     </button>
-                    {progress === "Not Started" &&
+                    {progress !== "In Progress" && progress !== "Complete" &&
                         <button onClick={() => handleDeleteClick("encounters", id || 0)} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
@@ -165,12 +170,12 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
                     <h4 className={`font-${theme}-heading text-${theme}-accent text-[1.18rem] text-left`}>{encounter_type}</h4>
                 }
                 {edit &&
-                    <>
-                        <label htmlFor="type-input" className={`${theme}-label block`}>Type of Encounter:</label>
+                    <div className="flex flex-wrap">
+                        <label htmlFor="type-input" className={`${theme}-label block w-full text-left`}>Type of Encounter:</label>
                         <input
                             id={`type-input-${id}`}
                             name={`type-input-${id}`}
-                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                            className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block w-full`}
                             onChange={() => handleInputChange(typeRef)}
                             disabled={loading}
                             key={'type-input'}
@@ -178,10 +183,10 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
                             data-name="Type"
                             ref={typeRef}
                         />
-                    </>
+                    </div>
                 }
                 <div className={`h-3 mt-1.5 w-full border-${theme}-scene-text border-2 bg-${theme}-progress-void rounded-full z-20 lg:w-64`}>
-                    <div className={`h-full bg-${theme}-primary rounded-full`} style={{ width: `${progress}%` }}></div>
+                    <div className={`h-full bg-${theme}-primary rounded-full`} style={{ width: `${progressPct}%` }}></div>
                 </div>
                 {edit && window.innerWidth >= 1024 &&
                     <section className="flex justify-between space-x-2 z-20">
@@ -193,7 +198,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                             &nbsp; After
                         </button>
-                        {progress === "Not Started" &&
+                        {progress !== "In Progress" && progress !== "Complete" &&
                             <button onClick={() => handleDeleteClick("encounters", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                             </button>
