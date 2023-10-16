@@ -41,12 +41,22 @@ interface EncounterDetailsProps {
     completeEncounter: (encounterId: number) => void,
     loading: boolean,
     scene: isoScene,
+    statefulScene: isoScene,
     setStatefulScene: (scene: isoScene) => void,
     setActiveEncounter: (idx: number) => void,
+    deleting: string,
+    setDeleting: (value: string) => void,
+    deleteEncounter: boolean,
+    sceneIndex: number,
+    setSceneDelIdx: (value: number | undefined) => void,
+    reloadRequired: boolean,
+    setReloadRequired: (value: boolean) => void,
+    encounterCarouselKey: number,
+    setEncounterCarouselKey: (value: number) => void;
     // sceneDetails: React.MutableRefObject<HTMLElement | null>
 }
 
-export default function EncounterDetails({ encounter, encounters, encounterIndex, edit, handleDeleteClick, startEncounter, completeEncounter, loading, scene, setStatefulScene, setActiveEncounter, }: EncounterDetailsProps) {
+export default function EncounterDetails({ encounter, encounters, encounterIndex, edit, handleDeleteClick, startEncounter, completeEncounter, loading, scene, statefulScene, setStatefulScene, setActiveEncounter, deleting, setDeleting, deleteEncounter, sceneIndex, setSceneDelIdx, reloadRequired, setReloadRequired, encounterCarouselKey, setEncounterCarouselKey }: EncounterDetailsProps) {
     const { theme } = useTheme();
 
     const { id, encounter_type, description, progress } = encounter;
@@ -54,12 +64,37 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
     const [typeText, setTypeText] = useState<string | undefined>(encounter_type || "");
     const [descriptionText, setDescriptionText] = useState<string | undefined>(description || "");
     const [progressPct, setProgressPct] = useState(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
+    const [encounterDelIdx, setEncounterDelIdx] = useState<number | undefined>(undefined);
 
     const encounterDetailsRef = useRef<HTMLElement | null>(null);
     const typeRef = useRef<HTMLInputElement | null>(null);
     const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
     const cols = window.innerWidth < 1024 ? 24 : 75;
+
+    useEffect(() => {
+        if (deleting === 'encounter' && deleteEncounter && encounterIndex === encounterDelIdx) {
+            const updatedEncounters = statefulScene.encounter_set.filter((_enc, idx) => idx !== encounterDelIdx);
+            const updatedScene = {
+                ...statefulScene,
+                encounter_set: updatedEncounters
+            }
+            setStatefulScene(updatedScene as isoScene);
+            setSceneDelIdx(undefined);
+            setEncounterDelIdx(undefined);
+            setDeleting('');
+            setReloadRequired(true);
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [deleting]);
+
+    useEffect(() => {
+        if (reloadRequired) {
+            setEncounterCarouselKey(encounterCarouselKey + 1);
+            setReloadRequired(false);
+        }
+    }, [reloadRequired]);
 
     useEffect(() => {
         setProgressPct(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
@@ -145,6 +180,16 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
         }
     }
 
+    const deleteClickHandler = () => {
+        if (id && id > 0) {
+            handleDeleteClick("encounters", id);
+        } else {
+            setSceneDelIdx(sceneIndex);
+            setEncounterDelIdx(encounterIndex);
+            handleDeleteClick("encounter", 0);
+        }
+    }
+
     return (
         <section ref={encounterDetailsRef} className={`bg-${theme}-encounter rounded-2xl pt-2 pb-8 px-10 w-full`}>
             {edit && window.innerWidth < 1024 &&
@@ -158,7 +203,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
                         &nbsp; After
                     </button>
                     {progress !== "In Progress" && progress !== "Complete" &&
-                        <button onClick={() => handleDeleteClick("encounters", id || 0)} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
+                        <button onClick={deleteClickHandler} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
                     }
@@ -199,7 +244,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
                             &nbsp; After
                         </button>
                         {progress !== "In Progress" && progress !== "Complete" &&
-                            <button onClick={() => handleDeleteClick("encounters", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
+                            <button onClick={deleteClickHandler} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                             </button>
                         }

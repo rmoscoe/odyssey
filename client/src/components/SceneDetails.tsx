@@ -40,10 +40,18 @@ interface SceneDetailsProps {
     completeEncounter: (encounterId: number) => void;
     loading: boolean;
     setActiveScene: (value: number) => void;
+    deleting: string;
+    setDeleting: (value: string) => void;
+    sceneDelIdx: number | undefined;
+    setSceneDelIdx: (value: number | undefined) => void;
+    carouselKey: number;
+    setCarouselKey: (value: number) => void;
+    reloadRequired: boolean;
+    setReloadRequired: (value: boolean) => void;
     // adventureDetails: React.MutableRefObject<HTMLElement | null>
 }
 
-export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene }: SceneDetailsProps) {
+export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene, deleting, setDeleting, sceneDelIdx, setSceneDelIdx, carouselKey, setCarouselKey, reloadRequired, setReloadRequired }: SceneDetailsProps) {
     const { theme } = useTheme();
 
     const { id, sequence, challenge, setting, encounter_set, plot_twist, clue, progress } = scene || {};
@@ -56,12 +64,40 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
     const [statefulScene, setStatefulScene] = useState(scene);
     const [activeEncounter, setActiveEncounter] = useState(0);
     const [progressPct, setProgressPct] = useState(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
+    const [encounterCarouselKey, setEncounterCarouselKey] = useState(0);
 
     const sceneDetailsRef = useRef<HTMLElement | null>(null);
     const challengeRef = useRef(null);
     const settingRef = useRef(null);
     const plotTwistRef = useRef(null);
     const clueRef = useRef(null);
+
+    useEffect(() => {
+        if (deleting === 'scene' && sceneDelIdx === sceneIndex) {
+            const newScenes = scenes.filter((_s, i) => {
+                return i !== sceneDelIdx;
+            });
+            if (newScenes.length > 0) {
+                for (let i = sceneDelIdx; i < newScenes.length; i++) {
+                    newScenes[i]!.sequence = i + 1;
+                }
+            }
+            
+            setScenes(newScenes.slice());
+            setSceneDelIdx(undefined);
+            setDeleting('');
+            setReloadRequired(true);
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [deleting]);
+
+    useEffect(() => {
+        if (reloadRequired) {
+            setCarouselKey(carouselKey + 1);
+            setReloadRequired(false);
+        }
+    }, [reloadRequired]);
 
     useEffect(() => {
         let updatedScenes: isoScenes;
@@ -195,6 +231,14 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
 
     const handleSlideChange = (idx: number) => setActiveEncounter(idx);
 
+    const deleteClickHandler = () => {
+        if (id && id > 0) {
+            handleDeleteClick("scenes", id);
+        } else {
+            setSceneDelIdx(sceneIndex);
+            handleDeleteClick("scene", 0);
+        }
+    }
 
     return (
         <section ref={sceneDetailsRef} className={`bg-${theme}-stage-background rounded-2xl pt-2 pb-8 px-10 w-full`}>
@@ -209,7 +253,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                         &nbsp; After
                     </button>
                     {progress !== "In Progress" && progress !== "Complete" &&
-                        <button onClick={() => handleDeleteClick("scenes", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
+                        <button onClick={deleteClickHandler} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
                     }
@@ -232,7 +276,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                             &nbsp; After
                         </button>
                         {progress !== "In Progress" && progress !== "Complete" &&
-                            <button onClick={() => handleDeleteClick("scenes", id || 0)} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
+                            <button onClick={deleteClickHandler} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                             </button>
                         }
@@ -293,10 +337,10 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                 </section>
             </section>
 
-            <section className="mt-2">
+            <section key={encounterCarouselKey} className="mt-2">
                 <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} selectedItem={activeEncounter} onChange={handleSlideChange} >
                     {encounter_set?.map((encounter, i) => (
-                        <EncounterDetails key={encounter?.id || i} encounter={encounter!} encounters={encounter_set} encounterIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} scene={scene!} setStatefulScene={setStatefulScene} setActiveEncounter={setActiveEncounter} />
+                        <EncounterDetails key={encounter?.id || i} encounter={encounter!} encounters={encounter_set} encounterIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} scene={scene!} statefulScene={statefulScene!} setStatefulScene={setStatefulScene} setActiveEncounter={setActiveEncounter} deleting={deleting} setDeleting={setDeleting} deleteEncounter={sceneDelIdx === sceneIndex} sceneIndex={sceneIndex} setSceneDelIdx={setSceneDelIdx} reloadRequired={reloadRequired} setReloadRequired={setReloadRequired} encounterCarouselKey={encounterCarouselKey} setEncounterCarouselKey={setEncounterCarouselKey} />
                     ))}
                 </Carousel>
             </section>

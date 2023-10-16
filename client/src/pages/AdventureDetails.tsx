@@ -116,6 +116,9 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [reloadRequired, setReloadRequired] = useState(false);
     const [scenes_complete, setScenesComplete] = useState(false);
     const [activeScene, setActiveScene] = useState(0);
+    const [deleting, setDeleting] = useState("");
+    const [sceneDelIdx, setSceneDelIdx] = useState<number | undefined>(undefined);
+    const [carouselKey, setCarouselKey] = useState(0);
 
     const adventureDetailsRef = useRef<HTMLElement | null>(null);
     const titleInputRef = useRef<HTMLInputElement | null>(null);
@@ -607,17 +610,19 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 }
                 <Stage key="exposition" title="Background" content={exposition} edit={edit} setRef={setExpositionRef} inputText={expositionText} loading={loading} />
                 <Stage key="incitement" title="Beginning" content={incitement} edit={edit} setRef={setIncitementRef} inputText={incitementText} loading={loading} />
-                <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} onChange={handleSlideChange} selectedItem={activeScene} >
-                    {scenes?.map((scene, i) => (
-                        <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} setScenes={setScenes} sceneIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} setActiveScene={setActiveScene} />
-                    ))}
-                </Carousel>
+                <div key={carouselKey} >
+                    <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} onChange={handleSlideChange} selectedItem={activeScene} >
+                        {scenes?.map((scene, i) => (
+                            <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} setScenes={setScenes} sceneIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} setActiveScene={setActiveScene} deleting={deleting} setDeleting={setDeleting} sceneDelIdx={sceneDelIdx} setSceneDelIdx={setSceneDelIdx} reloadRequired={reloadRequired} setReloadRequired={setReloadRequired} carouselKey={carouselKey} setCarouselKey={setCarouselKey} />
+                        ))}
+                    </Carousel>
+                </div>
                 <Stage key="climax" title="Climax" content={climax} edit={edit} setRef={setClimaxRef} inputText={climaxText} loading={loading} climax_progress={climax_progress} scenes_complete={scenes_complete} startClimax={startClimax} completeClimax={completeClimax} />
                 <Stage key="denoument" title="Epilogue" content={denoument} edit={edit} setRef={setDenoumentRef} inputText={denoumentText} loading={loading} />
             </section>
 
             {deleteConfirm &&
-                <DeleteConfirm deleteType={deleteType} deleteId={deleteId} setDeleteConfirm={setDeleteConfirm} setReloadRequired={setReloadRequired} redirectRequired={redirectRequired} />
+                <DeleteConfirm deleteType={deleteType} deleteId={deleteId} setDeleteConfirm={setDeleteConfirm} setReloadRequired={setReloadRequired} redirectRequired={redirectRequired} setDeleting={setDeleting} />
             }
         </main>
     );
