@@ -12,9 +12,10 @@ type DeleteProps = {
     setDeleteConfirm: (value: boolean) => void;
     setReloadRequired?: (value: boolean) => void;
     redirectRequired?: boolean;
+    setRemoveScene?: (value: boolean) => void;
 }
 
-export default function DeleteConfirm({ deleteType, deleteId, setDeleting, setDeleteConfirm, setReloadRequired, redirectRequired }: DeleteProps) {
+export default function DeleteConfirm({ deleteType, deleteId, setDeleting, setDeleteConfirm, setReloadRequired, redirectRequired, setRemoveScene }: DeleteProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
 
@@ -60,6 +61,7 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting, setDe
                 }
                 if (response.status === 204 && setReloadRequired) {
                     setReloadRequired(true);
+                    setRemoveScene && setRemoveScene(true)
                 }
                 if (response.status === 204 && redirectRequired) {
                     navigate('/adventures');

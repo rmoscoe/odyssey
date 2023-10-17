@@ -119,6 +119,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [deleting, setDeleting] = useState("");
     const [sceneDelIdx, setSceneDelIdx] = useState<number | undefined>(undefined);
     const [carouselKey, setCarouselKey] = useState(0);
+    const [removeScene, setRemoveScene] = useState(false);
 
     const adventureDetailsRef = useRef<HTMLElement | null>(null);
     const titleInputRef = useRef<HTMLInputElement | null>(null);
@@ -244,6 +245,11 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         setDeleteId(dId);
         setRedirectRequired(dType === "adventures");
         setDeleteConfirm(true);
+    }
+
+    const handleEdit = () => {
+        setEdit(true);
+        setCarouselKey(carouselKey + 1);
     }
 
     const saveAdventure = async () => {
@@ -541,10 +547,10 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                     <button className={`aspect-square font-${theme}-text text-${theme}-neutral text-3xl`} onClick={() => navigate('/adventures')}>&lt;</button>
                     {!edit &&
                         <div className="flex justify-end space-x-3">
-                            <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => setEdit(true)}>
+                            <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={handleEdit}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPencil} />
                             </button>
-                            <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => { handleDeleteClick("adventures", parseInt(adventureId || "0")) }}>
+                            <button className={`border-${theme}-button-alt-border bg-${theme}-primary border-2 rounded-xl p-1 aspect-square shrink-0 basis-11`} onClick={() => { handleDeleteClick("adventures", id) }}>
                                 <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                             </button>
                         </div>
@@ -613,7 +619,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 <div key={carouselKey} >
                     <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} onChange={handleSlideChange} selectedItem={activeScene} >
                         {scenes?.map((scene, i) => (
-                            <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} setScenes={setScenes} sceneIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} setActiveScene={setActiveScene} deleting={deleting} setDeleting={setDeleting} sceneDelIdx={sceneDelIdx} setSceneDelIdx={setSceneDelIdx} reloadRequired={reloadRequired} setReloadRequired={setReloadRequired} carouselKey={carouselKey} setCarouselKey={setCarouselKey} />
+                            <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} setScenes={setScenes} sceneIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} setActiveScene={setActiveScene} deleting={deleting} setDeleting={setDeleting} sceneDelIdx={sceneDelIdx} setSceneDelIdx={setSceneDelIdx} reloadRequired={reloadRequired} setReloadRequired={setReloadRequired} carouselKey={carouselKey} setCarouselKey={setCarouselKey} removeScene={removeScene} setRemoveScene={setRemoveScene} />
                         ))}
                     </Carousel>
                 </div>
@@ -622,7 +628,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
             </section>
 
             {deleteConfirm &&
-                <DeleteConfirm deleteType={deleteType} deleteId={deleteId} setDeleteConfirm={setDeleteConfirm} setReloadRequired={setReloadRequired} redirectRequired={redirectRequired} setDeleting={setDeleting} />
+                <DeleteConfirm deleteType={deleteType} deleteId={deleteId} setDeleteConfirm={setDeleteConfirm} setReloadRequired={setReloadRequired} redirectRequired={redirectRequired} setDeleting={setDeleting} setRemoveScene={setRemoveScene} />
             }
         </main>
     );

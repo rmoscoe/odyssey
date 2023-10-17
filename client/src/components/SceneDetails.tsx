@@ -48,10 +48,12 @@ interface SceneDetailsProps {
     setCarouselKey: (value: number) => void;
     reloadRequired: boolean;
     setReloadRequired: (value: boolean) => void;
+    removeScene: boolean;
+    setRemoveScene: (value: boolean) => void;
     // adventureDetails: React.MutableRefObject<HTMLElement | null>
 }
 
-export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene, deleting, setDeleting, sceneDelIdx, setSceneDelIdx, carouselKey, setCarouselKey, reloadRequired, setReloadRequired }: SceneDetailsProps) {
+export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene, deleting, setDeleting, sceneDelIdx, setSceneDelIdx, carouselKey, setCarouselKey, reloadRequired, setReloadRequired, removeScene, setRemoveScene }: SceneDetailsProps) {
     const { theme } = useTheme();
 
     const { id, sequence, challenge, setting, encounter_set, plot_twist, clue, progress } = scene || {};
@@ -86,6 +88,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             setScenes(newScenes.slice());
             setSceneDelIdx(undefined);
             setDeleting('');
+            setCarouselKey(carouselKey + 1);
             setReloadRequired(true);
         }
 
@@ -119,6 +122,21 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             dot.classList.remove(`${oldTheme}-dot`);
         });
     }, [activeEncounter]);
+
+    useEffect(() => {
+        if (removeScene) {
+            const updatedScenes: isoScenes = [];
+            scenes.forEach(s => {
+                if (!s?.id || s.id !== id) {
+                    updatedScenes.push(s);
+                }
+            });
+            setScenes(updatedScenes);
+            setCarouselKey(carouselKey + 1);
+            setRemoveScene(false);
+            setActiveScene(sceneIndex > 0 ? sceneIndex - 1 : sceneIndex);
+        }
+    }, [removeScene]);
 
     useEffect(() => {
         setProgressPct(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);

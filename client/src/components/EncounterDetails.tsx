@@ -134,6 +134,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
         updatedScene.encounter_set = updatedEncounters;
 
         setStatefulScene(updatedScene);
+        setEncounterCarouselKey(encounterCarouselKey + 1);
     }
 
     const addEncounterAfter = () => {
@@ -162,6 +163,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
 
         setStatefulScene(updatedScene);
         setActiveEncounter(newIndex);
+        setEncounterCarouselKey(encounterCarouselKey + 1);
     }
 
     const handleInputChange = (field: React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>) => {
