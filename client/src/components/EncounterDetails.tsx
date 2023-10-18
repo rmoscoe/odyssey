@@ -65,12 +65,11 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
     const [descriptionText, setDescriptionText] = useState<string | undefined>(description || "");
     const [progressPct, setProgressPct] = useState(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
     const [encounterDelIdx, setEncounterDelIdx] = useState<number | undefined>(undefined);
+    const [cols, setCols] = useState(calculateCols());
 
     const encounterDetailsRef = useRef<HTMLElement | null>(null);
     const typeRef = useRef<HTMLInputElement | null>(null);
     const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
-
-    const cols = window.innerWidth < 1024 ? 24 : 75;
 
     useEffect(() => {
         if (deleting === 'encounter' && deleteEncounter && encounterIndex === encounterDelIdx) {
@@ -109,6 +108,25 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
     //     const encounterHeight = encounterDetailsRef.current?.offsetHeight;
     //     carousel?.setAttribute("style", `height: ${encounterHeight}px!important;`);
     // }
+
+    useEffect(() => {
+        const handleResize = () => {
+          const newCols = calculateCols();
+          setCols(newCols);
+        };
+    
+        window.addEventListener('resize', handleResize);
+    
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+      }, []);
+    
+      function calculateCols() {
+        return window.innerWidth < 1024
+          ? Math.round(80.5 - ((1023 - window.innerWidth) * 0.10714286))
+          : Math.round((window.innerWidth - 1024) * 0.08527132 + 59);
+      }
 
     const addEncounterBefore = () => {
         const newEncounter: isoEncounter = {
@@ -260,7 +278,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
                 }
                 {edit &&
                     <>
-                        <label htmlFor="description-textarea" className={`${theme}-label block`}>Description:</label>
+                        <label htmlFor="description-textarea" className={`${theme}-label text-left block`}>Description:</label>
                         <textarea
                             id={`description-textarea-${id}`}
                             name={`description-textarea-${id}`}

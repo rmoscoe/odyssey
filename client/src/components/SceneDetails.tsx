@@ -67,6 +67,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
     const [activeEncounter, setActiveEncounter] = useState(0);
     const [progressPct, setProgressPct] = useState(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
     const [encounterCarouselKey, setEncounterCarouselKey] = useState(0);
+    const [cols, setCols] = useState(calculateCols());
 
     const sceneDetailsRef = useRef<HTMLElement | null>(null);
     const challengeRef = useRef(null);
@@ -84,7 +85,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                     newScenes[i]!.sequence = i + 1;
                 }
             }
-            
+
             setScenes(newScenes.slice());
             setSceneDelIdx(undefined);
             setDeleting('');
@@ -152,7 +153,25 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
     //     carousel?.setAttribute("style", `height: ${sceneHeight}px!important;`);
     // }
 
-    const cols = window.innerWidth < 1024 ? 30 : 47;
+    useEffect(() => {
+        const handleResize = () => {
+            const newCols = calculateCols();
+            setCols(newCols);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    function calculateCols() {
+        return window.innerWidth < 1024
+            ? Math.round(88 - (1023 - window.innerWidth) * 0.1042471)
+            : Math.round((window.innerWidth - 1024) * 0.03682171 + 28);
+    }
+
 
     const addSceneBefore = () => {
         let updatedScenes: isoScenes;
@@ -309,12 +328,12 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                     }
                     {edit &&
                         <>
-                            <label htmlFor="challenge-textarea" className={`${theme}-label block`}>Goal:</label>
+                            <label htmlFor="challenge-textarea" className={`${theme}-label text-left block`}>Goal:</label>
                             <textarea
                                 id={`challenge-textarea-${id}`}
                                 name="challenge-textarea"
                                 rows={5}
-                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 mx-auto block`}
                                 cols={cols}
                                 onChange={() => handleInputChange(challengeRef)}
                                 disabled={loading}
@@ -334,12 +353,12 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                     }
                     {edit &&
                         <>
-                            <label htmlFor="setting-textarea" className={`${theme}-label block`}>Setting:</label>
+                            <label htmlFor="setting-textarea" className={`${theme}-label text-left block`}>Setting:</label>
                             <textarea
                                 id={`setting-textarea-${id}`}
                                 name={`setting-textarea-${id}`}
                                 rows={5}
-                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 mx-auto block`}
                                 cols={cols}
                                 onChange={() => handleInputChange(settingRef)}
                                 disabled={loading}
@@ -370,12 +389,12 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                     }
                     {edit &&
                         <>
-                            <label htmlFor="plot-twist-textarea" className={`${theme}-label block`}>Plot Twist:</label>
+                            <label htmlFor="plot-twist-textarea" className={`${theme}-label text-left block`}>Plot Twist:</label>
                             <textarea
                                 id={`plot-twist-textarea-${id}`}
                                 name={`plot-twist-textarea-${id}`}
                                 rows={5}
-                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 mx-auto block`}
                                 cols={cols}
                                 onChange={() => handleInputChange(plotTwistRef)}
                                 disabled={loading}
@@ -395,12 +414,12 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                     }
                     {edit &&
                         <>
-                            <label htmlFor="clue-textarea" className={`${theme}-label block`}>Clue:</label>
+                            <label htmlFor="clue-textarea" className={`${theme}-label text-left block`}>Clue:</label>
                             <textarea
                                 id={`clue-textarea-${id}`}
                                 name={`clue-textarea-${id}`}
                                 rows={5}
-                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 block`}
+                                className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text text-lg px-1 py-2 mx-auto block`}
                                 cols={cols}
                                 onChange={() => handleInputChange(clueRef)}
                                 disabled={loading}
@@ -428,7 +447,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             }
 
             {progress === "Complete" && !edit &&
-                <div className={theme === "fantasy" ? "absolute inset-0 z-10 bg-black/[.30]" : "absolute inset-0 z-10 bg-white/[.30]"}></div>
+                <div className={theme === "fantasy" ? "absolute inset-0 z-10 rounded-2xl bg-black/[.30]" : "absolute inset-0 z-10 rounded-2xl bg-white/[.30]"}></div>
             }
 
         </section>

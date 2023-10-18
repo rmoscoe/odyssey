@@ -120,6 +120,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [sceneDelIdx, setSceneDelIdx] = useState<number | undefined>(undefined);
     const [carouselKey, setCarouselKey] = useState(0);
     const [removeScene, setRemoveScene] = useState(false);
+    const [adventureKey, setAdventureKey] = useState(1);
 
     const adventureDetailsRef = useRef<HTMLElement | null>(null);
     const titleInputRef = useRef<HTMLInputElement | null>(null);
@@ -134,102 +135,105 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
 
     useEffect(() => {
         if (reloadRequired) {
-            console.log("Reload required");
+            window.location.reload();
+            setReloadRequired(false);
         }
     }, [reloadRequired]);
 
     handlePageChange('Adventure Details');
 
     useEffect(() => {
-        const getAdventure = async () => {
-            try {
-                if (!Auth.loggedIn()) {
-                    navigate('/login');
-                    return;
-                }
-                const response = await axios.get(`/api/adventures/${adventureId}/`);
-                if (response.status === 401) {
-                    navigate('/login');
-                } else if (response.data) {
-                    const data: adventure = response.data;
-                    const isoAdventure: isoAdventure = {
-                        id: data.id,
-                        title: data.title,
-                        created_at: data.created_at,
-                        last_modified: data.last_modified,
-                        game: data.game,
-                        campaign_setting: data.campaign_setting,
-                        exposition: data.exposition,
-                        incitement: data.incitement,
-                        climax: data.climax,
-                        climax_progress: data.climax_progress,
-                        denoument: data.denoument,
-                        progress: data.progress,
-                        status: data.status,
+        if (!edit) {
+            const getAdventure = async () => {
+                try {
+                    if (!Auth.loggedIn()) {
+                        navigate('/login');
+                        return;
                     }
-                    const isoScenes: isoScenes = data.scene_set;
-                    setAdventure(isoAdventure);
-                    setScenes(isoScenes);
-                    setTitleText(isoAdventure.title);
-                    setExpositionText(isoAdventure.exposition);
-                    setIncitementText(isoAdventure.incitement);
-                    setClimaxText(isoAdventure.climax);
-                    setDenoumentText(isoAdventure.denoument);
-                    for (let i = 0; i < isoScenes.length; i++) {
-                        const scene = isoScenes[i]
-                        if (scene?.progress !== "Complete") {
-                            return;
-                        } else {
-                            continue;
+                    const response = await axios.get(`/api/adventures/${adventureId}/`);
+                    if (response.status === 401) {
+                        navigate('/login');
+                    } else if (response.data) {
+                        const data: adventure = response.data;
+                        const isoAdventure: isoAdventure = {
+                            id: data.id,
+                            title: data.title,
+                            created_at: data.created_at,
+                            last_modified: data.last_modified,
+                            game: data.game,
+                            campaign_setting: data.campaign_setting,
+                            exposition: data.exposition,
+                            incitement: data.incitement,
+                            climax: data.climax,
+                            climax_progress: data.climax_progress,
+                            denoument: data.denoument,
+                            progress: data.progress,
+                            status: data.status,
+                        }
+                        const isoScenes: isoScenes = data.scene_set;
+                        setAdventure(isoAdventure);
+                        setScenes(isoScenes);
+                        setTitleText(isoAdventure.title);
+                        setExpositionText(isoAdventure.exposition);
+                        setIncitementText(isoAdventure.incitement);
+                        setClimaxText(isoAdventure.climax);
+                        setDenoumentText(isoAdventure.denoument);
+                        for (let i = 0; i < isoScenes.length; i++) {
+                            const scene = isoScenes[i]
+                            if (scene?.progress !== "Complete") {
+                                return;
+                            } else {
+                                continue;
+                            }
+                        }
+                        setScenesComplete(true);
+                    } else {
+                        setAdventure(undefined);
+                        setScenes(undefined);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    if (err instanceof Error) {
+                        if (err instanceof AxiosError && err.response?.status === 401) {
+                            navigate('/login');
                         }
                     }
-                    setScenesComplete(true);
-                } else {
-                    setAdventure(undefined);
-                    setScenes(undefined);
                 }
-            } catch (err) {
-                console.error(err);
-                if (err instanceof Error) {
-                    if (err instanceof AxiosError && err.response?.status === 401) {
-                        navigate('/login');
+            }
+
+            if (id) {
+                setAdventure({
+                    id,
+                    title,
+                    created_at,
+                    last_modified,
+                    game,
+                    campaign_setting,
+                    exposition,
+                    incitement,
+                    climax,
+                    climax_progress,
+                    denoument,
+                    progress,
+                    status
+                });
+                setScenes(scene_set);
+                let allScenesComplete = true;
+                for (let i = 0; i < scene_set.length; i++) {
+                    if (scene_set[i].progress === "Complete") {
+                        continue;
+                    } else {
+                        allScenesComplete = false;
                     }
                 }
+                setScenesComplete(allScenesComplete);
+            } else {
+                getAdventure();
             }
-        }
-
-        if (id) {
-            setAdventure({
-                id,
-                title,
-                created_at,
-                last_modified,
-                game,
-                campaign_setting,
-                exposition,
-                incitement,
-                climax,
-                climax_progress,
-                denoument,
-                progress,
-                status
-            });
-            setScenes(scene_set);
-            let allScenesComplete = true;
-            for (let i = 0; i < scene_set.length; i++) {
-                if (scene_set[i].progress === "Complete") {
-                    continue;
-                } else {
-                    allScenesComplete = false;
-                }
-            }
-            setScenesComplete(allScenesComplete);
-        } else {
-            getAdventure();
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [adventureKey]);
 
     useEffect(() => {
         const dots = document.querySelectorAll('.dot');
@@ -274,15 +278,17 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         setNotification("Saving adventure");
         const adventurePayload = {
             title: titleText,
-            exposition: expositionText,
+            exposition: expositionRef.current?.innerText || expositionText,
             incitement: incitementText,
             climax: climaxText,
             denoument: denoumentText
         }
+        console.log("Adventure Payload: " + JSON.stringify(adventurePayload));
 
         try {
             // save Adventure
-            const response = await axios.patch(`/api/adventures/${adventureId}/`, adventurePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            const response = await axios.patch(`/api/adventures/${id}/`, adventurePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            console.log(`Adventure Response: ${JSON.stringify(response)}`)
 
             if (response.status === 401) {
                 navigate('/login');
@@ -295,7 +301,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 scenesArr?.forEach(async (scene, idx) => {
                     setNotification(`Saving Scene ${idx + 1}`);
                     const scenePayload = {
-                        adventure_id: adventureId,
+                        adventure_id: id,
                         sequence: scene?.sequence,
                         challenge: scene?.challenge,
                         setting: scene?.setting,
@@ -322,7 +328,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
 
                             const encounterResponse = encounter?.id ? await axios.patch(`/api/encounters/${encounter.id}/`, encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } }) : await axios.post(`/api/encounters/`, encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
 
-                            if (encounterResponse.status !== 201) {
+                            if (encounterResponse.status !== 200) {
                                 setNotification('Oops! Something went wrong. Please try again.');
                             }
                         });
@@ -333,6 +339,9 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
             } else {
                 setNotification('Oops! Something went wrong. Please try again.');
             }
+            setEdit(false);
+            setAdventureKey(adventureKey + 1);
+            setReloadRequired(true);
             setLoading(false);
         } catch (err) {
             console.error(err);
@@ -343,7 +352,8 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
 
     const handleInputChange = (field: React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>) => {
         const { current } = field;
-        const inputValue: string | number | undefined = current?.tagName === "INPUT" ? current?.value : current?.innerText;
+        const inputValue: string | number | undefined = current?.value;
+        // const inputValue: string | number | undefined = current?.tagName === "INPUT" ? current?.value : current?.innerText;
 
         current?.classList.remove("invalid-entry");
         setNotification('');
@@ -389,7 +399,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         let progressDivisor = 0;
 
         try {
-            const response = await axios.get(`/api/adventures/${adventureId}/`);
+            const response = await axios.get(`/api/adventures/${id}/`);
             if (response.status === 401) {
                 navigate('/login');
             } else if (response.data) {
@@ -426,8 +436,9 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                     adventureProgress += response.data.climax_progress;
                 }
                 const progressPercent = adventureProgress / progressDivisor * 100;
-                const updateResponse = await axios.patch(`/api/adventures/${adventureId}/`, { progress: progressPercent }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+                const updateResponse = await axios.patch(`/api/adventures/${id}/`, { progress: progressPercent }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
                 progress = updateResponse.data.progress;
+                setCarouselKey(carouselKey + 1);
             }
             else {
                 setNotification("Oops! Something went wrong. Please try again.");
@@ -504,7 +515,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
 
     const startClimax = async () => {
         try {
-            const response = await axios.patch(`/api/adventures/${adventureId}/`, { climax_progress: 50 }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            const response = await axios.patch(`/api/adventures/${id}/`, { climax_progress: 50 }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
             if (response.status === 401) {
                 navigate('login');
             } else if (response.data) {
@@ -521,7 +532,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
 
     const completeClimax = async () => {
         try {
-            const response = await axios.patch(`/api/adventures/${adventureId}/`, { climax_progress: 100 }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+            const response = await axios.patch(`/api/adventures/${id}/`, { climax_progress: 100 }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
             if (response.status === 401) {
                 navigate('login');
             } else if (response.data) {
@@ -543,7 +554,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     return (
         <main ref={adventureDetailsRef} className="mt-[5.5rem] mb-12 w-full h-overlay p-2 max-w-[100vw] overflow-scroll">
             <section className="w-full mb-3 lg:relative">
-                <div className="absolute flex basis-[6.5rem] justify-between inset-x-0 top-0 lg:absolute">
+                <div className="flex basis-[6.5rem] justify-between inset-x-0 top-0 lg:absolute">
                     <button className={`aspect-square font-${theme}-text text-${theme}-neutral text-3xl`} onClick={() => navigate('/adventures')}>&lt;</button>
                     {!edit &&
                         <div className="flex justify-end space-x-3">
@@ -567,8 +578,8 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                     <h2 className={`font-${theme}-heading text-${theme}-heading text-center text-3xl mx-auto`}>{adventure?.title}</h2>
                 }
                 {edit &&
-                    <div className="flex items-end basis-full mb-3 space-y-2">
-                        <div className="mr-2 w-full">
+                    <div className="flex justify-center items-end basis-full mb-3 space-y-2">
+                        <div className="mr-2 w-full lg:w-4/5">
                             <label htmlFor="adventure-title-input" className={`${theme}-label block`}>Enter a Title*</label>
                             <input
                                 type="text"
@@ -610,12 +621,12 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 <p className={`${theme}-text my-6 text-center`}>{notification}</p>
             }
 
-            <section className="w-full px-2 space-y-3 lg:w-4/5 mx-auto">
+            <section key={adventureKey} className="w-full px-2 space-y-3 lg:w-4/5 mx-auto">
                 {edit &&
                     <CSRFToken />
                 }
-                <Stage key="exposition" title="Background" content={exposition} edit={edit} setRef={setExpositionRef} inputText={expositionText} loading={loading} />
-                <Stage key="incitement" title="Beginning" content={incitement} edit={edit} setRef={setIncitementRef} inputText={incitementText} loading={loading} />
+                <Stage key="exposition" title="Background" content={exposition} edit={edit} setRef={setExpositionRef} inputText={expositionText} loading={loading} handleInputChange={handleInputChange} />
+                <Stage key="incitement" title="Beginning" content={incitement} edit={edit} setRef={setIncitementRef} inputText={incitementText} loading={loading} handleInputChange={handleInputChange} />
                 <div key={carouselKey} >
                     <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} onChange={handleSlideChange} selectedItem={activeScene} >
                         {scenes?.map((scene, i) => (
@@ -623,8 +634,8 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                         ))}
                     </Carousel>
                 </div>
-                <Stage key="climax" title="Climax" content={climax} edit={edit} setRef={setClimaxRef} inputText={climaxText} loading={loading} climax_progress={climax_progress} scenes_complete={scenes_complete} startClimax={startClimax} completeClimax={completeClimax} />
-                <Stage key="denoument" title="Epilogue" content={denoument} edit={edit} setRef={setDenoumentRef} inputText={denoumentText} loading={loading} />
+                <Stage key="climax" title="Climax" content={climax} edit={edit} setRef={setClimaxRef} inputText={climaxText} loading={loading} climax_progress={climax_progress} scenes_complete={scenes_complete} startClimax={startClimax} completeClimax={completeClimax} handleInputChange={handleInputChange} />
+                <Stage key="denoument" title="Epilogue" content={denoument} edit={edit} setRef={setDenoumentRef} inputText={denoumentText} loading={loading} handleInputChange={handleInputChange} />
             </section>
 
             {deleteConfirm &&

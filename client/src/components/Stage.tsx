@@ -18,9 +18,10 @@ interface StageProps {
     scenes_complete?: boolean;
     startClimax?: () => void;
     completeClimax?: () => void;
+    handleInputChange: (field: React.MutableRefObject<HTMLInputElement | HTMLTextAreaElement | null>) => void;
 }
 
-export default function Stage({ title, content, edit, setRef, inputText, loading, climax_progress, scenes_complete, startClimax, completeClimax }: StageProps) {
+export default function Stage({ title, content, edit, setRef, inputText, loading, climax_progress, scenes_complete, startClimax, completeClimax, handleInputChange }: StageProps) {
     const { theme } = useTheme();
 
     // const [inputText, setInputText] = useState(content);
@@ -51,10 +52,10 @@ export default function Stage({ title, content, edit, setRef, inputText, loading
                     id={`adventure-${title}-input`}
                     name={`adventure-${title}-input`}
                     className={`bg-${theme}-field border-${theme}-primary border-[3px] rounded-xl text-${theme}-text w-full text-lg px-1 py-2 mt-2`}
-                    // onChange={handleInputChange}
+                    onChange={() => {handleInputChange(stageInputRef)}}
                     rows={4}
                     {...title === "Background" && { maxLength: 499 }}
-                    // value={inputText}
+                    value={inputText}
                     disabled={loading}
                     ref={stageInputRef}
                     data-name="Title"
