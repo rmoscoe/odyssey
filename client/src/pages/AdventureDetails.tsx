@@ -103,6 +103,10 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
 
     const { id, title, created_at, last_modified, game, campaign_setting, exposition, incitement, scene_set, climax, denoument, status } = location.state || {};
     let { progress, climax_progress } = location.state || {};
+    const initialSceneSaved = [];
+    for (let i = 0; i < scene_set.length; i++) {
+        initialSceneSaved.push(true);
+    }
 
     const [titleText, setTitleText] = useState(title);
     const [expositionRef, setExpositionRef] = useState<React.MutableRefObject<HTMLTextAreaElement | null>>(useRef(null));
@@ -120,7 +124,11 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [sceneDelIdx, setSceneDelIdx] = useState<number | undefined>(undefined);
     const [carouselKey, setCarouselKey] = useState(0);
     const [removeScene, setRemoveScene] = useState(false);
-    const [adventureKey, setAdventureKey] = useState(1);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [adventureKey, _setAdventureKey] = useState(1);
+    const [saveScene, setSaveScene] = useState(false);
+    const [saveComplete, setSaveComplete] = useState(true);
+    const [sceneSaved, setSceneSaved] = useState<boolean[]>([...initialSceneSaved]);
 
     const adventureDetailsRef = useRef<HTMLElement | null>(null);
     const titleInputRef = useRef<HTMLInputElement | null>(null);
@@ -141,6 +149,16 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     }, [reloadRequired]);
 
     handlePageChange('Adventure Details');
+
+    useEffect(() => {
+        if (!sceneSaved.includes(false)) {
+            setSaveScene(false);
+            setSaveComplete(true);
+            setEdit(false);
+            setLoading(false);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [...sceneSaved]);
 
     useEffect(() => {
         if (!edit) {
@@ -233,7 +251,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [adventureKey]);
+    }, [saveComplete, adventureKey]);
 
     useEffect(() => {
         const dots = document.querySelectorAll('.dot');
@@ -294,55 +312,18 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 navigate('/login');
             } else if (response.data) {
                 setAdventure(response.data);
-
-                // save Scenes
-                const scenesArr = Array.isArray(scenes) ? scenes : [];
-
-                scenesArr?.forEach(async (scene, idx) => {
-                    setNotification(`Saving Scene ${idx + 1}`);
-                    const scenePayload = {
-                        adventure_id: id,
-                        sequence: scene?.sequence,
-                        challenge: scene?.challenge,
-                        setting: scene?.setting,
-                        plot_twist: scene?.plot_twist,
-                        clue: scene?.clue
+                setSaveScene(true);
+                setSaveComplete(false);
+                if (scenes) {
+                    const scenesSaved = [];
+                    for (let i = 0; i < scenes.length; i++) {
+                        scenesSaved.push(false)
                     }
-
-                    const sceneResponse = scene?.id ? await axios.patch(`/api/scenes/${scene.id}/`, scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } }) : await axios.post(`/api/scenes/`, scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
-
-                    if (sceneResponse.status === 401) {
-                        navigate('/login');
-                    } else if (sceneResponse.data) {
-                        // save Encounters
-                        const sceneId = sceneResponse.data.id;
-                        setNotification('Saving encounters');
-                        const encounters = scene?.encounter_set;
-
-                        encounters?.forEach(async encounter => {
-                            const encounterPayload = {
-                                scene_id: sceneId,
-                                encounter_type: encounter?.encounter_type,
-                                description: encounter?.description
-                            }
-
-                            const encounterResponse = encounter?.id ? await axios.patch(`/api/encounters/${encounter.id}/`, encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } }) : await axios.post(`/api/encounters/`, encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
-
-                            if (encounterResponse.status !== 200) {
-                                setNotification('Oops! Something went wrong. Please try again.');
-                            }
-                        });
-                    } else {
-                        setNotification('Oops! Something went wrong. Please try again.');
-                    }
-                })
+                    setSceneSaved(scenesSaved);
+                }
             } else {
                 setNotification('Oops! Something went wrong. Please try again.');
             }
-            setEdit(false);
-            setAdventureKey(adventureKey + 1);
-            setReloadRequired(true);
-            setLoading(false);
         } catch (err) {
             console.error(err);
             setNotification("Oops! Something went wrong. Please try again.");
@@ -630,7 +611,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 <div key={carouselKey} >
                     <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} onChange={handleSlideChange} selectedItem={activeScene} >
                         {scenes?.map((scene, i) => (
-                            <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} setScenes={setScenes} sceneIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} setActiveScene={setActiveScene} deleting={deleting} setDeleting={setDeleting} sceneDelIdx={sceneDelIdx} setSceneDelIdx={setSceneDelIdx} reloadRequired={reloadRequired} setReloadRequired={setReloadRequired} carouselKey={carouselKey} setCarouselKey={setCarouselKey} removeScene={removeScene} setRemoveScene={setRemoveScene} />
+                            <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} setScenes={setScenes} sceneIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} setActiveScene={setActiveScene} deleting={deleting} setDeleting={setDeleting} sceneDelIdx={sceneDelIdx} setSceneDelIdx={setSceneDelIdx} reloadRequired={reloadRequired} setReloadRequired={setReloadRequired} carouselKey={carouselKey} setCarouselKey={setCarouselKey} removeScene={removeScene} setRemoveScene={setRemoveScene} adventureId={id} saveScene={saveScene} sceneSaved={sceneSaved} setSceneSaved={setSceneSaved} setNotification={setNotification} />
                         ))}
                     </Carousel>
                 </div>

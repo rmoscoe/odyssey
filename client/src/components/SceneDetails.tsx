@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef, Dispatch, SetStateAction } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
 import EncounterDetails from './EncounterDetails';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 type isoScene = {
     id?: number;
@@ -50,14 +53,27 @@ interface SceneDetailsProps {
     setReloadRequired: (value: boolean) => void;
     removeScene: boolean;
     setRemoveScene: (value: boolean) => void;
+    adventureId: number;
+    saveScene: boolean;
+    sceneSaved: boolean[];
+    setSceneSaved: (arr: boolean[]) => void;
+    setNotification: (value: string) => void;
     // adventureDetails: React.MutableRefObject<HTMLElement | null>
 }
 
-export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene, deleting, setDeleting, sceneDelIdx, setSceneDelIdx, carouselKey, setCarouselKey, reloadRequired, setReloadRequired, removeScene, setRemoveScene }: SceneDetailsProps) {
+export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene, deleting, setDeleting, sceneDelIdx, setSceneDelIdx, carouselKey, setCarouselKey, reloadRequired, setReloadRequired, removeScene, setRemoveScene, adventureId, saveScene, sceneSaved, setSceneSaved, setNotification }: SceneDetailsProps) {
     const { theme } = useTheme();
 
-    const { id, sequence, challenge, setting, encounter_set, plot_twist, clue, progress } = scene || {};
-    // let { progress } = scene || {};
+    const { sequence, challenge, setting, encounter_set, plot_twist, clue, progress } = scene || {};
+    let { id } = scene || {};
+    const initialEncounterSaved = [];
+    if (encounter_set) {
+        for (let i = 0; i < encounter_set.length; i++) {
+            initialEncounterSaved.push(true);
+        }
+    } else {
+        initialEncounterSaved.push(true);
+    }
 
     const [challengeText, setChallengeText] = useState(challenge);
     const [settingText, setSettingText] = useState(setting);
@@ -68,6 +84,10 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
     const [progressPct, setProgressPct] = useState(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
     const [encounterCarouselKey, setEncounterCarouselKey] = useState(0);
     const [cols, setCols] = useState(calculateCols());
+    const [saveEncounter, setSaveEncounter] = useState(false);
+    const [encounterSaved, setEncounterSaved] = useState<boolean[]>([...initialEncounterSaved]);
+
+    const navigate = useNavigate();
 
     const sceneDetailsRef = useRef<HTMLElement | null>(null);
     const challengeRef = useRef(null);
@@ -102,6 +122,50 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             setReloadRequired(false);
         }
     }, [reloadRequired]);
+
+    useEffect(() => {
+        const executeSaveScene = async () => {
+            const scenePayload = {
+                adventure_id: adventureId,
+                sequence: scene?.sequence,
+                challenge: scene?.challenge,
+                setting: scene?.setting,
+                plot_twist: scene?.plot_twist,
+                clue: scene?.clue
+            }
+
+            const sceneResponse = scene?.id ? await axios.patch(`/api/scenes/${scene.id}/`, scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } }) : await axios.post(`/api/scenes/`, scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+
+            if (sceneResponse.status === 401) {
+                navigate('/login');
+            } else if (sceneResponse.data) {
+                id = sceneResponse.data.id;
+                setSaveEncounter(true);
+                if (encounter_set) {
+                    const encountersSaved = [];
+                    for (let i = 0; i < encounter_set.length; i++) {
+                        encountersSaved.push(false)
+                    }
+                    setEncounterSaved(encountersSaved);
+                }
+            } else {
+                setNotification('Oops! Something went wrong. Please try again.');
+            }
+        }
+        if (saveScene) {
+            executeSaveScene();
+        }
+    }, [saveScene]);
+
+    useEffect(() => {
+        if (!encounterSaved.includes(false)) {
+            setSaveEncounter(false);
+            const scenesSaved = [...sceneSaved];
+            scenesSaved[sceneIndex] = true;
+            setSceneSaved([...scenesSaved]);
+            console.log("SceneSaved: " + scenesSaved);
+        }
+    }, [...encounterSaved]);
 
     useEffect(() => {
         let updatedScenes: isoScenes;
@@ -377,7 +441,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             <section key={encounterCarouselKey} className="mt-2">
                 <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} selectedItem={activeEncounter} onChange={handleSlideChange} >
                     {encounter_set?.map((encounter, i) => (
-                        <EncounterDetails key={encounter?.id || i} encounter={encounter!} encounters={encounter_set} encounterIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} scene={scene!} statefulScene={statefulScene!} setStatefulScene={setStatefulScene} setActiveEncounter={setActiveEncounter} deleting={deleting} setDeleting={setDeleting} deleteEncounter={sceneDelIdx === sceneIndex} sceneIndex={sceneIndex} setSceneDelIdx={setSceneDelIdx} reloadRequired={reloadRequired} setReloadRequired={setReloadRequired} encounterCarouselKey={encounterCarouselKey} setEncounterCarouselKey={setEncounterCarouselKey} />
+                        <EncounterDetails key={encounter?.id || i} encounter={encounter!} encounters={encounter_set} encounterIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} scene={scene!} statefulScene={statefulScene!} setStatefulScene={setStatefulScene} setActiveEncounter={setActiveEncounter} deleting={deleting} setDeleting={setDeleting} deleteEncounter={sceneDelIdx === sceneIndex} sceneIndex={sceneIndex} setSceneDelIdx={setSceneDelIdx} reloadRequired={reloadRequired} setReloadRequired={setReloadRequired} encounterCarouselKey={encounterCarouselKey} setEncounterCarouselKey={setEncounterCarouselKey} sceneId={id} saveEncounter={saveEncounter} encounterSaved={encounterSaved} setEncounterSaved={setEncounterSaved} setNotification={setNotification} />
                     ))}
                 </Carousel>
             </section>

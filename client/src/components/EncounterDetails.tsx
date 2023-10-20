@@ -1,8 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../utils/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 type isoEncounter = {
     id?: number;
@@ -52,11 +55,16 @@ interface EncounterDetailsProps {
     reloadRequired: boolean,
     setReloadRequired: (value: boolean) => void,
     encounterCarouselKey: number,
-    setEncounterCarouselKey: (value: number) => void;
+    setEncounterCarouselKey: (value: number) => void,
+    sceneId: number | undefined,
+    saveEncounter: boolean,
+    encounterSaved: boolean[],
+    setEncounterSaved: (arr: boolean[]) => void,
+    setNotification: (value: string) => void,
     // sceneDetails: React.MutableRefObject<HTMLElement | null>
 }
 
-export default function EncounterDetails({ encounter, encounters, encounterIndex, edit, handleDeleteClick, startEncounter, completeEncounter, loading, scene, statefulScene, setStatefulScene, setActiveEncounter, deleting, setDeleting, deleteEncounter, sceneIndex, setSceneDelIdx, reloadRequired, setReloadRequired, encounterCarouselKey, setEncounterCarouselKey }: EncounterDetailsProps) {
+export default function EncounterDetails({ encounter, encounters, encounterIndex, edit, handleDeleteClick, startEncounter, completeEncounter, loading, scene, statefulScene, setStatefulScene, setActiveEncounter, deleting, setDeleting, deleteEncounter, sceneIndex, setSceneDelIdx, reloadRequired, setReloadRequired, encounterCarouselKey, setEncounterCarouselKey, sceneId, saveEncounter, encounterSaved, setEncounterSaved, setNotification }: EncounterDetailsProps) {
     const { theme } = useTheme();
 
     const { id, encounter_type, description, progress } = encounter;
@@ -66,6 +74,8 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
     const [progressPct, setProgressPct] = useState(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
     const [encounterDelIdx, setEncounterDelIdx] = useState<number | undefined>(undefined);
     const [cols, setCols] = useState(calculateCols());
+
+    const navigate = useNavigate();
 
     const encounterDetailsRef = useRef<HTMLElement | null>(null);
     const typeRef = useRef<HTMLInputElement | null>(null);
@@ -94,6 +104,32 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
             setReloadRequired(false);
         }
     }, [reloadRequired]);
+
+    useEffect(() => {
+        const executeSaveEncounter = async () => {
+            const encounterPayload = {
+                scene_id: sceneId,
+                encounter_type: encounter?.encounter_type,
+                description: encounter?.description
+            }
+
+            const encounterResponse = encounter?.id ? await axios.patch(`/api/encounters/${encounter.id}/`, encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } }) : await axios.post(`/api/encounters/`, encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
+
+            if (encounterResponse.status === 401) {
+                navigate('/login');
+            } else if (encounterResponse.data) {
+                const encountersSaved = [...encounterSaved];
+                encountersSaved[encounterIndex] = true;
+                setEncounterSaved([...encountersSaved]);
+                console.log("EncounterSaved: ", encounterSaved);
+            } else {
+                setNotification('Oops! Something went wrong. Please try again.');
+            }
+        }
+        if (saveEncounter) {
+            executeSaveEncounter();
+        }
+    }, [saveEncounter]);
 
     useEffect(() => {
         setProgressPct(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
