@@ -1,0 +1,10 @@
+django>=4.2.4
+gunicorn==20.1.0
+whitenoise==6.5.0
+python-dotenv==1.0.0
+djangorestframework==3.14.0
+google-generativeai==0.1.0
+aiohttp==3.8.4
+django-cors-headers==4.2.0
+mysql-connector-python==8.1.0
+mysqlclient==2.2.0
