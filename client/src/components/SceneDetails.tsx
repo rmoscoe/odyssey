@@ -133,10 +133,10 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             const scenePayload = {
                 adventure_id: adventureId,
                 sequence: scene?.sequence,
-                challenge: scene?.challenge,
-                setting: scene?.setting,
-                plot_twist: scene?.plot_twist,
-                clue: scene?.clue
+                challenge: challengeText,
+                setting: settingText,
+                plot_twist: plotTwistText,
+                clue: clueText
             }
 
             console.log("Scene Payload: " + JSON.stringify(scenePayload));

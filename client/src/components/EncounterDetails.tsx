@@ -109,8 +109,8 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
             console.log("Saving encounter");
             const encounterPayload = {
                 scene_id: sceneId,
-                encounter_type: encounter?.encounter_type,
-                description: encounter?.description
+                encounter_type: typeText,
+                description: descriptionText
             }
 
             console.log("Encounter Payload: " + JSON.stringify(encounterPayload));
@@ -249,29 +249,27 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
     return (
         <section ref={encounterDetailsRef} className={`bg-${theme}-encounter rounded-2xl pt-2 pb-8 px-10 w-full`}>
             {edit && window.innerWidth < 1024 &&
-                <section className="flex justify-between w-full px-2 mb-2 z-20">
-                    <button onClick={addEncounterBefore} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
-                        <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
-                        &nbsp; Before
+                <section className="flex justify-between space-x-2 w-full px-2 mb-2 z-20">
+                    <button onClick={addEncounterBefore} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 basis-2/5`}>
+                        &#x2329; <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
                     </button>
-                    <button onClick={addEncounterAfter} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
-                        <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
-                        &nbsp; After
+                    <button onClick={addEncounterAfter} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 basis-2/5`}>
+                        <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} /> &#x232A;
                     </button>
                     {progress !== "In Progress" && progress !== "Complete" &&
-                        <button onClick={deleteClickHandler} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>
+                        <button onClick={deleteClickHandler} className={`border-${theme}-button-alt-border border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square basis-1/5`}>
                             <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faTrashAlt} />
                         </button>
                     }
                 </section>
             }
 
-            <section className={`flex flex-wrap justify-between w-full px-2 mb-2 md:flex-nowrap`}>
+            <section className={`flex flex-wrap justify-between items-center w-full px-2 mb-2 md:flex-nowrap space-x-5`}>
                 {!edit &&
                     <h4 className={`font-${theme}-heading text-${theme}-accent text-[1.18rem] text-left`}>{encounter_type}</h4>
                 }
                 {edit &&
-                    <div className="flex flex-wrap">
+                    <div className="flex flex-wrap basis-2/5">
                         <label htmlFor="type-input" className={`${theme}-label block w-full text-left`}>Type of Encounter:</label>
                         <input
                             id={`type-input-${id}`}
@@ -286,18 +284,16 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
                         />
                     </div>
                 }
-                <div className={`h-3 mt-1.5 w-full border-${theme}-scene-text border-2 bg-${theme}-progress-void rounded-full z-20 lg:w-64`}>
+                <div className={`h-3 mt-1.5 w-full border-${theme}-scene-text border-2 bg-${theme}-progress-void rounded-full z-20 lg:w-64 lg:basis-1/5`}>
                     <div className={`h-full bg-${theme}-primary rounded-full`} style={{ width: `${progressPct}%` }}></div>
                 </div>
                 {edit && window.innerWidth >= 1024 &&
-                    <section className="flex justify-between space-x-2 z-20">
+                    <section className="flex justify-end items-center space-x-2 z-20 basis-2/5 h-11">
                         <button onClick={addEncounterBefore} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
-                            <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
-                            &nbsp; Before
+                            <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} /> &nbsp; Before
                         </button>
                         <button onClick={addEncounterAfter} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>
-                            <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} />
-                            &nbsp; After
+                            <FontAwesomeIcon className={`text-${theme}-accent text-xl`} icon={faPlus} /> &nbsp; After
                         </button>
                         {progress !== "In Progress" && progress !== "Complete" &&
                             <button onClick={deleteClickHandler} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2 aspect-square`}>

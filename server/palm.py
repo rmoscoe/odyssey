@@ -6,6 +6,7 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
     api_key = os.environ.get('API_KEY')
     null_plot_twists = 100 - plot_twists
     null_clues = 100 - clues
+    print(f"Context: {context}")
 
     palm.configure(api_key=api_key)
 
@@ -64,7 +65,7 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
     if context is not None:
         prompt += "\n" + context
 
-
+    print(prompt)
     redo = True
 
     try:
