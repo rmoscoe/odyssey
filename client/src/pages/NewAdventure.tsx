@@ -295,6 +295,32 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
     const [adventureId, setAdventureId] = useState(0);
     const [sceneIdx, setSceneIdx] = useState(-1);
     const [encounterIdx, setEncounterIdx] = useState(-1);
+    const [adventureState, setAdventureState] = useState({state: 
+        {
+            title: "",
+            game: "", 
+            campaign_setting: "",
+            exposition: "",
+            incitement: "", 
+            scene_set: [
+                {
+                    sequence: 0,
+                    challenge: "" as string | null,
+                    setting: "" as string | null,
+                    encounters: [
+                        {
+                            type: "" as string | null,
+                            description: "" as string | null,
+                        }
+                    ],
+                    plot_twist: "" as string | null,
+                    clue: "" as string | null
+                }
+            ], 
+            climax: "",
+            denoument: ""
+        }
+    });
 
     const contentContainerRef = useRef<HTMLElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -698,6 +724,18 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
             } else {
                 setNotification('Oops! Something went wrong. Please try again.');
             }
+            setAdventureState({state: 
+                { 
+                    title: adventureTitle,
+                    game: finalGameTitle, 
+                    campaign_setting: finalCampaignSetting,
+                    exposition: expositionChapter.chapterContent as string,
+                    incitement: incitementChapter.chapterContent as string, 
+                    scene_set: risingActionChapter.chapterContent as SceneData[], 
+                    climax: climaxChapter.chapterContent as string,
+                    denoument: denoumentChapter.chapterContent as string
+                }
+            });
             setAdventure(false);
             setLoading(false);
             setAdventureSaved(true);
@@ -1045,7 +1083,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
                 <DeleteConfirm deleteType={deleteType} setDeleting={setDeleting} setDeleteConfirm={setDeleteConfirm} />
             }
             {adventureSaved &&
-                <SaveConfirm adventureId={adventureId} setAdventureSaved={setAdventureSaved}/>
+                <SaveConfirm adventureId={adventureId} setAdventureSaved={setAdventureSaved} adventureState={adventureState}/>
             }
         </main>
     );

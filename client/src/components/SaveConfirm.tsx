@@ -7,9 +7,31 @@ import { faX, faDiceD20 } from '@fortawesome/free-solid-svg-icons';
 type SaveProps = {
     adventureId: number;
     setAdventureSaved: (value: boolean) => void;
+    adventureState: {state: {
+        title: string,
+        game: string, 
+        campaign_setting: string | null,
+        exposition: string,
+        incitement: string, 
+        scene_set: {
+            sequence: number,
+            challenge: string | null,
+            setting: string | null,
+            encounters: {
+                id?: number,
+                type: string | null,
+                description: string | null,
+                stats?: string
+            }[],
+            plot_twist: string | null,
+            clue: string | null
+        }[], 
+        climax: string,
+        denoument: string
+    }}
 }
 
-export default function SaveConfirm({ adventureId, setAdventureSaved }: SaveProps) {
+export default function SaveConfirm({ adventureId, setAdventureSaved, adventureState }: SaveProps) {
     const { theme } = useTheme();
     const navigate = useNavigate();
     const [reloadRequired, setReloadRequired] = useState(false);
@@ -29,7 +51,7 @@ export default function SaveConfirm({ adventureId, setAdventureSaved }: SaveProp
 
     const viewAdventureDetails = () => {
         closeModal();
-        navigate(`/adventures/${adventureId}`);
+        navigate(`/adventures/${adventureId}`, adventureState);
     }
 
     const viewAdventures = () => {

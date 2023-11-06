@@ -100,7 +100,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [edit, setEdit] = useState(false);
     const [loading, setLoading] = useState(false);
     const [notification, setNotification] = useState("");
-
+    console.log("Location State: ", location.state);
     const { title, created_at, last_modified, game, campaign_setting, scene_set, status } = location.state || {};
     let { id } = location.state || {};
     let { progress, climax_progress } = location.state || {};
@@ -129,6 +129,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     const [adventureKey, _setAdventureKey] = useState(1);
     const [saveScene, setSaveScene] = useState(false);
     const [saveComplete, setSaveComplete] = useState(true);
+    const [rerenderRequired, setRerenderRequired] = useState(false);
 
     const adventureDetailsRef = useRef<HTMLElement | null>(null);
     const titleInputRef = useRef<HTMLInputElement | null>(null);
@@ -268,7 +269,16 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     // }, [scenesSaved.current]);
 
     useEffect(() => {
+        if (rerenderRequired) {
+            setEdit(false);
+            getAdventure();
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [rerenderRequired]);
+    
+    useEffect(() => {
         if (!edit) {
+            console.log("Getting Adventure");
             const getAdventure = async () => {
                 try {
                     if (!Auth.loggedIn()) {
@@ -280,6 +290,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                         navigate('/login');
                     } else if (response.data) {
                         const data: adventure = response.data;
+                        console.log("Data: ", data)
                         const isoAdventure: isoAdventure = {
                             id: data.id,
                             title: data.title,
@@ -688,11 +699,11 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
             </section>
 
             {loading &&
-                <section className="modal-background z-20 flex justify-center items-center">
-                    <Spinner />
+                <section className="modal-background z-20 flex flex-wrap justify-center items-center">
                     {savingNotifications.includes(notification) &&
                         <p className={`${theme}-text mt-3 text-center z-40`}>{notification}</p>
                     }
+                    <Spinner />
                 </section>
             }
 
@@ -716,7 +727,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 <div key={carouselKey} >
                     <Carousel dynamicHeight={true} preventMovementUntilSwipeScrollTolerance={true} swipeScrollTolerance={edit ? 250 : 25} emulateTouch={!edit} centerMode={true} centerSlidePercentage={100} showStatus={false} showThumbs={false} onChange={handleSlideChange} selectedItem={activeScene} >
                         {scenes?.map((scene, i) => (
-                            <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} setScenes={setScenes} sceneIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} setActiveScene={setActiveScene} deleting={deleting} setDeleting={setDeleting} sceneDelIdx={sceneDelIdx} setSceneDelIdx={setSceneDelIdx} reloadRequired={reloadRequired} setReloadRequired={setReloadRequired} carouselKey={carouselKey} setCarouselKey={setCarouselKey} removeScene={removeScene} setRemoveScene={setRemoveScene} adventureId={id} saveScene={saveScene} setNotification={setNotification} incScenesSaved={incScenesSaved} />
+                            <SceneDetails key={scene?.id || i} scene={scene} scenes={scenes} setScenes={setScenes} sceneIndex={i} edit={edit} handleDeleteClick={handleDeleteClick} startScene={startScene} completeScene={completeScene} startEncounter={startEncounter} completeEncounter={completeEncounter} loading={loading} setActiveScene={setActiveScene} deleting={deleting} setDeleting={setDeleting} sceneDelIdx={sceneDelIdx} setSceneDelIdx={setSceneDelIdx} reloadRequired={reloadRequired} setReloadRequired={setReloadRequired} carouselKey={carouselKey} setCarouselKey={setCarouselKey} removeScene={removeScene} setRemoveScene={setRemoveScene} adventureId={id} saveScene={saveScene} setNotification={setNotification} incScenesSaved={incScenesSaved} rerenderRequired={rerenderRequired} setRerenderRequired={setRerenderRequired} />
                         ))}
                     </Carousel>
                 </div>
@@ -725,7 +736,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
             </section>
 
             {deleteConfirm &&
-                <DeleteConfirm deleteType={deleteType} deleteId={deleteId} setDeleteConfirm={setDeleteConfirm} setReloadRequired={setReloadRequired} redirectRequired={redirectRequired} setDeleting={setDeleting} setRemoveScene={setRemoveScene} />
+                <DeleteConfirm deleteType={deleteType} deleteId={deleteId} setDeleteConfirm={setDeleteConfirm} setReloadRequired={setReloadRequired} redirectRequired={redirectRequired} setDeleting={setDeleting} setRemoveScene={setRemoveScene} setRerenderRequired={setRerenderRequired} />
             }
         </main>
     );

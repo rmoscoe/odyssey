@@ -57,10 +57,12 @@ interface SceneDetailsProps {
     saveScene: boolean;
     setNotification: (value: string) => void;
     incScenesSaved: () => void;
+    rerenderRequired: boolean;
+    setRerenderRequired: (value: boolean) => void;
     // adventureDetails: React.MutableRefObject<HTMLElement | null>
 }
 
-export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene, deleting, setDeleting, sceneDelIdx, setSceneDelIdx, carouselKey, setCarouselKey, reloadRequired, setReloadRequired, removeScene, setRemoveScene, adventureId, saveScene, setNotification, incScenesSaved }: SceneDetailsProps) {
+export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene, deleting, setDeleting, sceneDelIdx, setSceneDelIdx, carouselKey, setCarouselKey, reloadRequired, setReloadRequired, removeScene, setRemoveScene, adventureId, saveScene, setNotification, incScenesSaved, rerenderRequired, setRerenderRequired }: SceneDetailsProps) {
     const { theme } = useTheme();
 
     const { sequence, challenge, setting, encounter_set, plot_twist, clue, progress } = scene || {};
@@ -172,6 +174,16 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
     //         incScenesSaved();
     //     }
     // }, [encountersSaved.current, statefulScene?.encounter_set.length]);
+
+    useEffect(() => {
+        console.log("Change in rerenderRequired detected");
+        if (rerenderRequired) {
+            console.log("Incrementing encounter carousel key");
+            setEncounterCarouselKey(encounterCarouselKey + 1);
+            console.log("Setting Rerender Required to false");
+            setRerenderRequired(false);
+        }
+    }, [rerenderRequired]);
 
     useEffect(() => {
         let updatedScenes: isoScenes;
