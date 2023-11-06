@@ -332,7 +332,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
 
             {progress !== "Complete" && (encounterIndex === 0 || encounters[encounterIndex - 1]?.progress === "Complete") &&
                 <section className="flex justify-end w-full mt-2">
-                    {progress === "Not Started" &&
+                    {progress === "Not Started" && scene.progress === "In Progress" &&
                         <button onClick={() => { startEncounter(id || 0) }} className={`border-${theme}-accent border-[3px] rounded-xl text-lg bg-${theme}-primary text-${theme}-accent font-${theme}-text py-1 px-2`}>Start</button>
                     }
                     {progress === "In Progress" &&

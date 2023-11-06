@@ -266,6 +266,7 @@ class GenerateAdventureView(APIView):
             level = data.get("level")
             experience = data.get("experience")
             context = data.get("context")
+            print("Context: ", context)
 
             adventure = generate_adventure(data["game"], data["players"], data["scenes"], data["encounters"], data["plot_twists"], data["clues"], campaign_setting, level, experience, context).strip('"```json\\n').rstrip('\\n```"')
 

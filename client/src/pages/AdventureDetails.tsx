@@ -279,64 +279,64 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
     useEffect(() => {
         if (!edit) {
             console.log("Getting Adventure");
-            const getAdventure = async () => {
-                try {
-                    if (!Auth.loggedIn()) {
-                        navigate('/login');
-                        return;
-                    }
-                    const response = await axios.get(`/api/adventures/${adventureId}/`);
-                    if (response.status === 401) {
-                        navigate('/login');
-                    } else if (response.data) {
-                        const data: adventure = response.data;
-                        console.log("Data: ", data)
-                        const isoAdventure: isoAdventure = {
-                            id: data.id,
-                            title: data.title,
-                            created_at: data.created_at,
-                            last_modified: data.last_modified,
-                            game: data.game,
-                            campaign_setting: data.campaign_setting,
-                            exposition: data.exposition,
-                            incitement: data.incitement,
-                            climax: data.climax,
-                            climax_progress: data.climax_progress,
-                            denoument: data.denoument,
-                            progress: data.progress,
-                            status: data.status,
-                        }
-                        const isoScenes: isoScenes = data.scene_set;
-                        setAdventure(isoAdventure);
-                        setScenes(isoScenes);
-                        setTitleText(isoAdventure.title);
-                        setExpositionText(isoAdventure.exposition);
-                        setIncitementText(isoAdventure.incitement);
-                        setClimaxText(isoAdventure.climax);
-                        setDenoumentText(isoAdventure.denoument);
-                        let allScenesComplete = true;
-                        for (let i = 0; i < isoScenes.length; i++) {
-                            const scene = isoScenes[i]
-                            if (scene?.progress !== "Complete") {
-                                allScenesComplete = false;
-                            } else {
-                                continue;
-                            }
-                        }
-                        setScenesComplete(allScenesComplete);
-                    } else {
-                        setAdventure(undefined);
-                        setScenes(undefined);
-                    }
-                } catch (err) {
-                    console.error(err);
-                    if (err instanceof Error) {
-                        if (err instanceof AxiosError && err.response?.status === 401) {
-                            navigate('/login');
-                        }
-                    }
-                }
-            }
+            // const getAdventure = async () => {
+            //     try {
+            //         if (!Auth.loggedIn()) {
+            //             navigate('/login');
+            //             return;
+            //         }
+            //         const response = await axios.get(`/api/adventures/${adventureId}/`);
+            //         if (response.status === 401) {
+            //             navigate('/login');
+            //         } else if (response.data) {
+            //             const data: adventure = response.data;
+            //             console.log("Data: ", data)
+            //             const isoAdventure: isoAdventure = {
+            //                 id: data.id,
+            //                 title: data.title,
+            //                 created_at: data.created_at,
+            //                 last_modified: data.last_modified,
+            //                 game: data.game,
+            //                 campaign_setting: data.campaign_setting,
+            //                 exposition: data.exposition,
+            //                 incitement: data.incitement,
+            //                 climax: data.climax,
+            //                 climax_progress: data.climax_progress,
+            //                 denoument: data.denoument,
+            //                 progress: data.progress,
+            //                 status: data.status,
+            //             }
+            //             const isoScenes: isoScenes = data.scene_set;
+            //             setAdventure(isoAdventure);
+            //             setScenes(isoScenes);
+            //             setTitleText(isoAdventure.title);
+            //             setExpositionText(isoAdventure.exposition);
+            //             setIncitementText(isoAdventure.incitement);
+            //             setClimaxText(isoAdventure.climax);
+            //             setDenoumentText(isoAdventure.denoument);
+            //             let allScenesComplete = true;
+            //             for (let i = 0; i < isoScenes.length; i++) {
+            //                 const scene = isoScenes[i]
+            //                 if (scene?.progress !== "Complete") {
+            //                     allScenesComplete = false;
+            //                 } else {
+            //                     continue;
+            //                 }
+            //             }
+            //             setScenesComplete(allScenesComplete);
+            //         } else {
+            //             setAdventure(undefined);
+            //             setScenes(undefined);
+            //         }
+            //     } catch (err) {
+            //         console.error(err);
+            //         if (err instanceof Error) {
+            //             if (err instanceof AxiosError && err.response?.status === 401) {
+            //                 navigate('/login');
+            //             }
+            //         }
+            //     }
+            // }
 
             console.log("ID: ", id);
             if (id) {
@@ -535,7 +535,8 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
                 const progressPercent = adventureProgress / progressDivisor * 100;
                 const updateResponse = await axios.patch(`/api/adventures/${id}/`, { progress: progressPercent }, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
                 progress = updateResponse.data.progress;
-                setCarouselKey(carouselKey + 1);
+                // setCarouselKey(carouselKey + 1);
+                setRerenderRequired(true);
             }
             else {
                 setNotification("Oops! Something went wrong. Please try again.");

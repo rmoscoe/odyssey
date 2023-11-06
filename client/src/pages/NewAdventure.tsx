@@ -412,7 +412,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { target } = e;
         const inputId = target.id;
-        const inputValue: string | number | undefined = target.tagName === 'TEXTAREA' ? target.innerText : target.value;
+        const inputValue: string | number | undefined = target.value;
 
         target.classList.remove("invalid-entry");
         setNotification('');
@@ -452,6 +452,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
                 setWithClues(Number(inputValue));
                 break;
             case 'context-textarea':
+                console.log(inputValue);
                 setContext(inputValue);
                 break;
             case 'adventure-title-input':
@@ -520,6 +521,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
             "campaign_setting",
             "level",
             "experience",
+            "context"
         ];
 
         const stateVariables = [homebrewDescription, campaignSetting, level, experience, context];
@@ -536,6 +538,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
         optionalParams.forEach((param, idx) => {
             updateOptionalProperty(param, stateVariables[idx]);
         });
+        console.log("Adventure Params: ", adventureParams)
 
         try {
             const response = await axios.post('/api/generate-adventure/', adventureParams, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
@@ -1024,6 +1027,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
                             onBlur={fieldLoseFocus}
                             disabled={loading}
                             key={'context-textarea'}
+                            value={context}
                         >
                             {context}
                         </textarea>
