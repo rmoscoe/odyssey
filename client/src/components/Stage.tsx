@@ -2,11 +2,6 @@
 import { useEffect, useRef } from 'react';
 import { useTheme } from '../utils/ThemeContext';
 
-// type stageObject = {
-//     stageTitle: string,
-//     stageContent: string,
-// }
-
 interface StageProps {
     title: string;
     content: string;
@@ -23,8 +18,6 @@ interface StageProps {
 
 export default function Stage({ title, content, edit, setRef, inputText, loading, climax_progress, scenes_complete, startClimax, completeClimax, handleInputChange }: StageProps) {
     const { theme } = useTheme();
-
-    // const [inputText, setInputText] = useState(content);
 
     const stageInputRef = useRef<HTMLTextAreaElement | null>(null);
 

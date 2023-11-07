@@ -36,20 +36,6 @@ def home(request):
     context = {}
     return render(request, "index.html", context)
 
-# class CheckAuthenticatedView(APIView):
-#     def get(self, request, format=None):
-#         user = self.request.user
-#         try:
-#             isAuthenticated = user.is_authenticated
-
-#             if isAuthenticated:
-#                 return Response({ 'isAuthenticated': 'success' }, status=200)
-#             else:
-#                 return Response({ 'isAuthenticated': 'error' }, status=400)
-#         except:
-#             return Response({ 'error': 'Oops! Something went wrong when checking authentication status.'}, status=500)
-
-
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class GetCSRFToken(APIView):
     permission_classes = (permissions.AllowAny, )
@@ -59,7 +45,6 @@ class GetCSRFToken(APIView):
             return Response({'success': 'CSRF cookie set'}, status=200)
         except:
             return Response({'error': 'Oops! Something went wrong getting a CSRF token.'}, status=500)
-
 
 @method_decorator(csrf_protect, name='dispatch')
 class UserViewSet(viewsets.ModelViewSet):
@@ -163,9 +148,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class AdventureViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
-    # class AdventureViewSet(viewsets.ModelViewSet):
-
-    # queryset = Adventure.objects.select_related('user_id').prefetch_related('scene_set__encounter_set')
     serializer_class = AdventureSerializer
 
     def get_queryset(self):
@@ -174,18 +156,6 @@ class AdventureViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
         if user_id:
             queryset = queryset.filter(user_id=user_id)
         return queryset.prefetch_related('scene_set__encounter_set')
-
-    # @action(detail=False, methods=['GET'])
-    # def get_user_adventures(self, request):
-    #     try:
-    #         user_id = request.query_params.get('user_id')
-    #         print("User: %s\tviews 150" % user_id)
-    #         adventures = Adventure.objects.filter(user_id = user_id).prefetch_related('scene_set__encounter_set')
-    #         serializer = AdventureSerializer(adventures, many=True)
-    #         return Response(serializer.data, status=200)
-    #     except Exception as e:
-    #         print("Unable to retrieve user's adventures because %s" % e)
-    #         return Response({ 'error': 'Something went wrong when retrieving the user\'s adventures' }, status=500)
 
     def partial_update(self, request, *args, **kwargs):
         try:
@@ -201,8 +171,6 @@ class AdventureViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
 
 
 class SceneViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
-    # class SceneViewSet(viewsets.ModelViewSet):
-
     queryset = Scene.objects.all().prefetch_related('encounter_set')
     serializer_class = SceneSerializer
 
@@ -220,8 +188,6 @@ class SceneViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
 
 
 class EncounterViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
-    # class EncounterViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
-
     queryset = Encounter.objects.all()
     serializer_class = EncounterSerializer
 
@@ -257,7 +223,6 @@ class CustomFieldViewSet(LoginRequiredMixinAjax, viewsets.ModelViewSet):
 
 
 class GenerateAdventureView(APIView):
-    # Supposedly generate_adventure runs synchronously. If this causes problems, try using async await.
     @login_required_ajax
     def post(self, request):
         try:
@@ -266,7 +231,6 @@ class GenerateAdventureView(APIView):
             level = data.get("level")
             experience = data.get("experience")
             context = data.get("context")
-            print("Context: ", context)
 
             adventure = generate_adventure(data["game"], data["players"], data["scenes"], data["encounters"], data["plot_twists"], data["clues"], campaign_setting, level, experience, context).strip('"```json\\n').rstrip('\\n```"')
 
@@ -325,7 +289,6 @@ class CustomPasswordResetView(APIView):
             return Response({'error': 'Something went wrong when sending password reset email'}, status=500)
 
 
-# @method_decorator(csrf_exempt, name='dispatch')
 class CustomPasswordResetConfirmView(APIView):
     authentication_classes = []  # Allow unauthenticated access
     permission_classes = [AllowAny]  # Allow unauthenticated access

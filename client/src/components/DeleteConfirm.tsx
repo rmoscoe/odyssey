@@ -64,11 +64,13 @@ export default function DeleteConfirm({ deleteType, deleteId, setDeleting, setDe
                     setReloadRequired(true);
                     setRemoveScene && setRemoveScene(true)
                 }
+                if (response.status === 204 && setReloadRequired && deleteType !== 'scenes') {
+                    setReloadRequired(true);
+                }
                 if (response.status === 204 && redirectRequired) {
                     navigate('/adventures');
                 }
                 if (response.status === 204 && setRerenderRequired) {
-                    console.log("Setting Rerender Required to true");
                     setRerenderRequired(true);
                 }
             } catch (err) {

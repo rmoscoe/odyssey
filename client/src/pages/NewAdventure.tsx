@@ -452,7 +452,6 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
                 setWithClues(Number(inputValue));
                 break;
             case 'context-textarea':
-                console.log(inputValue);
                 setContext(inputValue);
                 break;
             case 'adventure-title-input':
@@ -538,7 +537,6 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
         optionalParams.forEach((param, idx) => {
             updateOptionalProperty(param, stateVariables[idx]);
         });
-        console.log("Adventure Params: ", adventureParams)
 
         try {
             const response = await axios.post('/api/generate-adventure/', adventureParams, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
@@ -740,6 +738,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
                 }
             });
             setAdventure(false);
+            setAdventureTitle('');
             setLoading(false);
             setAdventureSaved(true);
         } catch (err) {

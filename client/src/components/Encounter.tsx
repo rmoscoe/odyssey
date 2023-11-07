@@ -83,7 +83,6 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
             });
             setEdited(false);
 
-            // setScenes(updatedScenes);
             setChapter({ chapterTitle: chapter.chapterTitle, chapterContent: newScenes });
         }
     }, [edit, edited]);
@@ -113,37 +112,6 @@ export default function Encounter({ encounter, handleDeleteClick, editEncounter,
 
     const saveEncounter = (event: React.MouseEvent) => {
         event.stopPropagation();
-        // console.log("Saving encounter...")
-        // setEncounterType(typeText);
-        // setEncounterDescription(descriptionText);
-
-        // const updatedEncounter = {
-        //     type: encounterType,
-        //     description: encounterDescription
-        // }
-
-        // console.log("Updated Encounter: ", updatedEncounter);
-
-        // const {sequence, challenge, setting, encounters, plot_twist, clue} = scenes[currentScene - 1];
-        // const updatedEncounterSet = [...encounters.slice(0, eSeq), updatedEncounter, ...encounters.slice(eSeq)];
-        // console.log("Updated Encounter Set: ", JSON.stringify(updatedEncounterSet));
-        // const updatedScene = {
-        //     sequence,
-        //     challenge,
-        //     setting,
-        //     encounters: updatedEncounterSet,
-        //     plot_twist,
-        //     clue
-        // }
-        // console.log("Updated Scene: ", JSON.stringify(updatedScene));
-        // const updatedScenes = [...scenes.slice(0, currentScene - 1), updatedScene, ...scenes.slice(currentScene - 1)];
-        // console.log("Updated Scenes: ", JSON.stringify(updatedScenes));
-
-        // setScenes(updatedScenes);
-        // setChapter({ chapterTitle: chapter.chapterTitle, chapterContent: scenes });
-
-        // setTypeText('');
-        // setDescriptionText('');
         setEditEncounter(eSeq, false);
         setEdit(false);
         setEdited(true);

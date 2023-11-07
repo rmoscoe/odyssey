@@ -59,7 +59,6 @@ interface SceneDetailsProps {
     incScenesSaved: () => void;
     rerenderRequired: boolean;
     setRerenderRequired: (value: boolean) => void;
-    // adventureDetails: React.MutableRefObject<HTMLElement | null>
 }
 
 export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edit, handleDeleteClick, startScene, completeScene, startEncounter, completeEncounter, loading, setActiveScene, deleting, setDeleting, sceneDelIdx, setSceneDelIdx, carouselKey, setCarouselKey, reloadRequired, setReloadRequired, removeScene, setRemoveScene, adventureId, saveScene, setNotification, incScenesSaved, rerenderRequired, setRerenderRequired }: SceneDetailsProps) {
@@ -118,7 +117,6 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
 
     const incEncountersSaved = () => {
         encountersSaved.current++;
-        console.log(`Encounters Saved: ${encountersSaved.current} out of ${statefulScene?.encounter_set.length}; ${JSON.stringify(statefulScene?.encounter_set)}`);
         if (!statefulScene?.encounter_set || encountersSaved.current >= statefulScene.encounter_set.length) {
             setSaveEncounter(false);
             incScenesSaved();
@@ -131,7 +129,6 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
 
     useEffect(() => {
         const executeSaveScene = async () => {
-            console.log("Saving scene");
             const scenePayload = {
                 adventure_id: adventureId,
                 sequence: scene?.sequence,
@@ -141,7 +138,6 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                 clue: clueText
             }
 
-            console.log("Scene Payload: " + JSON.stringify(scenePayload));
 
             const sceneResponse = scene?.id ? await axios.patch(`/api/scenes/${scene.id}/`, scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } }) : await axios.post(`/api/scenes/`, scenePayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
 
@@ -149,7 +145,6 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
                 navigate('/login');
             } else if (sceneResponse.data) {
                 id = sceneResponse.data.id;
-                console.log("Scene Response Data: " + sceneResponse.data);
                 if (encounter_set) {
                     resetEncountersSaved();
                 }
@@ -167,20 +162,9 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
         }
     }, [saveScene]);
 
-    // useEffect(() => {
-    //     console.log("Encounters Saved: " + encountersSaved.current + ", Total Encounters: " + statefulScene?.encounter_set.length + "SceneDetails 152");
-    //     if (statefulScene?.encounter_set && encountersSaved.current >= statefulScene.encounter_set.length) {
-    //         setSaveEncounter(false);
-    //         incScenesSaved();
-    //     }
-    // }, [encountersSaved.current, statefulScene?.encounter_set.length]);
-
     useEffect(() => {
-        console.log("Change in rerenderRequired detected");
         if (rerenderRequired) {
-            console.log("Incrementing encounter carousel key");
             setEncounterCarouselKey(encounterCarouselKey + 1);
-            console.log("Setting Rerender Required to false");
             setRerenderRequired(false);
         }
     }, [rerenderRequired]);
@@ -224,16 +208,6 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
     useEffect(() => {
         setProgressPct(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
     }, [progress]);
-
-    // useEffect(() => {
-    //     resizeCarousel();
-    // }, [statefulScene, scenes, edit, encounter_set, activeEncounter, sceneDetailsRef.current?.offsetHeight]);
-
-    // const resizeCarousel = () => {
-    //     const carousel = adventureDetails.current?.querySelector(".slider-wrapper");
-    //     const sceneHeight = sceneDetailsRef.current?.offsetHeight;
-    //     carousel?.setAttribute("style", `height: ${sceneHeight}px!important;`);
-    // }
 
     useEffect(() => {
         const handleResize = () => {

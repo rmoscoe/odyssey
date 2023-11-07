@@ -87,9 +87,17 @@ export default function MyAdventures({ handlePageChange, deleteConfirm, setDelet
 
     useEffect(() => {
         if (reloadRequired) {
-            window.location.reload();
+            let idx = -1;
+            adventures.forEach((adv, i) => {
+                if (adv.id === deleteTarget) {
+                    idx = i;
+                }
+            });
+            const newAdventures = [...adventures.slice(0, idx), ...adventures.slice(idx + 1)];
+            setAdventures(newAdventures);
             setReloadRequired(false);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [reloadRequired]);
 
     const newAdventureHandler = () => navigate('/adventures/new');

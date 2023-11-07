@@ -113,8 +113,6 @@ export default function Chapter({ chapter, setChapter, handleDeleteClick, deleti
     }
 
     const saveChapter = () => {
-        // const newContent = content ?? scenes;
-        // setContent('');
         setChapter({
             chapterTitle,
             chapterContent: content ?? scenes

@@ -137,6 +137,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
 
         try {
             const response = await axios.post('/api/users/', user, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});
+
             // log the user in and store the token in localStorage
             const token = response.data.token;
             localStorage.setItem('odysseyToken', JSON.stringify(token));
@@ -144,13 +145,14 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
             navigate('/adventures');
 
         } catch (error) {
+            if (axios.isAxiosError(error)) {
+                error.response?.data.error === 'Username already in use' ? emailInUse() : setNotification('An error occured while creating an account. Please try again.');
+            }
+            
             setEmail('');
             setPassword('');
             setConfirmPassword('');
             setLoading(false);
-
-            error === 'Username already in use' ? emailInUse() : setNotification('An error occured while creating an account. Please try again.');
-            console.error(error);
         }
     }
 

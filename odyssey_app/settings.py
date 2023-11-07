@@ -23,11 +23,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Configure whitenoise to serve static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STORAGES = {
-#     'staticfiles': {
-#         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
-#     },
-# }
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -57,8 +52,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    # 'debug_toolbar',
-    # 'mail_panel',
     'server',
 ]
 
@@ -66,7 +59,6 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -137,40 +129,12 @@ else:
         }
     }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'mysql.connector.django',
-#         # 'ENGINE': 'django.db.backends.mysql',
-#         'NAME': os.environ.get('SCHEMA'),
-#         'USER': os.environ.get(
-#             'DB_USER'
-#         ),
-#         'PASSWORD': os.environ.get(
-#             'DB_PASSWORD'
-#         ),
-#         'HOST': os.environ.get('DB_URL'),
-#         'PORT': '3306',
-#         # 'OPTIONS': {
-#         #     'sql_mode': 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER'
-#         # }
-#     }
-# }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 86400
 
-# Whether the session cookie should be set on every request. Default: False.
-# SESSION_COOKIE_HTTPONLY = True
-
-# Whether the session cookie should be set as secure (HTTPS-only). Default: False.
-# SESSION_COOKIE_SECURE = True
-
 # The name of the session cookie. Default: 'sessionid'.
 SESSION_COOKIE_NAME = 'odyssey_session_id'
-
-# The domain to which the session cookie should be set. Default: None.
-# SESSION_COOKIE_DOMAIN = 'odyssey-db3a471a3d45.herokuapp.com/'
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -189,11 +153,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'odyssey_app.utils.CharacterTypesValidator',
     },
 ]
-
-# MIME_TYPES = {
-#     '.js': 'application/javascript',
-#     '.css': 'text/css',
-# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -220,9 +179,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login'
 
-# 'mail_panel.backend.MailToolbarBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# 'smtp.office365.com' #smtp-mail.outlook.com
 EMAIL_HOST = 'smtp-mail.outlook.com'
 EMAIL_PORT = '587'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
@@ -246,44 +203,3 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ]
 }
-
-# INTERNAL_IPS = [
-#     '127.0.0.1',
-# ]
-
-# DEBUG_TOOLBAR_PANELS = (
-#     'debug_toolbar.panels.history.HistoryPanel',
-#     'mail_panel.panels.MailToolbarPanel',
-#     'debug_toolbar.panels.versions.VersionsPanel',
-#     'debug_toolbar.panels.timer.TimerPanel',
-#     'debug_toolbar.panels.settings.SettingsPanel',
-#     'debug_toolbar.panels.headers.HeadersPanel',
-#     'debug_toolbar.panels.request.RequestPanel',
-#     'debug_toolbar.panels.sql.SQLPanel',
-#     'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-#     'debug_toolbar.panels.templates.TemplatesPanel',
-#     'debug_toolbar.panels.cache.CachePanel',
-#     'debug_toolbar.panels.signals.SignalsPanel',
-#     'debug_toolbar.panels.redirects.RedirectsPanel',
-#     'debug_toolbar.panels.profiling.ProfilingPanel',
-# )
-
-# PASSWORD_RESET_TOKEN_GENERATOR = 'server.utils.password_reset_token_generator'
-
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'mail_admins': {
-#             'level': 'ERROR',
-#             'class': 'django.utils.log.AdminEmailHandler',
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['mail_admins'],
-#             'level': 'ERROR',
-#             'propagate': True,
-#         },
-#     },
-# }

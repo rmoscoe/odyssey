@@ -859,10 +859,6 @@ input.bg-fantasy-field:-internal-autofill-selected {
   background-image: linear-gradient(to top, #31333B, #FF54A4 45%, #FF54A4);
 }
 
-/*.slider-wrapper {
-  overflow-y: visible !important;
-}*/
-
 .switch {
   --tw-translate-x: 0;
   --tw-translate-y: 0;

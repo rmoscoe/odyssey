@@ -121,7 +121,6 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
                 clue: clue
             }
 
-            // const newScenes = [...scenes.slice(0, sceneIndex), updatedScene, ...scenes.slice(sceneIndex + 1)];
             const newScenes: SceneData[] = scenes.map((s) => {
                 return s.sequence === updatedScene.sequence ? updatedScene : s
             });
@@ -186,26 +185,9 @@ export default function Scene({ scene, scenes, sceneIndex, setScenes, handleDele
         } else {
             newEncounters = [...newScene.encounters.slice(0, idx), newEncounter, ...newScene.encounters.slice(idx)];
         }
-        // if (newEncounters.length > 0) {
-        //     for (let i = newEncounters.length - 1; i > idx; i--) {
-        //         //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        //         newEncounters[i + 1] = scene.encounters!.slice(i, i+1)[0];
-        //     }
-        // }
-
-
-        // newEncounters[idx] = newEncounter;
-
-        // const updatedChapterContent = scenes.slice();
-
-
+        
         newScene.encounters = newEncounters;
 
-        // updatedChapterContent[idx] = newScene;
-
-        // setScenes(updatedChapterContent);
-        // setChapter({ chapterTitle, chapterContent: updatedChapterContent });
-        // const newScenes: SceneData[] = [...scenes.slice(0, currentScene - 1), newScene, ...scenes.slice(currentScene)];
         const newScenes: SceneData[] = scenes.map((s) => {
             return s.sequence === newScene.sequence ? newScene : s
         });

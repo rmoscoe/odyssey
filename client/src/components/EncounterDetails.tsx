@@ -60,7 +60,6 @@ interface EncounterDetailsProps {
     saveEncounter: boolean,
     setNotification: (value: string) => void,
     incEncountersSaved: () => void
-    // sceneDetails: React.MutableRefObject<HTMLElement | null>
 }
 
 export default function EncounterDetails({ encounter, encounters, encounterIndex, edit, handleDeleteClick, startEncounter, completeEncounter, loading, scene, statefulScene, setStatefulScene, setActiveEncounter, deleting, setDeleting, deleteEncounter, sceneIndex, setSceneDelIdx, reloadRequired, setReloadRequired, encounterCarouselKey, setEncounterCarouselKey, sceneId, saveEncounter, setNotification, incEncountersSaved }: EncounterDetailsProps) {
@@ -106,21 +105,17 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
 
     useEffect(() => {
         const executeSaveEncounter = async () => {
-            console.log("Saving encounter");
             const encounterPayload = {
                 scene_id: sceneId,
                 encounter_type: typeText,
                 description: descriptionText
             }
 
-            console.log("Encounter Payload: " + JSON.stringify(encounterPayload));
-
             const encounterResponse = encounter?.id ? await axios.patch(`/api/encounters/${encounter.id}/`, encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } }) : await axios.post(`/api/encounters/`, encounterPayload, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') } });
 
             if (encounterResponse.status === 401) {
                 navigate('/login');
             } else if (encounterResponse.data) {
-                console.log("Encounter Response Data: " + encounterResponse.data);
                 incEncountersSaved();
             } else {
                 setNotification('Oops! Something went wrong. Please try again.');
@@ -134,16 +129,6 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
     useEffect(() => {
         setProgressPct(progress === "In Progress" ? 50 : progress === "Complete" ? 100 : 0);
     }, [progress]);
-
-    // useEffect(() => {
-    //     resizeCarousel();
-    // }, [encounter, encounters, edit, encounterDetailsRef.current?.offsetHeight]);
-
-    // const resizeCarousel = () => {
-    //     const carousel = sceneDetails.current?.querySelector(".slider-wrapper");
-    //     const encounterHeight = encounterDetailsRef.current?.offsetHeight;
-    //     carousel?.setAttribute("style", `height: ${encounterHeight}px!important;`);
-    // }
 
     useEffect(() => {
         const handleResize = () => {
