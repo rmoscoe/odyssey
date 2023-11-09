@@ -11,7 +11,17 @@
   - [Front End](#front-end)
 - [AI Prompt Example](#ai-prompt-example)
 - [Usage](#usage)
+  - [Getting Started](#getting-started)
+  - [Logging In](#logging-in)
+  - [My Adventures](#my-adventures)
+  - [Generating an Adventure](#generating-an-adventure)
+  - [Adventure Details](#adventure-details)
+  - [Account Management](#account-management)
 - [Process and Lessons Learned](#process-and-lessons-learned)
+  - [Analysis and User Stories](#analysis-and-user-stories)
+  - [Design, Technology Selection, and AI Prompt Development](#design-technology-selection-and-ai-prompt-development)
+  - [Project Planning and Success Criteria](#project-planning-and-success-criteria)
+  - [Development](#development)
 - [Author Info](#author-info)
   - [Ryan Moscoe](#ryan-moscoe)
 - [Features](#features)
@@ -254,13 +264,103 @@ Not shown in the prompt itself are the parameters passed to PaLM2 to control how
 
 ## Usage 
 
-Provide instructions and examples for use. Include screenshots as needed. 
+### Getting Started
 
-To add a screenshot, create an `assets/images` folder in your repository and upload your screenshot to it. Then, using the relative filepath, add it to your README using the following syntax:
+The first time you visit Odyssey, you'll need to create an account in order to use any features of the application. The image below shows the Home page. To get started, click the `Get Started` link in the header (large screens only) or the `Get Started` button beneath the hero image.
 
-```md
-![alt text](assets/images/screenshot.png)
-```
+![Site home page](/assets/homeFantasy.jpg)
+
+On the Create an Account page, enter your email address, choose a password, and re-enter the password for confirmation (see below). Your password must contain at least 8 characters, including at least one lowercase letter, at least one uppercase letter, and at least one number.
+
+![Create an Account page](/assets/createAccountFantasy.jpg)
+
+**PLEASE NOTE** there is ***no guest/visitor/test account***. Because users can change the email address and password for an account, there is no way to ensure the accuracy of credentials provided for a guest account. Please create an account if you wish to explore the application.
+
+
+<br/>
+
+### Logging In
+
+As a returning user, you must log in to use any features of the application. See the login page below. Enter your email address and password to log in.
+
+![Login page](/assets/loginSciFi.jpg)
+
+If you forget your password, click the `Forgot Password?` link. The image below shows the Reset Password page, where you can enter your email address. Odyssey will send you an email with a link to reset your password. If you don't see the email in your inbox within a few minutes, make sure to check your spam folder.
+
+![Reset Password page](/assets/resetPasswordFantasy.jpg)
+
+Clicking the link in the password reset email will take you to the Set New Password page (see below). Enter a new password and re-enter it to confirm.
+
+![Set New Password page](/assets/setNewPassword.jpg)
+
+<br/>
+
+### My Adventures
+
+The My Adventures page is the landing page once you are logged in. It shows your existing adventures and acts as the gateway to creating a new adventure, accessing the details of an existing adventure, or deleting an adventure. As shown below, this page is empty until you create an adventure.
+
+![My Adventures page with no adventures](/assets/myAdventuresEmptyFantasy.jpg)
+
+<br/>
+
+### Generating an Adventure
+
+To begin, click the `New Adventure` button on the My Adventures page. On the New Adventure page (see below), enter the parameters for your adventure, such as the game for which you want an adventure and the number of players. Fields marked with an asterisk (*) are required.
+
+![New Adventure page without a generated adventure](/assets/newAdventurePreFantasy.jpg)
+
+For your convenience, Odyssey lets you select a game from a list of the most popular tabletop roleplaying games, but you are not limited to these titles. Selecting `Other` lets you enter the name of another game. One of Odyssey's best features is its ability to generate adventures for unpublished, homebrew games. As shown below, just enter a description of the game.
+
+![New Adventure form for a homebrew/unpublished game](/assets/newAdventureHomebrewSciFi.jpg)
+
+The AI requires a few seconds to generate an adventure for you. Once the adventure is generated, it will be shown below the form (small screens) or to the right of the form (large screens). If you're happy with the adventure, give it a title and click the disk (&#x1F4BE;) button to save. 
+
+![New Adventure page with an adventure](assets/newAdventureSciFi.jpg)
+
+Even if you're not completely happy with the generated adventure, it may inspire your creative juices. If so, click any of the pencil (&#x270E;) icons to edit a specific part of the adventure (see below). Alternatively, you may click a plus (+) buttons to add a scene or (in scene edit mode) an encounter, or click any of the trash can (&#x1F5D1;) buttons to delete a specific part of the adventure. ***Don't forget to give your adventure a title and save it when you're finished editing.***
+
+![New Adventure page in edit mode](assets/newAdventureEditFantasy.jpg)
+
+Finally, you always have the option to fill out the form again and generate a totally different adventure. After saving an adventure, you have the option to return to the My Adventures page, view the details of the new adventure, or generate another adventure.
+
+<br/>
+
+### Adventure Details
+
+During gaming sessions, use the Adventure Details page to see the plot of the adventure and track the group's progress through it. You can also edit the adventure if the group makes choices that change the storyline or you just want to add an extra challenge, remove something, or change some details. You can access an adventure's details immediately after saving the newly generated adventure or by clicking the adventure's tile on the My Adventures page (see below).
+
+![My Adventures page with adventures](assets/myAdventuresSciFi.jpg)
+
+The narrative structure of an adventure consists of five parts:
+1. Exposition (Background section), which includes background information.
+2. Incitement (Beginning section), an event that sets the story in motion.
+3. Rising action, which consists of one or more scenes, each including one or more encounters. Dramatic tension rises toward the climax.
+4. Climax, the pivotal moment when dramatic tension is at its highest and the outcome of the adventure is determined.
+5. Denoument (Epilogue), in which the dramatic tension is dispersed and the heroes are (usually) rewarded.
+
+![Adventure Details page](assets/adventureDetailsFantasy.jpg)
+
+Progress bars indicate the status of the adventure as well as each scene and encounter. Completed scenes are also greyed out. Track the group's progress through the adventure:
+* When a scene is available to start, it will have a `Start` button in the bottom-right corner. The first scene is available immediately; each subsequent scene becomes available when the previous scene is completed.
+* When an encounter is available to start, it will have a `Start` button as well. The first encounter in each scene is available once the scene has started. Each subsequent encounter in that scene is available when the previous encounter is completed.
+* When the group finishes an encounter, click the `Complete` button for that encounter to mark it complete.
+* When the group finishes the last encounter in a scene, you may mark the scene complete, or you can hold off if there are still other things happening within the scene (such as conversations, travel, etc.).
+* The Climax becomes available when the last scene is completed.
+* Marking the Climax complete brings the progress of the adventure to 100%.
+
+You can also click the pencil button to edit the adventure or the trash can button to delete it. If you edit the adventure (see below), click the disk button to save your changes when you're finished.
+
+![Adventure Details page in edit mode](assets/adventureDetailsEditSciFi.jpg)
+
+<br/>
+
+### Account Management
+
+You can change your email address or password any time by clicking the `Account Settings` link in the header (or hanburger menu on a small screen). The Account Settings page is shown below. Enter an email address and/or password to update your account. If you enter a new password, re-enter the new password to confirm.
+
+![Account Settings page](assets/accountSettingsSciFi.jpg)
+
+<br/>
 
 -----
 
@@ -268,17 +368,41 @@ To add a screenshot, create an `assets/images` folder in your repository and upl
 
 ## Process and Lessons Learned 
 
+### Analysis and User Stories
 
-This is a good place to Explain what you Learned by creating this application.
-This is a great way to remind about all of the Complex Skills you now have.
-If the user is less experienced than you:
-They will be impressed by what you can do!
 
-If the user is more experienced than you:
-They will be impressed by what you can do!
 
-Remember, it is easy to forget exactly how Valuable and Impressive your skills are, as well as How Much You’ve Learned!
-So quantify that here!
+<br/>
+
+### Design, Technology Selection, and AI Prompt Development
+
+
+
+<br/>
+
+### Project Planning and Success Criteria
+
+
+
+<br/>
+
+### Development
+
+#### Bootstrapping and Delpoyment
+
+
+
+<br/>
+
+#### Database and Server
+
+
+
+<br/>
+
+#### Client
+
+
 
 -----
 
@@ -291,18 +415,6 @@ So quantify that here!
 * [Portfolio](https://rmoscoe.github.io/my-portfolio/)
 * [LinkedIn](https://www.linkedin.com/in/ryan-moscoe-8652973/)
 * [Github](https://github.com/rmoscoe)
-
-The user has looked through your whole README, and gotten familiar with your application. 
-This is where you take credit, and make it easy for them to learn more about you!
-Direct them to the following:
-- Your GitHub Profile
-- Your LinkedIn
-- Your Portfolio Website
-- And Anything Else You Want!
-
-Give credit where credit is due! 
-
-If you Pseudocode or Pair Program with someone else, give them kudos in your Contributors section!
 
 -----
 
@@ -326,12 +438,7 @@ If your project has a lot of features, consider adding a heading called "Feature
 
 ## License
 
-The last section of a good README is a license. This lets other developers know what they can and cannot do with your project. If you need help choosing a license, use [https://choosealicense.com/](https://choosealicense.com/)
-
-
----
-
-🏆 The sections listed above are the minimum for a good README, but your project will ultimately determine the content of this document. You might also want to consider adding the following sections.
+This project uses the [MIT License](https://choosealicense.com/licenses/mit/). See repository for license details.
 
 -----
 
@@ -339,4 +446,3 @@ The last section of a good README is a license. This lets other developers know 
 
 ## Contributing
 
-If you created an application or package and would like other developers to contribute it, you will want to add guidelines for how to do so. The [Contributor Covenant](https://www.contributor-covenant.org/) is an industry standard, but you can always write your own.

@@ -92,7 +92,7 @@ export default function Adventure({ adventure, handleDeleteClick }: AdventurePro
                 <div className="mr-0.5 flex-[1]">
                     <h4 className={`font-${theme}-heading text-${theme}-game-name text-lg`}>{game}</h4>
                     <div className={`h-3 mt-1.5 w-full border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full lg:hidden`}>
-                        <div className={`h-full bg-${theme}-progress-fill rounded-full`} style={{width:`${progress}%`}}></div>
+                        <div className={progress < 97 ? `h-full bg-${theme}-progress-fill rounded-l-full` : `h-full bg-${theme}-progress-fill rounded-full`} style={{width:`${progress}%`}}></div>
                     </div>
                 </div>
                 <div className="button-container flex shrink-0 basis-12 ml-2 space-x-0.5">
@@ -103,7 +103,7 @@ export default function Adventure({ adventure, handleDeleteClick }: AdventurePro
             </section>
             <p className={`hidden font-${theme}-text text-${theme}-neutral mt-1 mb-2 w-full h-56 text-ellipsis overflow-hidden fade from-[${theme}-contrast] text-fade lg:block`}>{adventureText}</p>
             <div className={`hidden mt-2 mx-auto h-4 w-10/12 border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full lg:block`}>
-                <div className={`h-full bg-${theme}-progress-fill rounded-l-full`} style={{width:`${progress}%`}}></div>
+                <div className={progress < 97 ? `h-full bg-${theme}-progress-fill rounded-l-full` : `h-full bg-${theme}-progress-fill rounded-full`} style={{width:`${progress}%`}}></div>
             </div>
         </section>
     );

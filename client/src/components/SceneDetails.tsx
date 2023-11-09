@@ -356,7 +356,7 @@ export default function SceneDetails({ scene, scenes, setScenes, sceneIndex, edi
             <section className="flex flex-wrap justify-between w-full px-2 mb-2 md:flex-nowrap">
                 <h3 className={`font-${theme}-heading text-${theme}-form-heading text-xl`}>Scene {sequence}</h3>
                 <div className={`h-3 mt-1.5 w-full border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full z-20 lg:w-64`}>
-                    <div className={`h-full bg-${theme}-progress-fill rounded-full`} style={{ width: `${progressPct}%` }}></div>
+                    <div className={progressPct < 97 ? `h-full bg-${theme}-progress-fill rounded-l-full` : `h-full bg-${theme}-progress-fill rounded-full`} style={{ width: `${progressPct}%` }}></div>
                 </div>
                 {edit && window.innerWidth >= 1024 &&
                     <section className="flex justify-between space-x-2 z-20">

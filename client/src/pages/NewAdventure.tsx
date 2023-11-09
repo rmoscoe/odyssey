@@ -739,6 +739,7 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
             });
             setAdventure(false);
             setAdventureTitle('');
+            setFinalCampaignSetting("");
             setLoading(false);
             setAdventureSaved(true);
         } catch (err) {

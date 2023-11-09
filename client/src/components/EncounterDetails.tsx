@@ -270,7 +270,7 @@ export default function EncounterDetails({ encounter, encounters, encounterIndex
                     </div>
                 }
                 <div className={`h-3 mt-1.5 w-full border-${theme}-scene-text border-2 bg-${theme}-progress-void rounded-full z-20 lg:w-64 lg:basis-1/5`}>
-                    <div className={`h-full bg-${theme}-primary rounded-full`} style={{ width: `${progressPct}%` }}></div>
+                    <div className={progressPct < 97 ? `h-full bg-${theme}-primary rounded-l-full` : `h-full bg-${theme}-primary rounded-full`} style={{ width: `${progressPct}%` }}></div>
                 </div>
                 {edit && window.innerWidth >= 1024 &&
                     <section className="flex justify-end items-center space-x-2 z-20 basis-2/5 h-11">

@@ -610,7 +610,7 @@ export default function AdventureDetails({ handlePageChange, deleteConfirm, setD
             <section className="w-full mb-6 px-2 lg:px-10">
                 {campaign_setting ? <h3 className={`font-${theme}-heading text-${theme}-heading text-center text-2xl mx-auto mb-3`}>{campaign_setting}, {game[0] === "A" || game[0] === "E" || game[0] === "I" || game[0] === "O" || game[0] === "U" || game[0] === "Y" ? "an" : "a"} {game} campaign setting</h3> : <h3 className={`font-${theme}-heading text-${theme}-heading text-center text-2xl mx-auto mb-3`}>{game}</h3>}
                 <div className={`h-3 mt-1.5 mx-auto w-64 border-${theme}-progress-border border-2 bg-${theme}-progress-void rounded-full`}>
-                    <div className={`h-full bg-${theme}-progress-fill rounded-full`} style={{ width: `${adventure?.progress}%` }}></div>
+                    <div className={adventure?.progress && adventure?.progress < 97 ? `h-full bg-${theme}-progress-fill rounded-l-full` : `h-full bg-${theme}-progress-fill rounded-full`} style={{ width: `${adventure?.progress}%` }}></div>
                 </div>
             </section>
 
