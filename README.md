@@ -71,7 +71,7 @@ _____
 
 ### Badges
 
-![badge](https://img.shields.io/badge/JavaScript-32.3%-ded30b)  &nbsp; &nbsp;   ![badge](https://img.shields.io/badge/TypeScript-31.3%-1a5096)  &nbsp; &nbsp;   ![badge](https://img.shields.io/badge/CSS-27.7%-3c0861)   &nbsp; &nbsp;  ![badge](https://img.shields.io/badge/Python-7.8%-093d80)   &nbsp; &nbsp;  ![badge](https://img.shields.io/badge/Other-0.9%-7d410c)
+![badge](https://img.shields.io/badge/JavaScript-32.3%25-ded30b)  &nbsp; &nbsp;   ![badge](https://img.shields.io/badge/TypeScript-31.3%25-1a5096)  &nbsp; &nbsp;   ![badge](https://img.shields.io/badge/CSS-27.7%25-3c0861)   &nbsp; &nbsp;  ![badge](https://img.shields.io/badge/Python-7.8%25-093d80)   &nbsp; &nbsp;  ![badge](https://img.shields.io/badge/Other-0.9%25-7d410c)
 
 -----
 
