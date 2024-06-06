@@ -1,4 +1,5 @@
-import google.generativeai as palm
+import google.generativeai as gemini
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import os
 import json
 
@@ -7,17 +8,23 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
     null_plot_twists = 100 - plot_twists
     null_clues = 100 - clues
 
-    palm.configure(api_key=api_key)
+    gemini.configure(api_key=api_key)
+    model = gemini.GenerativeModel(model_name="gemini-1.5-flash")
 
-    defaults = {
-        "model": 'models/text-bison-001',
+    config = {
         "temperature": 0.95,
         "candidate_count": 1,
         "top_k": 10000,
         "top_p": 0.95,
         "max_output_tokens": 1024,
         "stop_sequences": [],
-        "safety_settings": [{"category":"HARM_CATEGORY_DEROGATORY","threshold":1},{"category":"HARM_CATEGORY_TOXICITY","threshold":1},{"category":"HARM_CATEGORY_VIOLENCE","threshold":3},{"category":"HARM_CATEGORY_SEXUAL","threshold":3},{"category":"HARM_CATEGORY_MEDICAL","threshold":2},{"category":"HARM_CATEGORY_DANGEROUS","threshold":2}],
+    }
+    safety_settings={
+        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE
     }
     prompt = f"""Write an adventure for the {game} roleplaying game, """
     
@@ -68,11 +75,12 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
 
     try:
         while redo:
-            response = palm.generate_text(
-                **defaults,
-                prompt=prompt
+            response = model.generate_content(
+                prompt,
+                generation_config=config,
+                safety_settings=safety_settings
             )
-            adventure = json.loads(response.result.strip()[7:-3])
+            adventure = json.loads(response.text.strip()[7:-3])
             if len(adventure["Exposition"]) < 500:
                 redo = False
                 return response.result
