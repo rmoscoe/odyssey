@@ -85,7 +85,7 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
             adventure = json.loads(response.text.strip()[7:-3])
             if len(adventure["Exposition"]) < 500:
                 redo = False
-                return response.result
+                return response.text
     except Exception as e:
         print(e)
         raise e

@@ -22,6 +22,9 @@
   - [Design, Technology Selection, and AI Prompt Development](#design-technology-selection-and-ai-prompt-development)
   - [Project Planning and Success Criteria](#project-planning-and-success-criteria)
   - [Development](#development)
+    - [Bootstrapping and Delpoyment](#bootstrapping-and-delpoyment)
+    - [Database and Server](#database-and-server)
+    - [Client](#client)
 - [Author Info](#author-info)
   - [Ryan Moscoe](#ryan-moscoe)
 - [Features](#features)
@@ -37,11 +40,11 @@
 
 Writing adventures is time-consuming, and players often make unanticipated choices, forcing game masters to improvise and abandon the preparations they spent so much time creating. What game masters need is a way to create a customized adventure quickly.
 
-Odyssey uses the Google PaLM2 generative AI to craft thrilling adventures for tabletop roleplaying games in seconds. Choose from a large selection of the most popular games, enter a lesser-known title, or describe an unpublished/homebrew game. Refine your request with a campaign setting, number of players, experience level, and other parameters.
+Odyssey uses the Google Gemini generative AI to craft thrilling adventures for tabletop roleplaying games in seconds. Choose from a large selection of the most popular games, enter a lesser-known title, or describe an unpublished/homebrew game. Refine your request with a campaign setting, number of players, experience level, and other parameters.
 
 If desired, fine-tune the adventure by editing it, then save it so you can refer to it over the course of multiple game sessions. View the details of any of your saved adventures, and edit saved adventures to adapt to your players' choices. Odyssey also tracks the group's progress through the adventure.
 
-Odyssey is built with Python/Django for the back end and TypeScript, React, and TailwindCSS for the front end. It uses PaLM2 and Gencraft generative AIs, and it has a MySQL database.
+Odyssey is built with Python/Django for the back end and TypeScript, React, and TailwindCSS for the front end. It uses Gemini and Gencraft generative AIs, and it has a MySQL database.
 
 ![Odyssey Home Page](./assets/homeFantasy.jpg)
 
@@ -56,7 +59,7 @@ _____
 | MySQL       | Relational database                                                                                | [https://www.mysql.com/](https://www.mysql.com/)                                                     |
 | Python      | Programming language often used with AI and machine learning                                       | [https://www.python.org/](https://www.python.org/)                                                   |
 | Django      | Web development framework for Python                                                               | [https://www.djangoproject.com/](https://www.djangoproject.com/)                                     |
-| PaLM2       | Large language model (LLM) generative AI                                                           | [https://ai.google/discover/palm2/](https://ai.google/discover/palm2/)                               |
+| Gemini       | Large language model (LLM) generative AI                                                           | [https://ai.google/gemini-ecosystem](https://ai.google/gemini-ecosystem)                               |
 | Gencraft    | AI image generator                                                                                 | [https://gencraft.com/](https://gencraft.com/)                                                       |
 | Vite        | Build tool that aims to provide a faster and leaner development experience for modern web projects | [https://vitejs.dev/](https://vitejs.dev/)                                                           |
 | TypeScript  | Strongly typed variant of the JavaScript programming language                                      | [https://www.typescriptlang.org/](https://www.typescriptlang.org/)                                   |
@@ -205,11 +208,11 @@ Whereas the previous code example shows how certain functionality was achieved w
 
 ## AI Prompt Example
 
-Below is the prompt provided to Google PaLM2 to generate an adventure. The prompt always includes certain text but is also dynamically constructed based on user input. This prompt is an example of a zero-shot prompt, meaning it does not provide an example of an adventure for the AI to replicate, relying instead on instructions and context. The instructions take the form of a task input ("Write an adventure...").
+Below is the prompt provided to Google Gemini to generate an adventure. The prompt always includes certain text but is also dynamically constructed based on user input. This prompt is an example of a zero-shot prompt, meaning it does not provide an example of an adventure for the AI to replicate, relying instead on instructions and context. However, it also exemplifies a few-shot prompt, because it provides examples of clues that are related to settings or encounters. The instructions take the form of a task input ("Write an adventure...").
 
 The context for this prompt includes detailed instructions about how to format the response ("Respond in JSON using the following format..."), as well as contextual information ("The following is a description of {game}, a homebrew roleplaying game..." and "Each encounter is a trap, enemies, a puzzle... or some other obstacle.").
 
-Not shown in the prompt itself are the parameters passed to PaLM2 to control how the model generates a response. In early tests, generated adventures tended to be almost identical, whith only slight variations. To make Odyssey more "creative," I ramped up the randomness by significantly increasing the temperate, top-k, and top-p values. The nature of roleplaying games means that adventures should contain some (**pretend**) violence and could contain (pretend) sexual content. Players are generally at least 12 years old, with the vast majority being adults or teenagers. Therefore, I also adjusted the safety settings to allow for violence and modest sexual content but prohibit derogatory, toxic, medical, or dangerous content.
+Not shown in the prompt itself are the parameters passed to Gemini to control how the model generates a response. In early tests, generated adventures tended to be almost identical, whith only slight variations. To make Odyssey more "creative," I ramped up the randomness by significantly increasing the temperate, top-k, and top-p values. The nature of roleplaying games means that adventures should contain some (**pretend**) violence and could contain (pretend) sexual content. Players are generally at least 12 years old, with the vast majority being adults or teenagers. Therefore, I also adjusted the safety settings to allow for violence and modest sexual content but prohibit dangerous content, harassment, and hate speech.
 
 ```python
     prompt = f"""Write an adventure for the {game} roleplaying game, """
@@ -220,10 +223,10 @@ Not shown in the prompt itself are the parameters passed to PaLM2 to control how
     prompt += f"""for {players} players"""
 
     if level is not None:
-        prompt += f""" at level {level}"""
+        prompt += f""" at level {level}. The difficulty of the adventure should be appropriate to the number of players and their level"""
     
     if experience is not None:
-        prompt += f""" with {experience} experience points"""
+        prompt += f""" with {experience} experience points. The difficulty of the adventure should be appropriate to the number of players and their experience"""
 
     prompt += ". "
     
@@ -252,7 +255,9 @@ Not shown in the prompt itself are the parameters passed to PaLM2 to control how
         Denoument: "Epilogue or rewards the players can expect if successful"
     }}
 
-    Each scene has a challenge and an array of encounters. Each array of encounters includes a different random number of encounters, between 1 and {encounters} (inclusive). Also, {null_plot_twists}% of plot twists are null and {null_clues}% of clues are null. For example, one scene may have 3 encounters, a plot twist, and a null clue. Another scene may have 1 encounter, a null plot twist, and a clue."""
+    Each scene has a challenge and an array of encounters. Each array of encounters includes a different random number of encounters, between 1 and {encounters} (inclusive). Also, {null_plot_twists}% of plot twists are null and {null_clues}% of clues are null. For example, one scene may have 3 encounters, a plot twist, and a null clue. Another scene may have 1 encounter, a null plot twist, and a clue.
+    
+    Each clue should be related to the scene's setting or an encounter. EXAMPLE 1: challenge: track down a bad guy. setting: the bad guys' office with a computer. clue: The computer shows the bad guy's calendar, which has an appointment tomorrow at 9:00 a.m. in a nearby park. EXAMPLE 2: challenge: deactivate the security cameras in the starbase. setting: the security chief's office. encounters: [enemy: the security chief]. clue: If subdued and interrogated, the security chief can provide the access code to deactivate the security cameras. EXAMPLE 3: encounters: [enemies: 2 bugbears, trap: swinging log trap]. clue: the bugbears know how to disarm the swinging log trap."""
 
     if context is not None:
         prompt += "\n" + context
@@ -313,7 +318,7 @@ For your convenience, Odyssey lets you select a game from a list of the most pop
 
 ![New Adventure form for a homebrew/unpublished game](/assets/newAdventureHomebrewSciFi.jpg)
 
-The AI requires a few seconds to generate an adventure for you. Once the adventure is generated, it will be shown below the form (small screens) or to the right of the form (large screens). If you're happy with the adventure, give it a title and click the disk (&#x1F4BE;) button to save. 
+The AI requires only a couple seconds to generate an adventure for you. Once the adventure is generated, it will be shown below the form (small screens) or to the right of the form (large screens). If you're happy with the adventure, give it a title and click the disk (&#x1F4BE;) button to save. 
 
 ![New Adventure page with an adventure](assets/newAdventureSciFi.jpg)
 
@@ -375,8 +380,12 @@ A typical analysis process involves gathering requirements from stakeholders. Be
 I wrote these requirements as user stories in my design document. I created a total of 18 user stories, from which I selected 14 for inclusion in the minimum viable product (MVP). Two examples of these user stories follow:
 | As a {role} | I want {feature} | so that {reason} | What does it inform |
 | ----- | ----- | ----- | ----- |
-| User | To create a new adventure for a game of my choice | I can dazzle my players in a tabletop RPG with minimal investment of time and effort. | CLIENT: Need a create button, a form to collect specifications, and a new adventure page to show the new adventure.<br/>SERVER: Need a route to the form, a controller to submit the form and generate an adventure through the PaLM 2 API, and a route to the new adventure page. |
+| User | To create a new adventure for a game of my choice | I can dazzle my players in a tabletop RPG with minimal investment of time and effort. | CLIENT: Need a create button, a form to collect specifications, and a new adventure page to show the new adventure.<br/>SERVER: Need a route to the form, a controller to submit the form and generate an adventure through the PaLM 2* API, and a route to the new adventure page. |
 | User | To track progress in an adventure | Remember what happened in the previous session and where the group left off. | CLIENT: Need progress indicators for the adventure and each scene, plus a way to start and end each encounter and scene.<br/>SERVER: Need controllers to update encounters, scenes, and the adventure with the current progress.<br/>DB: Adventure, scene, and encounter models need progress fields. |
+
+<br/>
+
+*NOTE: Odyssey was originally built using Google PaLM 2 but has since been migrated to Gemini.
 
 <br/>
 
@@ -420,13 +429,13 @@ Consider the following prompts:
 * `medieval wizard, elf, dwarf, and warrior in a castle parapet with a single maroon dragon flying in the background`
 * `a hooded elf on a castle parapet with a deep red dragon flying in the background`
 
-The AI had a tendency to draw the humanoid figures with extra limbs (or too few). As for the dragon... Many of the results looked like chunks of dragon littering the sky: a talon here, a wing there, and bits of scaly flesh all over the place.
+The AI had a tendency to draw the humanoid figures with extra limbs (or too few). As for the dragon... Many of the results looked like chunks of dragon littering the sky: a talon here, a wing there, and bits of scaly flesh all over the place. Note that since I originally created Odyssey, additional AI services (such as Google Gemini) have added image generation capabilities that are superior to those of the AI services available when I started this project, but they still suffer from these same deficiencies, albeit to a lesser degree.
 
-The final step in the design process was to select technologies. In selecting a generative AI technology, I considered two primary factors: quality and cost. I would have liked to consider ease of use as well, but this was my first foray into AI technologies, so I didn't have a basis for comparison. After studying Googles documentation on prompt design, I crafted a prompt to generate an adventure and compared results from ChatGPT and Google Bard. I refined the prompt several times to try to improve my results, but I also used this process to evaluate the quality of the leading AI tools. In the end, Bard had a slight edge in quality--and a massive lead in cost. As of now, Google's PaLM2 is still free, and even when they start charging for it, the cost will be approximately 1/7 the cost of GPT. With a single winner in both quality and cost, the choice was clear.
+The final step in the design process was to select technologies. In selecting a generative AI technology, I considered two primary factors: quality and cost. I would have liked to consider ease of use as well, but this was my first foray into AI technologies, so I didn't have a basis for comparison. After studying Googles documentation on prompt design, I crafted a prompt to generate an adventure and compared results from ChatGPT and Google Bard. I refined the prompt several times to try to improve my results, but I also used this process to evaluate the quality of the leading AI tools. In the end, Bard had a slight edge in quality--and a massive lead in cost. When I created Odyssey, Google's PaLM2 was still free, and even now, Gemini is far less expensive than OpenAI. With a single winner in both quality and cost, the choice was clear.
 
-My database needs were minimal, and I could have used pretty much any database technology. I knew I was electing to learn a lot of new technologies for this project already, so I chose to stick with something familiar for the database, which meant MySQL or MongoDB. The choice of MySQL over MongoDB was somewhat arbitrary.
+My database needs were minimal, and I could have used pretty much any database technology. I knew I was electing to learn a lot of new technologies for this project already, so I chose to stick with something familiar for the database, which meant MySQL or MongoDB. (In the interim, I have learned PostgreSQL and SQLite.) The choice of MySQL over MongoDB was somewhat arbitrary.
 
-Python was a natural choice for the back end because of its strong association with AI and machine learning. Google's PaLM2 even has a client for Python (and only for Python). I had previously used Flask with Python, but Django seemed to be a more marketable skill than Flask, so I chose to use Django for this project.
+Python was a natural choice for the back end because of its strong association with AI and machine learning. Gemini, like other popular generative AI technologies, even has a client for Python (and only for Python). I had previously used Flask with Python, but Django seemed to be a more marketable skill than Flask, so I chose to use Django for this project.
 
 For the front end, I knew I wanted to learn TypeScript and TailwindCSS, because they seemed to be in-demand skills. After confirming that TypeScript was compatible with React, I finalized the decision to use those technologies. 
 
@@ -478,7 +487,7 @@ I had great difficulty figuring out how to create routes in Django. I eventually
 
 At that point, I was far enough along that there was no reason to start over and use Django views, so I continued building the API with DRF ViewSets. But I could have saved myself some trouble by reading the View Layer section of the Django documentation.
 
-Along with the views for CRUD functions on my models, I created a view to interface with PaLM2's Python client and generate an adventure. I had already developed and refined the prompt, but I needed to parameterize it to incorporate user input.
+Along with the views for CRUD functions on my models, I created a view to interface with Gemini's Python client and generate an adventure. I had already developed and refined the prompt, but I needed to parameterize it to incorporate user input.
 
 Once my models and views were complete, I tested all of my routes and CRUD functionality using [Insomnia](https://insomnia.rest/). Almost everything worked flawlessly in these early tests, but I learned one more important lesson:
 
@@ -573,16 +582,17 @@ Sci-fi theme
 ## Future Development
 
 Because this is a portfolio project, there are no concrete plans for additional development. However, if and when time allows, I might periodically add features or fix bugs. Four of my original user stories did not make it into the MVP, and additional ideas might arise over time. Examples of features that ***may*** be added over time include
-* The ability to archive adventures. Only active adventures would appear on the My Adventures page, but archived adventures could still be accessed on a separate archive page.
-* Having the AI generate stats for each encounter. Currently, it generates only descriptions, and it may not be possible for the AI to reliably generate stats for encounters without training a custom model, which is beyond the budget and scope of this project. Obstacles include inconsistent game systems, constraining difficulty to the players' experience level/point range, and varying the difficulty level in a generally increasing direction throughout the course of the adventure. But if time permits, I would like to at least try to make this happen.
-* AI-generated assets for adventures, such as maps, diagrams, character images, etc.
-* Permit users to add custom fields to adventures, scenes, and encounters. This would allow users to customize not only the content, but the format of their adventures. The data model and views for custom fields are already built, but the fields themselves have not yet been implemented.
-* The ability to delete a user account.
-* The ability to share adventures with other users.
-* The ability to have the AI generate a single scene or encounter on the fly. Cost efficiency is a constraint on this feature. The AI would need access to the entire adventure as context, which would make for a large (and thus, expensive) prompt.
-* The incorporation of machine learning to allow users to give the AI feedback on the adventures it generates (e.g., thumbs and/or a limited number of simple statements like "too difficult", "too easy", etc.).
-* Continued refinement of the main prompt to improve the reliability and quality of responses and/or the efficiency of the prompt.
-* Additional content on the Home page showing the features of the application and providing some simple instructions.
+- [ ] The ability to archive adventures. Only active adventures would appear on the My Adventures page, but archived adventures could still be accessed on a separate archive page.
+- [ ] Having the AI generate stats for each encounter. Currently, it generates only descriptions, and it may not be possible for the AI to reliably generate stats for encounters without training a custom model, which is beyond the budget and scope of this project. Obstacles include inconsistent game systems, constraining difficulty to the players' experience level/point range, and varying the difficulty level in a generally increasing direction throughout the course of the adventure. But if time permits, I would like to at least try to make this happen.
+- [ ] AI-generated assets for adventures, such as maps, diagrams, character images, etc.
+- [ ] Permit users to add custom fields to adventures, scenes, and encounters. This would allow users to customize not only the content, but the format of their adventures. The data model and views for custom fields are already built, but the fields themselves have not yet been implemented.
+- [ ] The ability to delete a user account.
+- [ ] The ability to share adventures with other users.
+- [ ] The ability to have the AI generate a single scene or encounter on the fly. Cost efficiency is a constraint on this feature. The AI would need access to the entire adventure as context, which would make for a large (and thus, expensive) prompt.
+- [ ] The incorporation of machine learning to allow users to give the AI feedback on the adventures it generates (e.g., thumbs and/or a limited number of simple statements like "too difficult", "too easy", etc.).
+- [x] Continued refinement of the main prompt to improve the reliability and quality of responses and/or the efficiency of the prompt.
+- [ ] Additional content on the Home page showing the features of the application and providing some simple instructions.
+- [x] Migrate from PalM2 to Gemini.
 
 -----
 
