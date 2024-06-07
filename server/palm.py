@@ -34,10 +34,10 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
     prompt += f"""for {players} players"""
 
     if level is not None:
-        prompt += f""" at level {level}"""
+        prompt += f""" at level {level}. The difficulty of the adventure should be appropriate to the number of players and their level"""
     
     if experience is not None:
-        prompt += f""" with {experience} experience points"""
+        prompt += f""" with {experience} experience points. The difficulty of the adventure should be appropriate to the number of players and their experience"""
 
     prompt += ". "
     
@@ -66,7 +66,9 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
         Denoument: "Epilogue or rewards the players can expect if successful"
     }}
 
-    Each scene has a challenge and an array of encounters. Each array of encounters includes a different random number of encounters, between 1 and {encounters} (inclusive). Also, {null_plot_twists}% of plot twists are null and {null_clues}% of clues are null. For example, one scene may have 3 encounters, a plot twist, and a null clue. Another scene may have 1 encounter, a null plot twist, and a clue."""
+    Each scene has a challenge and an array of encounters. Each array of encounters includes a different random number of encounters, between 1 and {encounters} (inclusive). Also, {null_plot_twists}% of plot twists are null and {null_clues}% of clues are null. For example, one scene may have 3 encounters, a plot twist, and a null clue. Another scene may have 1 encounter, a null plot twist, and a clue.
+    
+    Each clue should be related to the scene's setting or an encounter. EXAMPLE 1: challenge: track down a bad guy. setting: the bad guys' office with a computer. clue: The computer shows the bad guy's calendar, which has an appointment tomorrow at 9:00 a.m. in a nearby park. EXAMPLE 2: challenge: deactivate the security cameras in the starbase. setting: the security chief's office. encounters: [enemy: the security chief]. clue: If subdued and interrogated, the security chief can provide the access code to deactivate the security cameras. EXAMPLE 3: encounters: [enemies: 2 bugbears, trap: swinging log trap]. clue: the bugbears know how to disarm the swinging log trap."""
 
     if context is not None:
         prompt += "\n" + context
