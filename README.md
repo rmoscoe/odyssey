@@ -61,6 +61,8 @@ _____
 | Django      | Web development framework for Python                                                               | [https://www.djangoproject.com/](https://www.djangoproject.com/)                                     |
 | Gemini       | Large language model (LLM) generative AI                                                           | [https://ai.google/gemini-ecosystem](https://ai.google/gemini-ecosystem)                               |
 | Gencraft    | AI image generator                                                                                 | [https://gencraft.com/](https://gencraft.com/)                                                       |
+| Pydantic    | Data validation library | [https://docs.pydantic.dev/latest/](https://docs.pydantic.dev/latest/) |
+| Instructor | Library to derive structured outputs from LLM outputs | [https://python.useinstructor.com/](https://python.useinstructor.com/)
 | Vite        | Build tool that aims to provide a faster and leaner development experience for modern web projects | [https://vitejs.dev/](https://vitejs.dev/)                                                           |
 | TypeScript  | Strongly typed variant of the JavaScript programming language                                      | [https://www.typescriptlang.org/](https://www.typescriptlang.org/)                                   |
 | React       | Web interface library                                                                              | [https://react.dev/](https://react.dev/)                                                             |
@@ -213,6 +215,8 @@ Below is the prompt provided to Google Gemini to generate an adventure. The prom
 The context for this prompt includes detailed instructions about how to format the response ("Respond in JSON using the following format..."), as well as contextual information ("The following is a description of {game}, a homebrew roleplaying game..." and "Each encounter is a trap, enemies, a puzzle... or some other obstacle.").
 
 Not shown in the prompt itself are the parameters passed to Gemini to control how the model generates a response. In early tests, generated adventures tended to be almost identical, whith only slight variations. To make Odyssey more "creative," I ramped up the randomness by significantly increasing the temperate, top-k, and top-p values. The nature of roleplaying games means that adventures should contain some (**pretend**) violence and could contain (pretend) sexual content. Players are generally at least 12 years old, with the vast majority being adults or teenagers. Therefore, I also adjusted the safety settings to allow for violence and modest sexual content but prohibit dangerous content, harassment, and hate speech.
+
+I used Pydantic and Instructor to improve Odyssey's reliability by ensuring that the output from Gemini matches the desired schema.
 
 ```python
     prompt = f"""Write an adventure for the {game} roleplaying game, """
@@ -535,7 +539,7 @@ Soon after that, I learned another difficult lesson:
 
 The last page I needed to build was Adventure Details. Shortly after I started building the Adventure Details page, I learned one final lesson:
 
-> Never, ever use Heroku. I realized that even though Odyssey was still up and running on Heroku, deployments were in fact failing, so the application was not being updated. When I dug deeper into the failed deployments, the logs showed the failures were related to mysqlclient, which was very bizare, because I had removed mysqlclient from my application and replaced it with mysql-connector-python. But when I opened the Heroku console and inspected the requirements.txt file, it still listed mysqlclient. No matter what I did, I could not replace mysqlclient with mysql-connector-python on Heroku. Even when I edited the requirements.txt file on Heroku, saved the changes, and reopened it, it reverted to mysqlclient. Ultimately, I was forced to set up the application to use mysqlclient on Heroku and mysql-connector-python locally.
+> I realized that even though Odyssey was still up and running on Heroku, deployments were in fact failing, so the application was not being updated. When I dug deeper into the failed deployments, the logs showed the failures were related to mysqlclient, which was very bizare, because I had removed mysqlclient from my application and replaced it with mysql-connector-python. But when I opened the Heroku console and inspected the requirements.txt file, it still listed mysqlclient. No matter what I did, I could not replace mysqlclient with mysql-connector-python on Heroku. Even when I edited the requirements.txt file on Heroku, saved the changes, and reopened it, it reverted to mysqlclient. Ultimately, I was forced to set up the application to use mysqlclient on Heroku and mysql-connector-python locally.
 
 -----
 

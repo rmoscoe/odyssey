@@ -574,7 +574,6 @@ export default function NewAdventure({ handlePageChange, deleteConfirm, setDelet
                     chapterTitle: "Denoument",
                     chapterContent: Denoument
                 }];
-
                 Rising_Action.forEach((plotObj: SceneData, idx: number) => {
                     const sequence = idx + 1;
                     const scene = {

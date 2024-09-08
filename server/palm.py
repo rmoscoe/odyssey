@@ -1,7 +1,37 @@
 import google.generativeai as gemini
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
-import os
+import instructor
 import json
+import os
+from pydantic import AfterValidator, BaseModel
+from typing import Annotated, List, Optional
+
+def length_limit_validator(text):
+    if len(text) >= 500:
+        raise ValueError("Length must be less than 500 characters")
+    return text
+
+class Encounter(BaseModel):
+    """ Describes a specific encounter within a scene """
+    type: str
+    description: str
+    stats: Optional[str] = None
+
+class Scene(BaseModel):
+    """ Describes a scene within an adventure, consisting of an objective (challenge), a setting, and one or more encounters """
+    challenge: str
+    setting: str
+    plot_twist: Optional[str] = None
+    clue: Optional[str] = None
+    encounters: List[Encounter]
+
+class Adventure(BaseModel):
+    """ A complete storyline for an RPG adventure with a full plot, including exposition, incitement, rising action, climax, and denoument """
+    Exposition: Annotated[str, AfterValidator(length_limit_validator)]
+    Incitement: str
+    Rising_Action: List[Scene]
+    Climax: str
+    Denoument: str
 
 def generate_adventure(game, players, scenes, encounters, plot_twists, clues, homebrew_description=None, campaign_setting=None, level=None, experience=None, context=None):
     api_key = os.environ.get('API_KEY')
@@ -9,8 +39,6 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
     null_clues = 100 - clues
 
     gemini.configure(api_key=api_key)
-    model = gemini.GenerativeModel(model_name="gemini-1.5-flash")
-
     config = {
         "temperature": 0.95,
         "candidate_count": 1,
@@ -26,6 +54,8 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
         HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
         HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE
     }
+    model = gemini.GenerativeModel(model_name="gemini-1.5-flash", safety_settings=safety_settings, generation_config=config)
+
     prompt = f"""Write an adventure for the {game} roleplaying game, """
     
     if campaign_setting is not None:
@@ -48,9 +78,9 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
 
     prompt += f"""The rising action should include {scenes} scenes. Each encounter is a trap, enemies, a puzzle (in which case, describe the solution), or some other obstacle. Respond in JSON using the following format:
     {{
-        Exposition: "Background knowledge the players might possess, if any, or prologue. Use between 0 and 250 characters for the exposition.",
+        Exposition: "Background knowledge the players might possess, if any, or prologue. Use up to 400 characters for the exposition.",
         Incitement: "The event that directly involves the players and starts the adventure",
-        "Rising Action": [scene: {{
+        "Rising_Action": [scene: {{
           challenge: "something the players must accomplish to get one step closer to their goal", 
           setting: "where the scene takes place, which should be more specific than the name of a city", 
           encounters: [
@@ -62,7 +92,7 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
           "plot twist": "An event or discovery that changes something the players believed to be true", 
           clue : "a hint about what the players should do next or information that brings the players closer to completing the overall adventure"
         }}],
-        Climax: "The final and most difficult scene that determines whether the players complete the adventure",
+        Climax: "The final and most difficult scene, occurring after the last scene in the Rising_Action, that determines whether the players complete the adventure. The Climax is not just the last scene in the Rising_Action. Although this value is a String, it should include descriptions of a Setting, Challenge (objective), and a single Encounter",
         Denoument: "Epilogue or rewards the players can expect if successful"
     }}
 
@@ -73,20 +103,25 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
     if context is not None:
         prompt += "\n" + context
 
-    redo = True
+    client = instructor.from_gemini(
+        client=model,
+        mode=instructor.Mode.GEMINI_JSON
+    )
 
-    try:
-        while redo:
-            response = model.generate_content(
-                prompt,
-                generation_config=config,
-                safety_settings=safety_settings
+    for i in range(3):
+        try:
+            response = client.chat.completions.create(
+                messages=[{
+                    'role': 'user',
+                    'content': prompt
+                }],
+                response_model=Adventure,
+                max_retries=3
             )
-            adventure = json.loads(response.text.strip()[7:-3])
-            if len(adventure["Exposition"]) < 500:
-                redo = False
-                return response.text
-    except Exception as e:
-        print(e)
-        raise e
-
+            if isinstance(response, Adventure):
+                break
+        except Exception as e:
+            print(e)
+            raise e
+    
+    return response.model_dump_json().replace("Rising_Action", "Rising Action")
