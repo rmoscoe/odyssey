@@ -37,7 +37,7 @@ jiter==0.4.2
 markdown-it-py==3.0.0
 mdurl==0.1.2
 multidict==6.0.5
-mysql-connector-python==8.1.0
+mysqlclient==2.2.4
 openai==1.44.0
 proto-plus==1.23.0
 protobuf==4.21.12
