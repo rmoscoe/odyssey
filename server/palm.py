@@ -122,6 +122,5 @@ def generate_adventure(game, players, scenes, encounters, plot_twists, clues, ho
                 break
         except Exception as e:
             print(e)
-            raise e
     
     return response.model_dump_json().replace("Rising_Action", "Rising Action")
