@@ -6,6 +6,7 @@ import axios from 'axios';
 import Auth from '../utils/auth';
 import CSRFToken from '../components/CSRFToken';
 import Spinner from '../components/Spinner';
+import Cookies from 'js-cookie';
 
 type PageProps = {
     handlePageChange: (page: string) => void;
@@ -136,7 +137,7 @@ export default function CreateAccount({ handlePageChange }: PageProps) {
         }
 
         try {
-            const response = await axios.post('/api/users/', user, { headers: { 'X-CSRFToken': document.querySelector('.csrf')?.getAttribute('value')}});
+            const response = await axios.post('/api/users/', user, { headers: { 'X-CSRFToken': Cookies.get('csrftoken') }});
 
             // log the user in and store the token in localStorage
             const token = response.data.token;
